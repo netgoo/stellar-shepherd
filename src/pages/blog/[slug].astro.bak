@@ -1,4 +1,3 @@
-@'
 ---
 import BlogLayout from '../../layouts/BlogLayout.astro';
 const allPostFiles = import.meta.glob('../../content/posts/*.md', { eager: true });
@@ -31,4 +30,3 @@ const displayDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toStrin
     a:hover { color:#0066cc; }
   </style>
 </BlogLayout>
-'@ | Out-File src/pages/blog/[slug].astro -Encoding utf8
