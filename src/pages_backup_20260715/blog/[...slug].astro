@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  console.log('[DEBUG-STEP22] Total posts found:', posts.length);
+  
+  const paths = posts.map((post) => {
+    // 兼容 .md �?.mdx，同时处理可能的子目录结�?    const slug = post.id.replace(/\.mdx?$/, '').replace(/^blog\//, '');
+    console.log(`[DEBUG-STEP22] Registered slug: "${slug}" (from id: "${post.id}")`);
+    return {
+      params: { slug },
+      props: { post },
+    };
+  });
+
+  console.log('[DEBUG-STEP22] All registered slugs:', paths.map(p => p.params.slug));
+  return paths;
+}
+
+const { post } = Astro.props;
+
+// 🛡�?关键防御：当 slug 未匹配时优雅降级
+if (!post) {
+  console.warn('[DEBUG-STEP22] ⚠️ No post matched for slug:', Astro.params.slug);
+  return Astro.redirect('/404');
+}
+---
+<html><body><h1>{post.data.title}</h1></body></html>

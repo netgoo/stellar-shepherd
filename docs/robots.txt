@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stellarshepherd.com/sitemap-index.xml

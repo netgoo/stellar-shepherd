@@ -1,0 +1,18 @@
+﻿---
+const { date } = Astro.props;
+
+let validDate = date;
+if (!validDate || !(validDate instanceof Date) || isNaN(new Date(validDate).getTime())) {
+  validDate = new Date();
+} else if (!(validDate instanceof Date)) {
+  validDate = new Date(validDate);
+}
+---
+
+<time datetime={validDate.toISOString()}>
+  {validDate.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })}
+</time>
