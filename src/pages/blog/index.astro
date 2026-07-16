@@ -1,9 +1,8 @@
-﻿---
-import BlogLayout from '../../layouts/BlogLayout.astro';
-const allPostModules = import.meta.glob('/content/posts/*.md', { eager: true });
+﻿import BlogLayout from '../../layouts/BlogLayout.astro';
+const allPostModules = import.meta.glob('/content/blog/*.mdoc', { eager: true });
 const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
   const front = mod.frontmatter;
-  const slug = filePath.replace('/content/posts/', '').replace('.md', '');
+  const slug = filePath.replace('/content/blog/', '').replace('.mdoc', '');
   return {
     slug,
     title: front.title,
@@ -11,7 +10,7 @@ const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
     description: front.description || ''
   };
 }).sort((a, b) => b.date.getTime() - a.date.getTime());
----
+
 <BlogLayout title="全部笔记">
   <main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui,-apple-system,Segoe UI,Roboto;">
     <h1 style="font-size:2.2rem;font-weight:500;color:#111;margin-bottom:3rem;">全部笔记</h1>
