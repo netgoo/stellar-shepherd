@@ -9,11 +9,12 @@ export default config({
     provider: 'github',
     appId: '4285172',
   },
+  defaultBranch: "master",
   collections: {
-    posts: collection({
+    blog: collection({
       label: '文章',
       slugField: 'title',
-      path: 'src/content/posts/*',
+      path: 'content/blog/*',
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: '标题' } }),
