@@ -1,20 +1,9 @@
 ﻿---
 import BlogLayout from '../../layouts/BlogLayout.astro';
-const allPostModules = import.meta.glob('/content/blog/*.*', { eager: true });
-let posts = Object.entries(allPostModules).map(([filePath, mod]) => {
-  if (!filePath.endsWith('.md') && !filePath.endsWith('.mdoc')) return null;
-  const front = mod.frontmatter;
-  if (!front?.title || !front?.date) return null;
-  const slug = filePath.replace('/content/blog/', '').replace(/\.(md|mdoc)$/, '');
-  return {
-    slug,
-    title: front.title,
-    date: new Date(front.date),
-    description: front.description || ''
-  };
-}).filter(Boolean);
-posts.sort((a, b) => b.date.getTime() - a.date.getTime());
-if (import.meta.env.DEV) console.log('读取到全部文章：', posts);
+import { getCollection } from 'astro:content';
+const rawPosts = await getCollection('blog');
+const posts = rawPosts.sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
+if(import.meta.env.DEV) console.log('全部文章集合', posts);
 ---
 <BlogLayout title="全部笔记">
   <main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui,-apple-system,Segoe UI,Roboto;">
@@ -24,17 +13,17 @@ if (import.meta.env.DEV) console.log('读取到全部文章：', posts);
     ) : (
       <ul style="list-style:none;padding:0;margin:0;gap:2.5rem;display:flex;flex-direction:column;">
         {posts.map(post => {
-          const y = post.date.getFullYear();
-          const m = String(post.date.getMonth() + 1).padStart(2, '0');
-          const d = String(post.date.getDate()).padStart(2, '0');
-          const dateStr = y + '-' + m + '-' + d;
+          const y = post.data.date.getFullYear();
+          const m = String(post.data.date.getMonth() + 1).padStart(2, '0');
+          const d = String(post.data.date.getDate()).padStart(2, '0');
+          const dateStr = ${y}--;
           return (
             <li style="border-bottom:1px solid #eee;padding-bottom:2rem;">
-              <a href={'/blog/' + post.slug} style="text-decoration:none;">
-                <h2 style="font-size:1.5rem;margin:0 0 0.6rem;color:#111;transition:color 0.2s;">{post.title}</h2>
+              <a href={/blog/} style="text-decoration:none;">
+                <h2 style="font-size:1.5rem;margin:0 0 0.6rem;color:#111;transition:color 0.2s;">{post.data.title}</h2>
               </a>
               <time style="color:#666;font-size:0.9rem;display:block;margin-bottom:0.8rem;">{dateStr}</time>
-              {post.description && <p style="color:#333;line-height:1.7;margin:0;">{post.description}</p>}
+              {post.data.description && <p style="color:#333;line-height:1.7;margin:0;">{post.data.description}</p>}
             </li>
           )
         })}
