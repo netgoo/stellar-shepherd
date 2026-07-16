@@ -1,4 +1,5 @@
-﻿import BlogLayout from '../../layouts/BlogLayout.astro';
+﻿---
+import BlogLayout from '../../layouts/BlogLayout.astro';
 const allPostModules = import.meta.glob('/content/blog/*.mdoc', { eager: true });
 const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
   const front = mod.frontmatter;
@@ -10,7 +11,7 @@ const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
     description: front.description || ''
   };
 }).sort((a, b) => b.date.getTime() - a.date.getTime());
-
+---
 <BlogLayout title="全部笔记">
   <main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui,-apple-system,Segoe UI,Roboto;">
     <h1 style="font-size:2.2rem;font-weight:500;color:#111;margin-bottom:3rem;">全部笔记</h1>
@@ -19,10 +20,10 @@ const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
     ) : (
       <ul style="list-style:none;padding:0;margin:0;gap:2.5rem;display:flex;flex-direction:column;">
         {posts.map(post => {
-          const dateStr = `${post.date.getFullYear()}-${(post.date.getMonth()+1).toString().padStart(2,'0')}-${post.date.getDate().toString().padStart(2,'0')}`;
+          const dateStr = ${post.date.getFullYear()}--;
           return (
             <li style="border-bottom:1px solid #eee;padding-bottom:2rem;">
-              <a href={`/blog/${post.slug}`} style="text-decoration:none;">
+              <a href={/blog/} style="text-decoration:none;">
                 <h2 style="font-size:1.5rem;margin:0 0 0.6rem;color:#111;transition:color 0.2s;">{post.title}</h2>
               </a>
               <time style="color:#666;font-size:0.9rem;display:block;margin-bottom:0.8rem;">{dateStr}</time>
