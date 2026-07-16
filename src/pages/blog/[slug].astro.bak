@@ -1,30 +1,28 @@
 ---
 import BlogLayout from '../../layouts/BlogLayout.astro';
-const allPostFiles = import.meta.glob('../../content/posts/*.md', { eager: true });
-const { slug } = Astro.params;
-const targetMdPath = `../../content/posts/${slug}.md`;
-const targetPost = allPostFiles[targetMdPath];
+import { getAllPosts } from '../../lib/getPosts';
+import { marked } from 'marked';
 
-if (!targetPost) {
+const { slug } = Astro.params;
+const allPosts = getAllPosts();
+const post = allPosts.find(p => p.slug === slug);
+
+if (!post) {
   return Astro.redirect('/blog');
 }
 
-const { default: ArticleContent, frontmatter } = targetPost;
-const rawPublishDate = frontmatter.date ?? frontmatter.pubDate;
-const dateObj = new Date(rawPublishDate);
-const displayDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+const dateObj = new Date(post.pubDate);
+const displayDate = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2,'0')}-${dateObj.getDate().toString().padStart(2,'0')}`;
+const htmlContent = marked.parse(post.content);
 ---
-
-<BlogLayout title={frontmatter.title}>
+<BlogLayout title={post.title}>
   <main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui,-apple-system,Segoe UI,Roboto;">
     <a href="/blog" style="display:inline-block;margin-bottom:2.5rem;color:#666;text-decoration:none;font-size:1rem;">← 返回全部笔记</a>
     <header style="margin-bottom:3rem;border-bottom:1px solid #eee;padding-bottom:1.8rem;">
-      <h1 style="font-size:2.4rem;font-weight:400;margin:0 0 1rem;color:#111;">{frontmatter.title}</h1>
+      <h1 style="font-size:2.4rem;font-weight:400;margin:0 0 1rem;color:#111;">{post.title}</h1>
       <time style="display:block;color:#666;font-size:0.95rem;">{displayDate}</time>
     </header>
-    <article style="line-height:1.9;font-size:1.08rem;color:#222;">
-      <ArticleContent />
-    </article>
+    <article style="line-height:1.9;font-size:1rem;color:#222;" set:html={htmlContent}></article>
   </main>
   <style>
     a:hover { color:#0066cc; }

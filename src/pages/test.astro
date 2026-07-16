@@ -1,0 +1,8 @@
+﻿---
+import { getCollection } from 'astro:content';
+const posts = await getCollection('posts', () => true);
+console.log('posts原始数据：', posts);
+console.log('文章数量：', posts.length);
+---
+<h1>文章总数：{posts.length}</h1>
+{JSON.stringify(posts, null, 2)}

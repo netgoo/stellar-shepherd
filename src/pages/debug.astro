@@ -1,0 +1,7 @@
+﻿---
+import { getAllPosts } from '../lib/getPosts';
+const posts = getAllPosts();
+console.log('debug-posts', posts);
+---
+<meta charset="UTF-8" />
+<pre>{JSON.stringify(posts, null, 2)}</pre>
