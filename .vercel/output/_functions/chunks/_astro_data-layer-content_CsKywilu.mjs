@@ -20,7 +20,7 @@ var _astro_data_layer_content_default = [
 	"astro-version",
 	"7.0.9",
 	"content-config-digest",
-	"3cf1827fef955469"
+	"1dac87f26b476704"
 ];
 //#endregion
 export { _astro_data_layer_content_default as default };

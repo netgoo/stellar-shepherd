@@ -2,7 +2,7 @@ import { t as __exportAll } from "./rolldown-runtime_D7D4PA-g.mjs";
 import { _ as addAttribute, d as renderTemplate, h as maybeRenderHead, i as renderComponent } from "./server_CNiDaRmB.mjs";
 import { t as createComponent } from "./astro-component_SYADG7pl.mjs";
 import "./compiler_Dd9cibqx.mjs";
-import { n as hello_exports, r as hello_world_exports, t as $$BlogLayout } from "./BlogLayout_CDu9ZvH4.mjs";
+import { n as hello_exports, r as hello_world_exports, t as $$BlogLayout } from "./BlogLayout_D9fSd-dm.mjs";
 //#region src/pages/blog/index.astro
 var blog_exports = /* @__PURE__ */ __exportAll({
 	default: () => $$Index,

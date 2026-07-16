@@ -21,7 +21,7 @@ var frontmatter$1 = {
 };
 var file$1 = "C:/Users/Administrator/stellar-shepherd-new/src/content/posts/hello-world.md";
 function rawContent$1() {
-	return "﻿   \n                  \n                   \n                                          \n   \n\n# Welcome to My Blog\n\nThis is a **test post** to verify the content collection setup.\n\n## Features\n\n- Markdown support\n- Content Collections\n- Static generation\r\n";
+	return "﻿   \r\n                  \r\n                   \r\n                                          \r\n   \r\n\r\n# Welcome to My Blog\r\n\r\nThis is a **test post** to verify the content collection setup.\r\n\r\n## Features\r\n\r\n- Markdown support\r\n- Content Collections\r\n- Static generation\r\n";
 }
 async function compiledContent$1() {
 	return await html$1();
@@ -63,7 +63,7 @@ var frontmatter = {
 };
 var file = "C:/Users/Administrator/stellar-shepherd-new/src/content/posts/hello.md";
 function rawContent() {
-	return "﻿   \n                     \n                   \n                       \n   \n\n这是你的第一篇文章。\r\n";
+	return "﻿   \r\n                     \r\n                   \r\n                       \r\n   \r\n\r\n这是你的第一篇文章。\r\n";
 }
 async function compiledContent() {
 	return await html();

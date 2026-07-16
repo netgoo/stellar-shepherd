@@ -1,48 +1,40 @@
----
+﻿---
 import BlogLayout from '../../layouts/BlogLayout.astro';
-const postModules = import.meta.glob('../../content/posts/*.md', { eager: true });
-const postList = [];
-
-for (const filePath in postModules) {
-  const mod = postModules[filePath];
-  const fm = mod.frontmatter;
-  const fullFileName = filePath.split('/').at(-1);
-  const slug = fullFileName.replace('.md','');
-  const rawDate = fm.date ?? fm.pubDate ?? '';
-  const dateObj = new Date(rawDate);
-  const validDate = isNaN(dateObj.getTime()) ? new Date() : dateObj;
-
-  postList.push({slug, title:fm.title, date:validDate});
-}
-postList.sort((a,b)=>b.date.getTime()-a.date.getTime());
+const allPostModules = import.meta.glob('/content/posts/*.md', { eager: true });
+const posts = Object.entries(allPostModules).map(([filePath, mod]) => {
+  const front = mod.frontmatter;
+  const slug = filePath.replace('/content/posts/', '').replace('.md', '');
+  return {
+    slug,
+    title: front.title,
+    date: new Date(front.date),
+    description: front.description || ''
+  };
+}).sort((a, b) => b.date.getTime() - a.date.getTime());
 ---
 <BlogLayout title="全部笔记">
-<main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui;">
-  <header style="margin-bottom:3rem;">
-    <h1 style="font-size:2.6rem;font-weight:400;margin:0 0 0.6rem;color:#111;">全部笔记</h1>
-    <p style="color:#666;margin:0;">当前文章总数：{postList.length}</p>
-    <div style="width:60px;height:3px;background:#2277dd;margin-top:1rem;"></div>
-  </header>
-
-  {postList.length === 0 ? (
-    <p style="color:#888;text-align:center;padding:3rem 0;">暂无发布文章</p>
-  ) : (
-    <ul style="list-style:none;padding:0;margin:0;">
-      {postList.map(post=>(
-        <li style="padding:1.8rem 0;border-bottom:1px solid #eee;">
-          <a href={/blog/} style="font-size:1.45rem;color:#111;text-decoration:none;">
-            {post.title}
-          </a>
-          <div style="margin-top:0.7rem;color:#666;font-size:0.95rem;">
-            {post.date.getFullYear()}-{(post.date.getMonth()+1).toString().padStart(2,'0')}-{post.date.getDate().toString().padStart(2,'0')}
-          </div>
-        </li>
-      ))}
-    </ul>
-  )}
-</main>
-<style>
-a:hover {color:#0066cc;}
-li:hover {background:#fafafa;padding-left:8px;}
-</style>
+  <main style="max-width:860px;margin:4rem auto;padding:0 2rem;font-family:system-ui,-apple-system,Segoe UI,Roboto;">
+    <h1 style="font-size:2.2rem;font-weight:500;color:#111;margin-bottom:3rem;">全部笔记</h1>
+    {posts.length === 0 ? (
+      <p style="color:#666;">暂无文章</p>
+    ) : (
+      <ul style="list-style:none;padding:0;margin:0;gap:2.5rem;display:flex;flex-direction:column;">
+        {posts.map(post => {
+          const dateStr = `${post.date.getFullYear()}-${(post.date.getMonth()+1).toString().padStart(2,'0')}-${post.date.getDate().toString().padStart(2,'0')}`;
+          return (
+            <li style="border-bottom:1px solid #eee;padding-bottom:2rem;">
+              <a href={`/blog/${post.slug}`} style="text-decoration:none;">
+                <h2 style="font-size:1.5rem;margin:0 0 0.6rem;color:#111;transition:color 0.2s;">{post.title}</h2>
+              </a>
+              <time style="color:#666;font-size:0.9rem;display:block;margin-bottom:0.8rem;">{dateStr}</time>
+              {post.description && <p style="color:#333;line-height:1.7;margin:0;">{post.description}</p>}
+            </li>
+          )
+        })}
+      </ul>
+    )}
+  </main>
+  <style>
+    h2:hover { color:#0066cc; }
+  </style>
 </BlogLayout>

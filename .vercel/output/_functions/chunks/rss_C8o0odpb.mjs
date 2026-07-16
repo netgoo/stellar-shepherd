@@ -96,7 +96,7 @@ var ImmutableDataStore = class ImmutableDataStore {
 	*/
 	static async fromModule() {
 		try {
-			const data = await import("./_astro_data-layer-content_BSf_Q8zu.mjs");
+			const data = await import("./_astro_data-layer-content_CsKywilu.mjs");
 			if (data.default instanceof Map) return ImmutableDataStore.fromMap(data.default);
 			const map = devalue.unflatten(data.default);
 			return ImmutableDataStore.fromMap(map);
@@ -212,7 +212,7 @@ function createGetCollection({ liveCollections }) {
 		const hasFilter = typeof filter === "function";
 		const store = await globalDataStore.get();
 		if (store.hasCollection(collection)) {
-			const { default: imageAssetMap } = await import("./content-assets_DXqEyLLP.mjs");
+			const { default: imageAssetMap } = await import("./content-assets_BNW1matP.mjs");
 			const result = [];
 			for (const rawEntry of store.values(collection)) {
 				const data = updateImageReferencesInData(rawEntry.data, rawEntry.filePath, imageAssetMap);
@@ -260,7 +260,7 @@ function createGetEntry({ liveCollections }) {
 				console.warn(`Entry ${collection} → ${lookupId} was not found.`);
 				return;
 			}
-			const { default: imageAssetMap } = await import("./content-assets_DXqEyLLP.mjs");
+			const { default: imageAssetMap } = await import("./content-assets_BNW1matP.mjs");
 			const data = updateImageReferencesInData(entry.data, entry.filePath, imageAssetMap);
 			const result = {
 				...entry,
