@@ -1,49 +1,161 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+// ALEX AUTOMATION Hompage
+const pageTitle = "ALEX AUTOMATION | Next-Gen AI & Agentic Workflow Hub";
+const description = "Your premier directory and technical blueprints for Autonomous AI Agents, No-Code workflows, and Decentralized Automation.";
 ---
 
-<!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<!-- 引入现代科技感无衬线字体 -->
+		<link rel="preconnect" href="https://googleapis.com">
+		<link rel="preconnect" href="https://gstatic.com" crossorigin>
+		<link href="https://googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+		<style>
+			:root {
+				--bg-color: #0B0F19; /* 顶级科技感深黑 */
+				--accent-gold: #F3C653; /* 高端商业金 */
+				--accent-blue: #3B82F6; /* 科技蓝 */
+				--text-main: #F3F4F6;
+				--text-muted: #9CA3AF;
+				--card-bg: #111827; /* 悬浮卡片暗灰 */
+			}
+			* { box-sizing: border-box; margin: 0; padding: 0; }
+			body {
+				background-color: var(--bg-color);
+				color: var(--text-main);
+				font-family: 'Plus Jakarta Sans', sans-serif;
+				line-height: 1.6;
+				overflow-x: hidden;
+			}
+			/* 导航栏 */
+			header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 1.5rem 5%;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			.logo { font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: 1px; }
+			.logo span { color: var(--accent-gold); }
+			nav a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; transition: 0.3s; }
+			nav a:hover { color: var(--accent-gold); }
+			
+			/* Hero 巨幕头部 */
+			.hero {
+				padding: 6rem 5% 4rem;
+				text-align: center;
+				max-width: 900px;
+				margin: 0 auto;
+			}
+			.tagline {
+				display: inline-block;
+				background: rgba(59, 130, 246, 0.1);
+				color: var(--accent-blue);
+				padding: 0.4rem 1rem;
+				border-radius: 99px;
+				font-size: 0.85rem;
+				font-weight: 600;
+				margin-bottom: 1.5rem;
+				border: 1px solid rgba(59, 130, 246, 0.2);
+			}
+			h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; letter-spacing: -1px; margin-bottom: 1.5rem; color: #fff; }
+			h1 span {
+				background: linear-gradient(to right, var(--accent-gold), #FFF);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
+			.sub-text { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+			.cta-btn {
+				display: inline-block;
+				background-color: var(--accent-gold);
+				color: #000;
+				padding: 0.8rem 2rem;
+				border-radius: 6px;
+				font-weight: 600;
+				text-decoration: none;
+				transition: 0.3s;
+				box-shadow: 0 4px 20px rgba(243, 198, 83, 0.2);
+			}
+			.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(243, 198, 83, 0.4); }
+
+			/*  */
+			.matrix-section { padding: 4rem 5%; max-width: 1200px; margin: 0 auto; }
+			.section-title { text-align: center; font-size: 1.8rem; margin-bottom: 3rem; color: #fff; }
+			.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+			.card {
+				background-color: var(--card-bg);
+				padding: 2.5rem 2rem;
+				border-radius: 12px;
+				border: 1px solid rgba(255, 255, 255, 0.03);
+				transition: 0.3s;
+			}
+			.card:hover { transform: translateY(-5px); border-color: rgba(243, 198, 83, 0.2); }
+			.card-icon { font-size: 2rem; margin-bottom: 1rem; }
+			.card h3 { font-size: 1.3rem; margin-bottom: 1rem; color: #fff; }
+			.card p { color: var(--text-muted); font-size: 0.95rem; }
+
+			/* 页脚 */
+			footer {
+				text-align: center;
+				padding: 4rem 5% 2rem;
+				border-top: 1px solid rgba(255, 255, 255, 0.05);
+				color: var(--text-muted);
+				font-size: 0.9rem;
+				margin-top: 4rem;
+			}
+			@media (max-width: 768px) { h1 { font-size: 2.2rem; } }
+		</style>
 	</head>
 	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
+
+		<header>
+			<div class="logo">ALEX <span>AUTOMATION</span></div>
+			<nav>
+				<a href="/blog">Technical SOPs</a>
+				<a href="https://wenboom.com">Master Blueprints</a>
+			</nav>
+		</header>
+
+		<section class="hero">
+			<div class="tagline">🤖 5-10 Year Future-Proof Enterprise Intelligence Hub</div>
+			<h1>Automate 80% of Operations with <span>Next-Gen Autonomous AI</span></h1>
+			<p class="sub-text">We bridge the gap between traditional zero-code automation (Make/Zapier) and the upcoming era of Decentralized AI Agents. Reclaim your team's creative capacity today.</p>
+			<a href="/blog" class="cta-btn">Access Technical SOP Hub →</a>
+		</section>
+
+		<section class="matrix-section">
+			<h2 class="section-title">Our Long-Term Architecture Layout</h2>
+			<div class="grid">
+				<!-- ：无代码自动化 -->
+				<div class="card">
+					<div class="card-icon">⚡</div>
+					<h3>Workflow No-Code</h3>
+					<p>Hardening deterministic pipelines using Make.com and Zapier. Error handling protocols designed to completely stop silent data poisoning.</p>
+				</div>
+				<!-- ：自主智能体 -->
+				<div class="card">
+					<div class="card-icon">🧠</div>
+					<h3>Agentic Autonomous</h3>
+					<p>Deploying cutting-edge AI Agents (Manus, Claude Code) to orchestrate cross-platform decision-making logs with minimal human overhead.</p>
+				</div>
+				<!-- ：未来协议通信 -->
+				<div class="card">
+					<div class="card-icon">🌐</div>
+					<h3>Agent Protocols</h3>
+					<p>Future-proofing enterprise connectivity with Model Context Protocols (MCP) and localized execution layers for secure A2A scaling.</p>
+				</div>
+			</div>
+		</section>
+
+		<footer>
+			<p>&copy; 2026 BY ALEX AUTOMATION. All Rights Reserved. Built securely via Astro + GitHub Enterprise Architecture.</p>
+		</footer>
+
 	</body>
 </html>
