@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Master Blueprints | ALEX AUTOMATION</title>
+    <meta name="description" content="Access our exclusive library of production-grade AI automation blueprints, agent deployment scripts, and MCP data gateway templates." />
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0B0F19;
+            --accent-gold: #F3C653;
+            --accent-blue: #3B82F6;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --card-bg: #111827;
+            --card-border: rgba(255, 255, 255, 0.03);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .logo { font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: 1px; }
+        .logo span { color: var(--accent-gold); }
+        .logo a { color:#fff; text-decoration:none; }
+        nav a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; transition: 0.3s; }
+        nav a:hover { color: var(--accent-gold); }
+        
+        .hero-section {
+            padding: 5rem 5% 3rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 1rem; color: #fff; }
+        h1 span { color: var(--accent-gold); }
+        .sub-text { font-size: 1.05rem; color: var(--text-muted); }
+
+        .matrix-section { padding: 2rem 5% 5rem; max-width: 1100px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        
+        .blueprint-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+        .blueprint-card:hover { transform: translateY(-4px); border-color: rgba(243, 198, 83, 0.2); }
+        .bp-meta { font-size: 0.75rem; color: var(--accent-blue); font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.5px; }
+        .blueprint-card h2 { font-size: 1.35rem; color: #fff; margin-bottom: 1rem; line-height: 1.4; }
+        .blueprint-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1; }
+        
+        /* Make.com  */
+        .bp-btn {
+            display: block;
+            text-align: center;
+            background-color: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .blueprint-card:hover .bp-btn {
+            background-color: var(--accent-gold);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(243, 198, 83, 0.2);
+        }
+
+        footer {
+            background-color: #080B13;
+            text-align: center;
+            padding: 4rem 5% 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><a href="/">ALEX <span>AUTOMATION</span></a></div>
+        <nav>
+            <a href="/trends">Future Trends</a>
+            <a href="/tools">Top AI Stack</a>
+            <a href="/blueprints" style="color: var(--accent-gold);">Master Blueprints</a>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <h1>Production-Grade <span>Automation Blueprints</span></h1>
+        <p class="sub-text">Deploy hard-vetted semantic routers, data enrichment scripts, and autonomous agent node networks. Standardized operational architecture engineered to run with zero marginal cost.</p>
+    </section>
+
+    <section class="matrix-section">
+        <div class="grid">
+            <!-- 蓝图一 -->
+            <div class="blueprint-card">
+                <div>
+                    <span class="bp-meta">Make.com Gateway</span>
+                    <h2>Visual MCP Semantic Routing Module</h2>
+                    <p>Enables non-technical mid-market operators to instantly bridge split corporate data layers straight into Claude Code swarms using native webhook triggers.</p>
+                </div>
+                <a href="/links/make" class="bp-btn">Deploy Infrastructure on Make.com &rarr;</a>
+            </div>
+
+            <!-- 蓝图二 -->
+            <div class="blueprint-card">
+                <div>
+                    <span class="bp-meta">Data Infrastructure</span>
+                    <h2>Automated High-Scale Outbound Scoring Grid</h2>
+                    <p>Connects 50+ background verification providers into a unified context table. Automatically qualifies leads and filters data poisoning synchronously.</p>
+                </div>
+                <a href="/links/clay" class="bp-btn">Initialize Routing System &rarr;</a>
+            </div>
+
+            <!-- 蓝图三 -->
+            <div class="blueprint-card">
+                <div>
+                    <span class="bp-meta">Agentic Workflow</span>
+                    <h2>Local Autonomous Operations Control Dashboard</h2>
+                    <p>Construct secure administrative UI panels and vectors connected directly to production internal servers with granular token optimization logs.</p>
+                </div>
+                <a href="/links/retool" class="bp-btn">Initialize Control Dashboard &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <a href="/about" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">About Us</a>
+            <a href="/privacy-policy" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+            <a href="/cookie-policy" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Cookie Policy</a>
+            <a href="/terms-of-service" style="color: var(--text-muted); text-decoration: none; font-weight: 500;">Terms of Service</a>
+        </div>
+        <div style="border-top: 1px solid rgba(255, 255, 255, 0.02); padding-top: 2rem; max-width: 800px; margin: 0 auto; font-size: 0.85rem; letter-spacing: 0.5px;">
+            <p>&copy; 2026-2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
