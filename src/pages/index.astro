@@ -1,4 +1,5 @@
-// ALEX AUTOMATION Hompage
+---
+// ALEX AUTOMATION Safe Homepage
 const pageTitle = "ALEX AUTOMATION | Next-Gen AI & Agentic Workflow Hub";
 const description = "Your premier directory and technical blueprints for Autonomous AI Agents, No-Code workflows, and Decentralized Automation.";
 ---
@@ -11,18 +12,17 @@ const description = "Your premier directory and technical blueprints for Autonom
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={description} />
-		<!-- 引入现代科技感无衬线字体 -->
 		<link rel="preconnect" href="https://googleapis.com">
 		<link rel="preconnect" href="https://gstatic.com" crossorigin>
-		<link href="https://googleapis.com" rel="stylesheet">
+		<link href="https://googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 		<style>
 			:root {
-				--bg-color: #0B0F19; /* 顶级科技感深黑 */
-				--accent-gold: #F3C653; /* 高端商业金 */
-				--accent-blue: #3B82F6; /* 科技蓝 */
+				--bg-color: #0B0F19;
+				--accent-gold: #F3C653;
+				--accent-blue: #3B82F6;
 				--text-main: #F3F4F6;
 				--text-muted: #9CA3AF;
-				--card-bg: #111827; /* 悬浮卡片暗灰 */
+				--card-bg: #111827;
 				--card-border: rgba(255, 255, 255, 0.03);
 			}
 			* { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +33,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 				line-height: 1.6;
 				overflow-x: hidden;
 			}
-			/* 导航栏 */
 			header {
 				display: flex;
 				justify-content: space-between;
@@ -46,7 +45,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 			nav a { color: var(--text-muted); text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; transition: 0.3s; }
 			nav a:hover { color: var(--accent-gold); }
 			
-			/* Hero 巨幕头部 */
 			.hero {
 				padding: 6rem 5% 4rem;
 				text-align: center;
@@ -84,13 +82,11 @@ const description = "Your premier directory and technical blueprints for Autonom
 			}
 			.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(243, 198, 83, 0.4); }
 
-			/* 通用区块布局 */
 			.matrix-section { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
 			.section-title { text-align: center; font-size: 1.8rem; margin-bottom: 1rem; color: #fff; }
 			.section-subtitle { text-align: center; font-size: 1rem; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 			.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 			
-			/* 核心架构卡片 */
 			.card {
 				background-color: var(--card-bg);
 				padding: 2.5rem 2rem;
@@ -103,7 +99,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 			.card h3 { font-size: 1.3rem; margin-bottom: 1rem; color: #fff; }
 			.card p { color: var(--text-muted); font-size: 0.95rem; }
 
-			/* 【新增变现模块】顶级工具栈卡片样式 */
 			.stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
 			.stack-card {
 				background-color: var(--card-bg);
@@ -116,15 +111,13 @@ const description = "Your premier directory and technical blueprints for Autonom
 				transition: 0.3s;
 				text-decoration: none;
 			}
-			.stack-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.3); background: linear-gradient(145deg, #111827, #1f2937); }
+			.stack-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.3); }
 			.stack-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
 			.stack-logo { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
 			.stack-badge { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 99px; background: rgba(243, 198, 83, 0.1); color: var(--accent-gold); font-weight: 600; }
 			.stack-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; flex-grow: 1; }
 			.stack-link { font-size: 0.9rem; color: var(--accent-blue); font-weight: 600; display: flex; align-items: center; gap: 0.25rem; }
-			.stack-card:hover .stack-link { color: var(--accent-gold); }
 
-			/* 【新增趋势模块】深度文章卡片样式 */
 			.trends-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
 			.trend-card {
 				background-color: #0e1422;
@@ -143,7 +136,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 			.trend-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; flex-grow: 1; }
 			.trend-footer { font-size: 0.9rem; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
 
-			/* 页脚 */
 			footer {
 				text-align: center;
 				padding: 4rem 5% 2rem;
@@ -173,7 +165,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 			<a href="/trends" class="cta-btn">Explore 10-Year AI Trends →</a>
 		</section>
 
-		<!-- 模块一：长期架构底座（保留原生） -->
 		<section class="matrix-section">
 			<h2 class="section-title">Our Long-Term Architecture Layout</h2>
 			<p class="section-subtitle">A rigid framework built to withstand the core evolutionary shifts of enterprise digital infrastructure.</p>
@@ -196,12 +187,10 @@ const description = "Your premier directory and technical blueprints for Autonom
 			</div>
 		</section>
 
-		<!-- 模块二：【新增变现引擎】Top AI Stack（联盟链接） -->
-		<section class="matrix-section" style="background: rgba(255,255,255,0.01); border-y: 1px solid rgba(255,255,255,0.02);">
+		<section class="matrix-section" style="background: rgba(255,255,255,0.01);">
 			<h2 class="section-title">Top AI & Automation Stack</h2>
 			<p class="section-subtitle">The industry-standard production infrastructure we review, stress-test, and deploy for high-scale operations.</p>
 			<div class="stack-grid">
-				<!-- Make 卡片 -->
 				<a href="/links/make" class="stack-card">
 					<div class="stack-header">
 						<div class="stack-logo">Make.com</div>
@@ -210,7 +199,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 					<p>The most visually powerful advanced workflow builder for seamless multi-app logic, conditioning, and custom API nesting.</p>
 					<div class="stack-link">Deploy Stack &rarr;</div>
 				</a>
-				<!-- Zapier 卡片 -->
 				<a href="/links/zapier" class="stack-card">
 					<div class="stack-header">
 						<div class="stack-logo">Zapier</div>
@@ -219,7 +207,6 @@ const description = "Your premier directory and technical blueprints for Autonom
 					<p>Unmatched integration coverage with thousands of native apps. Ideal for secure, instant ecosystem-wide enterprise triggers.</p>
 					<div class="stack-link">Deploy Stack &rarr;</div>
 				</a>
-				<!-- Clay 卡片 -->
 				<a href="/links/clay" class="stack-card">
 					<div class="stack-header">
 						<div class="stack-logo">Clay.com</div>
@@ -228,6 +215,16 @@ const description = "Your premier directory and technical blueprints for Autonom
 					<p>Next-gen AI data enrichment platform. Combines 50+ data providers to automatically score leads and scale outbound pipelines.</p>
 					<div class="stack-link">Deploy Stack &rarr;</div>
 				</a>
-				<!-- Retool 卡片 -->
 				<a href="/links/retool" class="stack-card">
 					<div class="stack-header">
+						<div class="stack-logo">Retool</div>
+						<span class="stack-badge">AI Apps</span>
+					</div>
+					<p>Build custom internal operations dashboards and secure AI agent vector interfaces connected straight to your databases.</p>
+					<div class="stack-link">Deploy Stack &rarr;</div>
+				</a>
+			</div>
+		</section>
+
+		<section class="matrix-section">
+			<h2 class="section-title">Latest Strategic AI Intelligence</h2>
