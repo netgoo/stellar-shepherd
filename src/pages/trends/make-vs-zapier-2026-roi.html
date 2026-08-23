@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -74,23 +74,34 @@
         }
         .lead‑magnet‑box h3 { color: #fff; font‑size: 1.4rem; margin‑bottom: 1rem; font‑weight: 800; }
         .lead‑magnet‑box p { color: var(--text‑muted); font‑size: 0.95rem; margin‑bottom: 2rem; max‑width: 600px; margin‑left: auto; margin‑right: auto; }
+
+        /* 改造后的CTA按钮：放大字体、高贵金黄色、呼吸悬浮动画、下划线隔离样式 */
         .magnet‑btn {
             display: inline‑block;
-            background‑color: var(--accent‑gold);
-            color: #000;
-            padding: 1.1rem 2.5rem;
-            border‑radius: 8px;
-            font‑size: 1.1rem;
-            font‑weight: 800;
-            text‑decoration: none;
-            transition: all 0.3s ease;
-            box‑shadow: 0 4px 15px rgba(243, 198, 83, 0.2);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            background-color: transparent;
+            text-decoration: underline;
+            text-underline-offset: 12px;
+            text-decoration-color: rgba(243, 198, 83, 0.35);
+            padding: 1rem 2.2rem;
+            border-radius: 8px;
+            /* 呼吸微悬浮动画 */
+            animation: breatheFloat 2.8s ease‑in‑out infinite;
+            transition: all 0.4s ease;
         }
-        .magnet‑btn:hover { 
-            transform: translateY(-3px); 
-            box‑shadow: 0 8px 30px rgba(243, 198, 83, 0.45);
-            background‑color: #ffe082;
+        .magnet‑btn:hover {
+            transform: translateY(-6px) scale(1.06);
+            text-decoration-color: var(--accent‑gold);
+            filter: brightness(1.25);
         }
+        @keyframes breatheFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(0px); }
+        }
+
         footer {
             background‑color: #080B13;
             text‑align: center;
