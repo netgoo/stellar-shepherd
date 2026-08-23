@@ -131,14 +131,40 @@
 			.trend-footer { font-size: 0.9rem; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
 
 			footer {
+				background-color: #080B13;
 				text-align: center;
-				padding: 4rem 5% 2rem;
+				padding: 5rem 5% 3rem;
 				border-top: 1px solid rgba(255, 255, 255, 0.05);
 				color: var(--text-muted);
 				font-size: 0.9rem;
-				margin-top: 4rem;
+				margin-top: 5rem;
 			}
-			@media (max-width: 768px) { h1 { font-size: 2.2rem; } }
+			.footer-links {
+				display: flex;
+				justify-content: center;
+				gap: 2rem;
+				margin-bottom: 2rem;
+				flex-wrap: wrap;
+			}
+			.footer-links a {
+				color: var(--text-muted);
+				text-decoration: none;
+				transition: 0.3s;
+				font-weight: 500;
+			}
+			.footer-links a:hover {
+				color: var(--accent-gold);
+			}
+			.footer-copyright {
+				border-top: 1px solid rgba(255, 255, 255, 0.02);
+				padding-top: 2rem;
+				max-width: 800px;
+				margin: 0 auto;
+				font-size: 0.85rem;
+				letter-spacing: 0.5px;
+			}
+
+			@media (max-width: 768px) { h1 { font-size: 2.2rem; } .footer-links { gap: 1rem 1.5rem; } }
 		</style>
 	</head>
 	<body>
@@ -212,16 +238,3 @@
 				<a href="/links/retool" class="stack-card">
 					<div class="stack-header">
 						<div class="stack-logo">Retool</div>
-						<span class="stack-badge">AI Apps</span>
-					</div>
-					<p>Build custom internal operations dashboards and secure AI agent vector interfaces connected straight to your databases.</p>
-					<div class="stack-link">Deploy Stack &rarr;</div>
-				</a>
-			</div>
-		</section>
-
-		<section class="matrix-section">
-			<h2 class="section-title">Latest Strategic AI Intelligence</h2>
-			<p class="section-subtitle">Forward-looking operational reports, threat assessments, and migration frameworks for SMB decision-makers.</p>
-			<div class="trends-grid">
-
