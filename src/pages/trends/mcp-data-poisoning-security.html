@@ -35,13 +35,31 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             gap: 4rem;
         }
-        .logo { font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: 1px; flex-shrink: 0; }
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
         .logo span { color: var(--accent-gold); }
         .logo a { color:#fff; text-decoration:none; }
-        nav { display: flex; align-items: center; gap: 1.8rem; flex-shrink: 0; margin-left: auto; }
-        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: 0.3s; white-space: nowrap; }
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
         nav a:hover { color: var(--accent-gold); }
-        
+
         .article-container { max-width: 820px; margin: 0 auto; padding: 5rem 5% 8rem; }
         .meta-tag { color: var(--accent-blue); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 1rem; display: block; }
         h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.2; color: #fff; margin-bottom: 2rem; letter-spacing: -0.5px; }
@@ -60,6 +78,7 @@
             border-radius: 0 8px 8px 0;
         }
         .highlight-quote p { font-style: italic; color: #fff; margin-bottom: 0; font-size: 1rem; }
+
         .lead-magnet-box {
             background: linear-gradient(145deg, #111827, #1e293b);
             border: 1px solid rgba(243, 198, 83, 0.2);
@@ -69,41 +88,32 @@
             text-align: center;
         }
         .lead-magnet-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; font-weight: 800; }
-        .lead-magnet-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .magnet-btn {
+        .lead-magnet-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        @keyframes breatheFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(0px); }
+        }
+        a.deploy-btn {
+            all: unset;
             display: inline-block;
-            background-color: var(--accent-gold);
-            color: #000;
-            padding: 1.1rem 2.5rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(243, 198, 83, 0.2);
+            color: var(--accent-gold);
+            text-decoration: underline;
+            text-underline-offset: 12px;
+            text-decoration-color: rgba(243, 198, 83, 0.35);
+            cursor: pointer;
+            animation: breatheFloat 2.8s ease-in-out infinite;
+            transition: all 0.4s ease;
         }
-        .magnet-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 8px 30px rgba(243, 198, 83, 0.45);
-            background-color: #ffe082;
+        a.deploy-btn:hover {
+            transform: translateY(-6px) scale(1.06);
+            text-decoration-color: var(--accent-gold);
+            filter: brightness(1.25);
         }
-        .deploy-btn {
-            display: inline-block;
-            background-color: var(--accent-gold);
-            color: #000;
-            padding: 1.1rem 2.5rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(243, 198, 83, 0.2);
-        }
-        .deploy-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(243, 198, 83, 0.45);
-            background-color: #ffe082;
-        }
+
         footer {
             background-color: #080B13;
             text-align: center;
@@ -117,23 +127,26 @@
             gap: 2rem;
             margin-top: 4rem;
         }
-        .footer-links {
+        .footer-links-wrap {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 2rem;
+            gap: 2.75rem;
             flex-wrap: wrap;
             width: 100%;
         }
-        .footer-links a {
+        .footer-links-wrap > a.footer-link-item {
+            all: unset;
             color: var(--text-muted);
-            text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
+            cursor:pointer;
             transition: 0.3s;
             white-space: nowrap;
         }
-        .footer-links a:hover { color: var(--accent-gold); }
+        .footer-links-wrap > a.footer-link-item:hover {
+            color: var(--accent-gold);
+        }
         .footer-copyright {
             color: var(--text-muted);
             font-size: 0.85rem;
@@ -144,16 +157,20 @@
             max-width: 600px;
             margin: 0 auto;
         }
+
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
             .content p { text-align: left; }
-            .footer-links { gap: 1rem 1.5rem; }
+            .footer-links-wrap { gap:1.2rem 1.8rem; }
             header { gap: 1.5rem; }
             nav {
                 margin-left: 0;
                 width:100%;
                 justify-content: center;
                 gap:1.2rem;
+            }
+            a.deploy-btn {
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -172,7 +189,7 @@
         <h1>The Ghost in the CRM: Eradicating Silent Data Poisoning in Automated Pipelines</h1>
         
         <div class="content">
-            <p>Most mid-market operations leads track system performance through simple up-time metrics. If the webhook responds with a status code 200, they assume the data pipeline is operational. That architectural blind spot is breaking down workflows. For growth-stage operations utilizing LLMs to synthesize internal context, generate dynamic personalization parameters, or execute pipeline queries, the main threat is no longer system downtime. It is silent data poisoning.</p>
+            <p>Most mid‑market operations leads track system performance through simple up‑time metrics. If the webhook responds with a status code 200, they assume the data pipeline is operational. That architectural blind spot is breaking down workflows. For growth‑stage operations utilizing LLMs to synthesize internal context, generate dynamic personalization parameters, or execute pipeline queries, the main threat is no longer system downtime. It is silent data poisoning.</p>
             
             <p>Silent data poisoning occurs when corrupted, unmapped, or poor‑quality data payloads flow freely through automated nodes. An unverified email address format, a split corporate directory string, or a missing field record cascades down the integration line. The API logs register a clean execution, but the cognitive engine encounters garbage variable inputs. This introduces massive reasoning hallucinations, leading to immediate system logic failure.</p>
             <h2>The Financial Cost of Poisoned Variables</h2>
@@ -187,20 +204,20 @@
             <div class="lead‑magnet‑box">
                 <h3>Initialize Your Lead Enrichment Stack</h3>
                 <p>Stop wasting pipeline capital on poisoned CRM variables and brittle manual scrubbing routines. Consolidate your data verification, multi‑vendor validation, and semantic logic inside Clay's unified data workspace today.</p>
-                <a href="/links/clay" class="deploy‑btn">Initialize Lead Enrichment Stack &rarr;</a>
+                <a href="/links/clay" class="deploy-btn">Initialize Lead Enrichment Stack &rarr;</a>
             </div>
             <h2>Long‑Term Summary: Building a Clean 10‑Year Pipeline</h2>
             <p>If your long‑term roadmap is to deploy autonomous multi‑agent networks that scale cash flow with zero developer friction, maintaining absolute data integrity is your primary point of leverage. Stacking disjointed SaaS extensions to manually sweep dirty records is a strategy for failure. Standardizing your core variables through powerful data meshes like Clay ensures your AI agents receive optimal data quality inputs, protecting your domains and scaling your conversions cleanly. Safeguard your data mesh, eliminate the technical debt, and lock in your margins.</p>
         </div>
     </main>
     <footer>
-        <div class="footer‑links">
-            <a href="/about">About Us</a>
-            <a href="/privacy‑policy">Privacy Policy</a>
-            <a href="/cookie‑policy">Cookie Policy</a>
-            <a href="/terms‑of‑service">Terms of Service</a>
+        <div class="footer-links-wrap">
+            <a href="/about" class="footer-link-item">About Us</a>
+            <a href="/privacy" class="footer-link-item">Privacy Policy</a>
+            <a href="/cookie" class="footer-link-item">Cookie Policy</a>
+            <a href="/terms" class="footer-link-item">Terms of Service</a>
         </div>
-        <div class="footer‑copyright">
+        <div class="footer-copyright">
             <p>&copy; 2026‑2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
         </div>
     </footer>
