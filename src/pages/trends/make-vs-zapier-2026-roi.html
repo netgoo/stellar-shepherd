@@ -1,11 +1,11 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Make vs. Zapier: Hard Financial ROI &amp; Architecture Analysis | ALEX AUTOMATION</title>
-    <meta name="description" content="A cold, numbers‑driven financial ROI and engineering scalability analysis comparing Make.com and Zapier for SMB enterprise operations." />
+    <title>Beyond SaaS: Deploying Multi‑Agent Systems in Cold Outbound Pipelines | ALEX AUTOMATION</title>
+    <meta name="description" content="A numbers‑driven architectural blueprint on replacing obsolete B2B outbound SaaS toolchains with localized multi‑agent intelligence nets." />
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com" rel="stylesheet">
@@ -29,17 +29,37 @@
         }
         header {
             display: flex;
-            justify‑content: space‑between;
             align‑items: center;
             padding: 1.5rem 5%;
             border‑bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 4rem; /* ✅ Logo与导航菜单强制拉开4rem大间距，解决紧贴粘连 */
         }
-        .logo { font‑weight: 800; font‑size: 1.3rem; color: #fff; letter‑spacing: 1px; }
+        .logo { 
+            font‑weight: 800; 
+            font‑size: 1.3rem; 
+            color: #fff; 
+            letter‑spacing: 1px;
+            flex‑shrink: 0; /* ✅ logo禁止被压缩 */
+        }
         .logo span { color: var(--accent‑gold); }
         .logo a { color:#fff; text‑decoration:none; }
-        nav a { color: var(--text‑muted); text‑decoration: none; margin‑left: 1.5rem; font‑size: 0.95rem; transition: 0.3s; }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem; /* ✅导航内部各个链接之间间距 */
+            flex‑shrink: 0; /* ✅导航整体禁止被压缩挤扁 */
+            margin‑left: auto; /* ✅导航自动推到header最右侧 */
+        }
+        nav a {
+            color: var(--text‑muted);
+            text‑decoration: none;
+            font‑size: 0.95rem;
+            transition: 0.3s;
+            white‑space: nowrap; /* 禁止链接文字换行 */
+        }
         nav a:hover { color: var(--accent‑gold); }
-        
+
         .article‑container { max‑width: 820px; margin: 0 auto; padding: 5rem 5% 8rem; }
         .meta‑tag { color: var(--accent‑blue); font‑weight: 600; text‑transform: uppercase; font‑size: 0.85rem; letter‑spacing: 1px; margin‑bottom: 1rem; display: block; }
         h1 { font‑size: 2.6rem; font‑weight: 800; line‑height: 1.2; color: #fff; margin‑bottom: 2rem; letter‑spacing: ‑0.5px; }
@@ -50,7 +70,6 @@
         .content li { margin‑bottom: 0.6rem; font‑size: 1.05rem; }
         .content strong { color: var(--accent‑gold); font‑weight: 600; }
         
-        /* 严密的财务账本高亮表格 */
         .roi‑table‑container { margin: 2.5rem 0; overflow‑x: auto; width: 100%; }
         table { width: 100%; border‑collapse: collapse; background: var(--card‑bg); border‑radius: 8px; border: 1px solid var(--card‑border); }
         th, td { padding: 1rem 1.2rem; text‑align: left; font‑size: 0.95rem; border‑bottom: 1px solid rgba(255,255,255,0.02); }
@@ -75,7 +94,7 @@
         .lead‑magnet‑box h3 { color: #fff; font‑size: 1.4rem; margin‑bottom: 1rem; font‑weight: 800; }
         .lead‑magnet‑box p { color: var(--text‑muted); font‑size: 0.95rem; margin‑bottom: 2rem; max‑width: 600px; margin‑left: auto; margin‑right: auto; }
 
-        /* 改造后的CTA按钮：放大字体、高贵金黄色、呼吸悬浮动画、下划线隔离样式 */
+        /* 全站统一呼吸悬浮CTA按钮样式 */
         .magnet‑btn {
             display: inline‑block;
             font-size: 1.8rem;
@@ -87,7 +106,6 @@
             text-decoration-color: rgba(243, 198, 83, 0.35);
             padding: 1rem 2.2rem;
             border-radius: 8px;
-            /* 呼吸微悬浮动画 */
             animation: breatheFloat 2.8s ease‑in‑out infinite;
             transition: all 0.4s ease;
         }
@@ -109,6 +127,7 @@
             border‑top: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text‑muted);
             font‑size: 0.9rem;
+            margin‑top: 5rem;
         }
         footer a {
             color: var(--text‑muted);
