@@ -30,15 +30,34 @@
         header {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             padding: 1.5rem 5%;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             gap: 4rem;
         }
-        .logo { font-weight: 800; font-size: 1.3rem; color: #fff; letter-spacing: 1px; flex-shrink: 0; }
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
         .logo span { color: var(--accent-gold); }
         .logo a { color:#fff; text-decoration:none; }
-        nav { display: flex; align-items: center; gap: 1.8rem; flex-shrink: 0; margin-left: auto; }
-        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: 0.3s; white-space: nowrap; }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            margin-left: auto;
+        }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
         nav a:hover { color: var(--accent-gold); }
         
         .legal-container { max-width: 820px; margin: 0 auto; padding: 5rem 5% 4rem; }
@@ -95,7 +114,23 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        @media (max-width: 768px) { h1 { font-size: 2.2rem; } .footer-links { gap: 1rem 1.5rem; } header { gap: 1.5rem; } }
+
+        /* 响应式断点：768px以下移动端修复导航 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .footer-links { gap: 1rem 1.5rem; }
+
+            header {
+                gap:1.5rem;
+                justify-content: center;
+            }
+            nav {
+                margin-left: 0;
+                width:100%;
+                justify-content: center;
+                gap:1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -114,26 +149,24 @@
         
         <p>This traditional software stack model is a structural trap designed to extract cash flow from your balance sheet. It forces you to hire redundant operational staff just to move rows between spreadsheets.</p>
         
-        <p>We built <strong>WENBOOM</strong> as a direct architectural response to this systemic waste. This platform is not a tech magazine, and it is certainly not an AI-generated clone farm publishing superficial tutorials. This is a cold, numbers-driven directory and intelligence hub operated by veteran automation engineers who spent twenty years hard-coding infrastructure before the term "No-Code" even existed. We are here to help you burn down your tech debt and reclaim your margins.</p>
+        <p>We built <strong>WENBOOM</strong> as a direct architectural response to this systemic waste. This platform is not a tech magazine, and it is certainly not an AI‑generated clone farm publishing superficial tutorials. This is a cold, numbers‑driven directory and intelligence hub operated by veteran automation engineers who spent twenty years hard‑coding infrastructure before the term "No‑Code" even existed. We are here to help you burn down your tech debt and reclaim your margins.</p>
         
         <h2>The Blueprint Strategy: What We Deploy For You</h2>
-        <p>We approach business automation through a strict engineering lens. When you study our tactical reports and architectural drops, you are accessing production-ready intelligence that has been stress-tested under high-frequency execution lines. We explicitly provide:</p>
+        <p>We approach business automation through a strict engineering lens. When you study our tactical reports and architectural drops, you are accessing production‑ready intelligence that has been stress‑tested under high‑frequency execution lines. We explicitly provide:</p>
         <ul>
-            <li><strong>Hard Financial ROI Audits:</strong> We run cold cost-per-operation equations on competing infrastructures (like our diagnostic breakdown of Make vs. Zapier). We show you exactly how to scale to half a million transactions without triggers imposing a $25,000-per-year variable tax on your business.</li>
-            <li><strong>Forward-Looking Infrastructure Assessments:</strong> The technological playground is shifting fast. We dissect deep evolutionary shifts—like the transition from REST APIs toward unified Model Context Protocols (MCP)—giving you the exact tactical insight needed to build frameworks that run smoothly for a decade without continuous manual refactoring.</li>
-            <li><strong>Uncompromising Tactical Blueprints:</strong> We map data lineages and drop exact workflow schematics showing how to stack specialized language models with scalable lead generation networks to achieve a 98% budget discount on high-volume outbound pipelines.</li>
+            <li><strong>Hard Financial ROI Audits:</strong> We run cold cost‑per‑operation equations on competing infrastructures (like our diagnostic breakdown of Make vs. Zapier). We show you exactly how to scale to half a million transactions without triggers imposing a $25,000‑per‑year variable tax on your business.</li>
+            <li><strong>Forward‑Looking Infrastructure Assessments:</strong> The technological playground is shifting fast. We dissect deep evolutionary shifts—like the transition from REST APIs toward unified Model Context Protocols (MCP)—giving you the exact tactical insight needed to build frameworks that run smoothly for a decade without continuous manual refactoring.</li>
+            <li><strong>Uncompromising Tactical Blueprints:</strong> We map data lineages and drop exact workflow schematics showing how to stack specialized language models with scalable lead generation networks to achieve a 98% budget discount on high‑volume outbound pipelines.</li>
         </ul>
-
         <div class="divider"></div>
-
         <h2>Absolute Realism Regarding Our Vetted Infrastructure Stack</h2>
-        <p>Let's talk about how this platform maintains its long-term operational autonomy. We build our technical recommendations on an absolute rule of 利他 (利他 - true mutual benefit) and absolute corporate realism. We do not accept sponsorship cash from venture-backed SaaS startups to write biased, glowing reviews for software that will deprecate its features next quarter.</p>
+        <p>Let's talk about how this platform maintains its long‑term operational autonomy. We build our technical recommendations on an absolute rule of 利他 (利他 ‑ true mutual benefit) and absolute corporate realism. We do not accept sponsorship cash from venture‑backed SaaS startups to write biased, glowing reviews for software that will deprecate its features next quarter.</p>
         
-        <p>Instead, WENBOOM operates via high-transparency affiliate attribution networks. Throughout our strategic reviews, code drops, and asset directories, you will find direct links to our hand-vetted production infrastructure toolchain—specifically <strong>Make.com</strong>, <strong>Clay.com</strong>, and <strong>Retool</strong>.</p>
+        <p>Instead, WENBOOM operates via high‑transparency affiliate attribution networks. Throughout our strategic reviews, code drops, and asset directories, you will find direct links to our hand‑vetted production infrastructure toolchain—specifically <strong>Make.com</strong>, <strong>Clay.com</strong>, and <strong>Retool</strong>.</p>
         
-        <p>Here is our raw promise to you: <strong>We only advocate for tools that run inside our own high-scale production systems.</strong> If we point you toward Make.com as the premier visual semantic data gateway for LLM agents, it is because we have personally run millions of operations through its engine and analyzed its exact memory package looping costs down to the penny. If we position Clay as the ultimate multi-vendor data mesh, it is because we know it cuts out 50 separate brittle middleware connection contracts instantly.</p>
+        <p>Here is our raw promise to you: <strong>We only advocate for tools that run inside our own high‑scale production systems.</strong> If we point you toward Make.com as the premier visual semantic data gateway for LLM agents, it is because we have personally run millions of operations through its engine and analyzed its exact memory package looping costs down to the penny. If we position Clay as the ultimate multi‑vendor data mesh, it is because we know it cuts out 50 separate brittle middleware connection contracts instantly.</p>
         
-        <p>When you click our referral links to claim free infrastructure allocations or activate your corporate pipelines on these systems, we receive a recurring commission from the vendors. Your cost remains completely unaffected, but our platform stays independent. We give you the hard numbers, the architectural math, and the unvarnished truth. You build the engine, cut out the bloated human overhead, and secure your long-term margins. That is the only blueprint that survives.</p>
+        <p>When you click our referral links to claim free infrastructure allocations or activate your corporate pipelines on these systems, we receive a recurring commission from the vendors. Your cost remains completely unaffected, but our platform stays independent. We give you the hard numbers, the architectural math, and the unvarnished truth. You build the engine, cut out the bloated human overhead, and secure your long‑term margins. That is the only blueprint that survives.</p>
     </main>
     <footer>
         <div class="footer-links">
@@ -143,19 +176,16 @@
             <a href="/terms-of-service">Terms of Service</a>
         </div>
         <div class="footer-copyright">
-            <p>&copy; 2026-2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
+            <p>&copy; 2026‑2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
         </div>
     </footer>
-
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G‑BV4E7FGY3P"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
-  gtag('config', 'G-BV4E7FGY3P');
+  gtag('config', 'G‑BV4E7FGY3P');
 </script>
-
 </body>
 </html>
