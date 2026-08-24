@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /links/
+Disallow: /links
+
+Sitemap: https://wenboom.com
