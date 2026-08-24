@@ -64,7 +64,13 @@
         h1 { font-size: 2.8rem; font-weight: 800; line-height: 1.2; color: #fff; margin-bottom: 2.5rem; letter-spacing: -0.5px; }
         h1 span { color: var(--accent-gold); }
         h2 { font-size: 1.5rem; color: #fff; margin: 3.5rem 0 1.2rem; font-weight: 800; border-left: 4px solid var(--accent-gold); padding-left: 1rem; }
-        p { color: var(--text-main); font-size: 1.05rem; margin-bottom: 1.8rem; opacity: 0.95; text-align: justify; }
+        p {
+            color: var(--text-main);
+            font-size: 1.05rem;
+            margin-bottom: 1.8rem;
+            opacity: 0.95;
+            text-align: justify;
+        }
         ul { margin-bottom: 1.8rem; padding-left: 1.5rem; color: var(--text-main); }
         li { margin-bottom: 0.6rem; font-size: 1.05rem; }
         strong { color: var(--accent-gold); font-weight: 600; }
@@ -115,9 +121,13 @@
             margin: 0 auto;
         }
 
-        /* 响应式断点：768px以下移动端修复导航 */
+        /* 响应式断点：768px以下移动端 */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
+            /* 手机端取消两端对齐，修复单词间距过大 */
+            p {
+                text-align: left;
+            }
             .footer-links { gap: 1rem 1.5rem; }
 
             header {
@@ -160,7 +170,8 @@
         </ul>
         <div class="divider"></div>
         <h2>Absolute Realism Regarding Our Vetted Infrastructure Stack</h2>
-        <p>Let's talk about how this platform maintains its long‑term operational autonomy. We build our technical recommendations on an absolute rule of 利他 (利他 ‑ true mutual benefit) and absolute corporate realism. We do not accept sponsorship cash from venture‑backed SaaS startups to write biased, glowing reviews for software that will deprecate its features next quarter.</p>
+        <!-- ✅已移除中文汉字利他，替换为纯英文 -->
+        <p>Let's talk about how this platform maintains its long‑term operational autonomy. We build our technical recommendations on an absolute rule of true mutual benefit and absolute corporate realism. We do not accept sponsorship cash from venture‑backed SaaS startups to write biased, glowing reviews for software that will deprecate its features next quarter.</p>
         
         <p>Instead, WENBOOM operates via high‑transparency affiliate attribution networks. Throughout our strategic reviews, code drops, and asset directories, you will find direct links to our hand‑vetted production infrastructure toolchain—specifically <strong>Make.com</strong>, <strong>Clay.com</strong>, and <strong>Retool</strong>.</p>
         
