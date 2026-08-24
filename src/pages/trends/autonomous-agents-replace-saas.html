@@ -71,27 +71,26 @@
         .lead-magnet-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; font-weight: 800; }
         .lead-magnet-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 
+        
         @keyframes breatheFloat {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-7px); }
             100% { transform: translateY(0px); }
         }
-
-        .deploy-btn {
+        a.deploy-btn {
+            all: unset;   
             display: inline-block;
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--accent-gold);
-            background-color: transparent;
             text-decoration: underline;
             text-underline-offset: 12px;
             text-decoration-color: rgba(243, 198, 83, 0.35);
-            padding: 1rem 2.2rem;
-            border-radius: 8px;
+            cursor: pointer;
             animation: breatheFloat 2.8s ease-in-out infinite;
             transition: all 0.4s ease;
         }
-        .deploy-btn:hover {
+        a.deploy-btn:hover {
             transform: translateY(-6px) scale(1.06);
             text-decoration-color: var(--accent-gold);
             filter: brightness(1.25);
@@ -110,7 +109,8 @@
             gap: 2rem;
             margin-top: 4rem;
         }
-        .footer-links {
+        
+        .footer-links-wrap {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -118,15 +118,18 @@
             flex-wrap: wrap;
             width: 100%;
         }
-        .footer-links a {
+        .footer-links-wrap > a.footer-link-item {
+            all: unset;
             color: var(--text-muted);
-            text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
+            cursor:pointer;
             transition: 0.3s;
             white-space: nowrap;
         }
-        .footer-links a:hover { color: var(--accent-gold); }
+        .footer-links-wrap > a.footer-link-item:hover {
+            color: var(--accent-gold);
+        }
         .footer-copyright {
             color: var(--text-muted);
             font-size: 0.85rem;
@@ -140,7 +143,7 @@
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
             .content p { text-align: left; }
-            .footer-links { gap:1.2rem 1.8rem; }
+            .footer-links-wrap { gap:1.2rem 1.8rem; }
             header { gap: 1.5rem; }
             nav {
                 margin-left: 0;
@@ -148,7 +151,7 @@
                 justify-content: center;
                 gap:1.2rem;
             }
-            .deploy-btn {
+            a.deploy-btn {
                 font-size: 1.3rem;
             }
         }
@@ -190,11 +193,12 @@
         </div>
     </main>
     <footer>
-        <div class="footer‑links">
-            <a href="/about">About Us</a>
-            <a href="/privacy‑policy">Privacy Policy</a>
-            <a href="/cookie‑policy">Cookie Policy</a>
-            <a href="/terms‑of‑service">Terms of Service</a>
+     
+        <div class="footer-links-wrap">
+            <a href="/about" class="footer-link-item">About Us</a>
+            <a href="/privacy‑policy" class="footer-link-item">Privacy Policy</a>
+            <a href="/cookie‑policy" class="footer-link-item">Cookie Policy</a>
+            <a href="/terms‑of‑service" class="footer-link-item">Terms of Service</a>
         </div>
         <div class="footer‑copyright">
             <p>&copy; 2026‑2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
