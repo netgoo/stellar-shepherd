@@ -8,7 +8,6 @@
     <meta name="description" content="Join 10,000+ tech leads and solopreneurs receiving weekly production‑ready automation blueprints and hard ROI SaaS audits." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
-        /* Newsletter local component */
         .newsletter-card {
             max-width: 680px;
             margin: 4rem auto;
@@ -75,87 +74,16 @@
         @media (max-width: 600px) {
             .sub-form { flex-direction: column; }
         }
-
-        /* Header navigation style per reference image */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.2rem 5%;
-            gap: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .logo {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-            font-weight: 800;
-            font-size: 1.35rem;
-            letter-spacing: 1px;
-        }
-
-        .logo a {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: var(--accent-gold);
-        }
-
-        header nav {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.9rem;
-            margin: 0;
-        }
-
-        header nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: 0.3s;
-            white-space: nowrap;
-        }
-
-        header nav a:hover {
-            color: var(--accent-gold);
-        }
-
-        /* Footer reduce vertical gap */
-        footer {
-            gap: 0.8rem;
-        }
-
+        /* 仅局部修改footer垂直间距，不干涉header */
         .footer-links-wrap {
             margin-bottom: 0;
-        }
-
-        @media (max-width: 768px) {
-            header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .logo {
-                font-size: 1.1rem;
-            }
-
-            header nav {
-                align-items: flex-end;
-            }
         }
     </style>
 </head>
 <body>
+<!-- header HTML结构完全复用index.html，不写任何header的style覆盖，全部行为交给site‑common.css -->
     <header>
-        <div class="logo">
-            <a href="/">ALEX<br><span>AUTOMATION</span></a>
-        </div>
+        <div class="logo"><a href="/">ALEX <span>AUTOMATION</span></a></div>
         <nav>
             <a href="/trends">Future Trends</a>
             <a href="/tools">Top AI Stack</a>
@@ -184,7 +112,6 @@
 
     <footer>
         <div class="footer-links-wrap">
-            <a href="/about" class="footer-link-item">About Us</a>
             <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
             <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
             <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
