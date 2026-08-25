@@ -8,6 +8,7 @@
     <meta name="description" content="Join 10,000+ tech leads and solopreneurs receiving weekly production‑ready automation blueprints and hard ROI SaaS audits." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
+        /* Newsletter local component */
         .newsletter-card {
             max-width: 680px;
             margin: 4rem auto;
@@ -74,6 +75,40 @@
         @media (max-width: 600px) {
             .sub-form { flex-direction: column; }
         }
+
+        /* Header override for mobile fix, prevent horizontal overflow */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding:1.5rem 5%;
+            gap:1rem;
+        }
+        header nav {
+            display: flex;
+            gap:1.8rem;
+        }
+        @media (max-width:768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            header nav {
+                width:100%;
+                flex-direction: column;
+                gap:1rem;
+                margin-top:0.5rem;
+            }
+        }
+
+        /* Footer reduce vertical gap between links and copyright */
+        footer {
+            gap:0.8rem;
+        }
+        .footer-links-wrap {
+            margin-bottom:0;
+        }
     </style>
 </head>
 <body>
@@ -83,7 +118,6 @@
             <a href="/trends">Future Trends</a>
             <a href="/tools">Top AI Stack</a>
             <a href="/blueprints">Master Blueprints</a>
-            <a href="/about">About Us</a>
         </nav>
     </header>
 
@@ -108,7 +142,6 @@
 
     <footer>
         <div class="footer-links-wrap">
-            <a href="/about" class="footer-link-item">About Us</a>
             <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
             <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
             <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
