@@ -5,6 +5,6 @@ export default defineConfig({
   site: 'https://wenboom.com',
   base: '/',
   trailingSlash: 'ignore',
-  output: 'hybrid', // 允许特定路由（如 API）走 Serverless 函数
+  output: 'static', // Astro 7 中保持 static 即可，接口文件设置 prerender = false 会自动生效
   adapter: vercel(),
 });
