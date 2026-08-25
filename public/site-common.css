@@ -477,7 +477,7 @@ footer {
     .article-container h1 { font-size: 2.2rem; }
     .content p { text-align: left; }
 
-    /* 移动端Header修复：logo独占整行，导航换行到logo下方，不再左右分居 */
+    /*   */
     header {
         justify-content: flex-start;
     }
