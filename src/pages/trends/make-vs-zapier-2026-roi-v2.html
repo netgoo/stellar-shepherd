@@ -8,7 +8,7 @@
     <meta name="description" content="An uncompromising, granular cost and execution scale optimization breakdown for growth‑stage businesses aiming to cut operational automation task overhead by 80%." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
-        /* 页面局部独有组件，公共CSS没有定义 */
+        /* 仅保留本页面真正独有的组件样式，呼吸链接、表格滚动全部交给 site‑common.css */
         .article-header .category-tag {
             color: var(--accent-blue);
             font-weight: 600;
@@ -28,71 +28,43 @@
             color: var(--text-muted);
             margin-bottom: 3rem;
         }
-        .table-container {
-            margin: 2.5rem 0;
-            overflow‑x: auto;
-            width: 100%;
-        }
         .callout-box {
-            background: linear‑gradient(145deg, #111827, #1e293b);
+            background: linear-gradient(145deg, #111827, #1e293b);
             border: 1px solid rgba(243, 198, 83, 0.2);
-            border‑radius: 12px;
+            border-radius: 12px;
             padding: 2rem;
             margin: 2.5rem 0;
         }
         .callout-box h3 {
             color: #fff;
-            margin‑bottom: 0.8rem;
-            font‑weight:800;
+            margin-bottom: 0.8rem;
+            font-weight:800;
         }
         .callout-box p {
-            color: var(--text‑muted);
-            margin‑bottom:0;
+            color: var(--text-muted);
+            margin-bottom:0;
         }
         .cta-container {
-            background: linear‑gradient(145deg, #111827, #1e293b);
+            background: linear-gradient(145deg, #111827, #1e293b);
             border: 1px solid rgba(243, 198, 83, 0.2);
-            border‑radius: 12px;
+            border-radius: 12px;
             padding: 3rem 2.5rem;
             margin: 4.5rem 0;
-            text‑align: center;
+            text-align: center;
         }
         .cta-container h3 {
             color:#fff;
-            font‑size:1.4rem;
-            margin‑bottom:1rem;
-            font‑weight:800;
+            font-size:1.4rem;
+            margin-bottom:1rem;
+            font-weight:800;
         }
         .cta-container p {
-            color: var(--text‑muted);
-            font‑size:0.95rem;
-            margin‑bottom:2.5rem;
-            max‑width:600px;
-            margin‑left:auto;
-            margin‑right:auto;
-        }
-        .magnet-btn {
-            all: unset;
-            display: inline‑block;
-            font‑size:1.8rem;
-            font‑weight:800;
-            color: var(--accent‑gold);
-            text‑decoration: underline;
-            text‑underline‑offset:12px;
-            text‑decoration‑color:rgba(243,198,83,0.35);
-            cursor:pointer;
-            animation: breatheFloat 2.8s ease‑in‑out infinite;
-            transition: all 0.4s ease;
-        }
-        .magnet-btn:hover {
-            transform: translateY(-6px) scale(1.06);
-            text‑decoration‑color: var(--accent‑gold);
-            filter: brightness(1.25);
-        }
-        @media (max‑width:768px){
-            .magnet‑btn {
-                font‑size:1.3rem;
-            }
+            color: var(--text-muted);
+            font-size:0.95rem;
+            margin-bottom:2.5rem;
+            max-width:600px;
+            margin-left:auto;
+            margin-right:auto;
         }
     </style>
 </head>
@@ -123,7 +95,9 @@
 
                 <h2>Financial Breakdown: Operations vs. Tasks</h2>
                 <p>To understand the stark cost disparity, we audited a standard multi‑stage lead enrichment and CRM routing pipeline running 50,000 executions per month across both infrastructure architectures.</p>
-                <div class="table-container">
+
+                <!-- 使用全局表格滚动容器 class="table-scroll-wrap" -->
+                <div class="table-scroll-wrap">
                     <table>
                         <thead>
                             <tr>
@@ -182,7 +156,8 @@
                 <div class="cta-container">
                     <h3>Ready to Cut Your Automation Overhead by 80%+?</h3>
                     <p>Stop paying high prices for basic linear tasks. Build advanced, visual, enterprise‑grade workflows on a scalable infrastructure.</p>
-                    <a href="/links/make" class="magnet-btn">Claim Free Infrastructure on Make.com &rarr;</a>
+                    <!-- 全局磁吸呼吸链接 magnet‑cta‑link，实现金色大字+呼吸上浮hover效果 -->
+                    <a href="/links/make" class="magnet-cta-link">Claim Free Infrastructure on Make.com &rarr;</a>
                 </div>
             </section>
         </article>
