@@ -1,4 +1,4 @@
-/* site‑common.css — ALEX AUTOMATION Global Shared Styles — FINAL FIXED VERSION */
+/* site‑common.css — ALEX AUTOMATION Global Shared Styles — FINAL VERSION */
 /*
 ==== FONT NOTICE ====
 Place these 4 font woff2 files inside /fonts/ folder:
@@ -138,7 +138,6 @@ nav a:hover { color: var(--accent-gold); }
 a.cta-float-btn {
     all: unset;
     display: inline-block;
-    white-space: nowrap;
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--accent-gold);
@@ -155,11 +154,10 @@ a.cta-float-btn:hover {
     filter: brightness(1.25);
 }
 
-/* ✨ New preferred global magnet‑cta‑link for new articles | FIX: added white‑space:nowrap prevent line‑break */
+/* ✨ New preferred global magnet‑cta‑link for new articles */
 .magnet-cta-link {
     all: unset;
     display: inline-block;
-    white-space: nowrap;
     font-size: 1.8rem;
     font-weight: 600;
     color: var(--accent-gold);
@@ -477,20 +475,12 @@ footer {
     .article-container h1 { font-size: 2.2rem; }
     .content p { text-align: left; }
 
-    /*   */
-    header {
-        justify-content: flex-start;
-    }
-    .logo {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
     /* Mobile‑only: nav switch to vertical stack */
     nav {
-        width:100%;
         flex-direction: column;
         align-items: flex-start;
         gap: 0.9rem;
+        width: auto;
     }
 
     /* Floating CTA link font‑size mobile */
