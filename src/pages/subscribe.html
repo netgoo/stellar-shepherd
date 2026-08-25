@@ -1,42 +1,151 @@
-import type { APIRoute } from 'astro';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscribe to Enterprise Automation Intelligence | ALEX AUTOMATION</title>
+    <meta name="description" content="Join 10,000+ tech leads and solopreneurs receiving weekly production‑ready automation blueprints and hard ROI SaaS audits." />
+    <link rel="stylesheet" href="/site-common.css">
+    <style>
+        .newsletter-card {
+            max-width: 680px;
+            margin: 4rem auto;
+            padding: 3rem 2rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .newsletter-card h2 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 800;
+        }
+        .newsletter-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .sub-form {
+            display: flex;
+            gap: 10px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .sub-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background-color: #161616;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .sub-input:focus {
+            border-color: var(--accent-gold);
+        }
+        .sub-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-gold);
+            color: #000;
+            font-weight: 600;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(243, 198, 83, 0.2);
+        }
+        .sub-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 198, 83, 0.45);
+            background-color: #ffe082;
+        }
+        .form-status {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            display: none;
+        }
+        @media (max-width: 600px) {
+            .sub-form { flex-direction: column; }
+        }
+       
+        .footer-links-wrap {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+ 
+    <header>
+        <div class="logo"><a href="/">ALEX <span>AUTOMATION</span></a></div>
+        <nav>
+            <a href="/trends">Future Trends</a>
+            <a href="/tools">Top AI Stack</a>
+            <a href="/blueprints">Master Blueprints</a>
+        </nav>
+    </header>
 
-export const POST: APIRoute = async ({ request }) => {
-  try {
-    const data = await request.json();
-    const email = data.email;
+    <main>
+        <div class="newsletter-card">
+            <h2>The Automation Architect Newsletter</h2>
+            <p>Get weekly production‑ready JSON blueprints (Make.com/Clay), zero‑fluff middleware ROI audits, and system architecture teardowns. No spam. Unsubscribe anytime.</p>
 
-    if (!email) {
-      return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
-    }
+            <form id="newsletter-form" class="sub-form" onsubmit="handleSubscribe(event)">
+                <input
+                    type="email"
+                    id="subscriber-email"
+                    class="sub-input"
+                    placeholder="Enter your work email..."
+                    required
+                />
+                <button type="submit" class="sub-btn">Get Blueprint Access &rarr;</button>
+            </form>
+            <div id="status-message" class="form-status"></div>
+        </div>
+    </main>
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      console.error('API Key Missing: RESEND_API_KEY is not defined in environment variables.');
-      return new Response(JSON.stringify({ message: 'Server configuration error' }), { status: 500 });
-    }
+    <footer>
+        <div class="footer-links-wrap">
+            <a href="/about" class="footer-link-item">About Us</a>
+            <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
+            <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
+            <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
+        </div>
+        <div class="footer-copyright">
+            <p>&copy; 2026‑2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
+        </div>
+    </footer>
 
-    const resendRes = await fetch('https://api.resend.com/contacts', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        unsubscribed: false,
-      }),
-    });
+    <script>
+        function handleSubscribe(e) {
+            e.preventDefault();
+            const email = document.getElementById('subscriber-email').value;
+            const status = document.getElementById('status-message');
 
-    const resData = await resendRes.json();
-
-    if (resendRes.ok) {
-      return new Response(JSON.stringify({ status: 'success', data: resData }), { status: 200 });
-    } else {
-      console.error('Resend API Error:', resendRes.status, resData);
-      return new Response(JSON.stringify({ status: 'error', detail: resData }), { status: 400 });
-    }
-  } catch (err) {
-    console.error('Runtime Catch Error:', err);
-    return new Response(JSON.stringify({ status: 'error' }), { status: 500 });
-  }
-};
+            status.style.display = 'block';
+            status.innerText = 'Processing your subscription...';
+            if (typeof gtag === 'function') {
+                gtag('event', 'newsletter_signup', { 'email_domain': email.split('@')[1] });
+            }
+            setTimeout(() => {
+                status.innerText = 'Success! Check your inbox for the latest automation blueprints.';
+                document.getElementById('newsletter-form').reset();
+            }, 800);
+        }
+    </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BV4E7FGY3P');
+</script>
+</body>
+</html>
