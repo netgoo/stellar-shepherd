@@ -74,7 +74,7 @@
         @media (max-width: 600px) {
             .sub-form { flex-direction: column; }
         }
-       
+        
         .footer-links-wrap {
             margin-bottom: 0;
         }
@@ -123,20 +123,35 @@
     </footer>
 
     <script>
-        function handleSubscribe(e) {
+        async function handleSubscribe(e) {
             e.preventDefault();
-            const email = document.getElementById('subscriber-email').value;
+            const emailInput = document.getElementById('subscriber-email');
             const status = document.getElementById('status-message');
+            const email = emailInput.value;
 
             status.style.display = 'block';
             status.innerText = 'Processing your subscription...';
+
             if (typeof gtag === 'function') {
                 gtag('event', 'newsletter_signup', { 'email_domain': email.split('@')[1] });
             }
-            setTimeout(() => {
-                status.innerText = 'Success! Check your inbox for the latest automation blueprints.';
-                document.getElementById('newsletter-form').reset();
-            }, 800);
+
+            try {
+                const res = await fetch('/api/subscribe.json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                if (res.ok) {
+                    status.innerText = 'Success! Check your inbox for the latest automation blueprints.';
+                    document.getElementById('newsletter-form').reset();
+                } else {
+                    status.innerText = 'Subscription failed. Please try again.';
+                }
+            } catch (err) {
+                status.innerText = 'Network error. Please try again later.';
+            }
         }
     </script>
 <!-- Google tag (gtag.js) -->
