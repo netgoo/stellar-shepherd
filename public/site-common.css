@@ -1,5 +1,4 @@
-
-/* site‑common.css — ALEX AUTOMATION Global Shared Styles — FINAL CORRECTED VERSION */
+/* site‑common.css — ALEX AUTOMATION Global Shared Styles — FINAL GOLD VERSION */
 /*
 ==== FONT NOTICE ====
 Place these 4 font woff2 files inside /fonts/ folder:
@@ -135,7 +134,7 @@ nav a:hover { color: var(--accent-gold); }
     100% { transform: translateY(0px); }
 }
 
-/* Legacy class for backward‑compatibility with old pages */
+/* Legacy class for backward‑compatibility with old pages — DESKTOP nowrap */
 a.cta-float-btn {
     all: unset;
     display: inline-block;
@@ -156,7 +155,7 @@ a.cta-float-btn:hover {
     filter: brightness(1.25);
 }
 
-/* ✨ New preferred global magnet‑cta‑link for new articles | FIX: added white‑space:nowrap prevent line‑break */
+/* ✨ New preferred global magnet‑cta‑link — DESKTOP nowrap */
 .magnet-cta-link {
     all: unset;
     display: inline-block;
@@ -482,9 +481,8 @@ footer {
     header {
         justify-content: space-between;
     }
-    /*   */
 
-    /* Mobile‑only:  width:auto，  */
+    /* Mobile‑only: nav  */
     nav {
         width: auto;
         flex-direction: column;
@@ -492,10 +490,12 @@ footer {
         gap: 0.9rem;
     }
 
-    /* Floating CTA link font‑size mobile */
+    /*   */
     a.cta-float-btn,
     .magnet-cta-link {
         font-size: 1.3rem;
+        white-space: normal;
+        text-align: center;
     }
 
     /* Footer responsive gap */
