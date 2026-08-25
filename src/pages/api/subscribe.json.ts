@@ -1,3 +1,4 @@
+export const prerender = false;
 import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request }) => {
@@ -9,7 +10,6 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
 
-    // Astro 7 推荐的环境变量获取方式
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
 
     if (!apiKey) {
