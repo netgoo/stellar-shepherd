@@ -9,11 +9,16 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
 
-    //   Resend API  
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.error('API Key Missing: RESEND_API_KEY is not defined in environment variables.');
+      return new Response(JSON.stringify({ message: 'Server configuration error' }), { status: 500 });
+    }
+
     const resendRes = await fetch('https://api.resend.com/contacts', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -22,12 +27,16 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     });
 
+    const resData = await resendRes.json();
+
     if (resendRes.ok) {
-      return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
+      return new Response(JSON.stringify({ status: 'success', data: resData }), { status: 200 });
     } else {
-      return new Response(JSON.stringify({ status: 'error' }), { status: 400 });
+      console.error('Resend API Error:', resendRes.status, resData);
+      return new Response(JSON.stringify({ status: 'error', detail: resData }), { status: 400 });
     }
   } catch (err) {
+    console.error('Runtime Catch Error:', err);
     return new Response(JSON.stringify({ status: 'error' }), { status: 500 });
   }
 };
