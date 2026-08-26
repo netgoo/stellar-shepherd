@@ -19,9 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const resend = new Resend(apiKey.trim());
 
-    
     const [contactRes, emailRes] = await Promise.all([
-   
       fetch('https://api.resend.com/contacts', {
         method: 'POST',
         headers: {
@@ -35,7 +33,8 @@ export const POST: APIRoute = async ({ request }) => {
       }),
       
       resend.emails.send({
-        from: 'Alex Automation <onboarding@wenboom.com>',
+        // 1. 发件人修改为自定义的前缀 alex@wenboom.com
+        from: 'Alex Automation <alex@wenboom.com>',
         to: [email],
         subject: 'The 1-person architecture replacing your 5-person team',
         html: `
@@ -60,7 +59,8 @@ export const POST: APIRoute = async ({ request }) => {
             <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">Alex, Chief Architect @ Alex Automation</p>
             
             <hr style="border: none; border-top: 1px solid #eaeaea; margin: 40px 0 20px 0;" />
-            <p style="color: #888; font-size: 12px;">You are receiving this because you subscribed at wenboom.com. No fluff, un-sub anytime with a single click.</p>
+            <!-- 2. 退订文案已更新为引导回复退订 -->
+            <p style="color: #888; font-size: 12px;">You are receiving this email because you subscribed at wenboom.com. Reply directly to this email if you'd like to unsubscribe or reach out to us!</p>
           </div>
         `,
       })
