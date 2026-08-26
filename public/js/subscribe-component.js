@@ -3,7 +3,7 @@ class SubscribeBox extends HTMLElement {
     this.innerHTML = `
       <section class="lead-magnet-box subscribe-component">
         <div class="subscribe-content">
-          <span class="meta-tag">EXCLUSIVELY FOR SMBs & AI ARCHITECTS</span>
+          <span class="meta-tag">EXCLUSIVELY FOR SMBS & AI ARCHITECTS</span>
           <h2>Get Production-Ready AI Automation Insights</h2>
           <p>Join 2,000+ business leaders receiving high-ROI automation breakdowns, tool stack reviews, and agentic workflows. Zero spam.</p>
           
@@ -14,7 +14,7 @@ class SubscribeBox extends HTMLElement {
               placeholder="Enter your business email..." 
               required 
             />
-            <button type="submit" id="sub-submit-btn" class="cta-btn">Get Free Blueprints &rarr;</button>
+            <button type="submit" id="sub-submit-btn" class="sub-cta-btn">Get Free Blueprints &rarr;</button>
           </form>
           <p id="sub-status-msg" class="sub-status hidden"></p>
         </div>
@@ -24,24 +24,27 @@ class SubscribeBox extends HTMLElement {
           margin: 3rem auto;
           padding: 2.5rem 2rem;
           text-align: center;
-          background: var(--card-bg, #111827);
-          border: 1px solid var(--card-border, rgba(255, 255, 255, 0.05));
+          background: #111827;
+          border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 12px;
           max-width: 820px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
         .subscribe-content .meta-tag {
           font-size: 0.8rem;
-          color: var(--accent-blue, #3B82F6);
+          color: #3B82F6;
           font-weight: 600;
           letter-spacing: 0.5px;
+          text-transform: uppercase;
         }
         .subscribe-content h2 {
           margin: 0.8rem 0 0.5rem 0;
           font-size: 1.6rem;
-          color: #fff;
+          color: #ffffff;
+          font-weight: 700;
         }
         .subscribe-content p {
-          color: var(--text-muted, #9CA3AF);
+          color: #9CA3AF;
           font-size: 0.95rem;
           margin-bottom: 1.5rem;
           line-height: 1.6;
@@ -57,15 +60,37 @@ class SubscribeBox extends HTMLElement {
           flex: 1;
           padding: 12px 16px;
           border-radius: 6px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.15);
           background: #0B0F19;
-          color: #fff;
+          color: #ffffff;
           font-size: 0.95rem;
           outline: none;
           transition: border-color 0.2s ease;
         }
         .subscribe-form input:focus {
-          border-color: var(--accent-gold, #F3C653);
+          border-color: #F3C653;
+        }
+      
+        .subscribe-form .sub-cta-btn {
+          background-color: #F3C653 !important;
+          color: #000000 !important;
+          font-weight: 700 !important;
+          padding: 12px 20px !important;
+          border-radius: 6px !important;
+          border: none !important;
+          cursor: pointer !important;
+          font-size: 0.95rem !important;
+          white-space: nowrap !important;
+          transition: all 0.2s ease !important;
+          box-shadow: 0 0 15px rgba(243, 198, 83, 0.2) !important;
+        }
+        .subscribe-form .sub-cta-btn:hover {
+          background-color: #e0b342 !important;
+          transform: translateY(-1px);
+        }
+        .subscribe-form .sub-cta-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
         .sub-status {
           margin-top: 1rem;
