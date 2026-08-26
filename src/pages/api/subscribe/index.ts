@@ -13,10 +13,16 @@ export const POST: APIRoute = async ({ request }) => {
     if (apiKey) {
       const resend = new Resend(apiKey.trim());
 
-      // 1. 动态获取 Resend 账号里的 Audience ID 并同步联系人
+      // 1. 兼容获取 Audience ID 并添加联系人
       try {
-        const { data: audiences } = await resend.audiences.list();
-        const targetAudienceId = audiences?.[0]?.id;
+        const response = await resend.audiences.list();
+        
+        // 兼容 Resend SDK 的不同返回格式 (Array 结构)
+        const audienceList = Array.isArray(response.data) 
+          ? response.data 
+          : (response.data as any)?.data || [];
+
+        const targetAudienceId = audienceList[0]?.id;
 
         if (targetAudienceId) {
           await resend.contacts.create({
@@ -24,9 +30,15 @@ export const POST: APIRoute = async ({ request }) => {
             unsubscribed: false,
             audienceId: targetAudienceId,
           });
+        } else {
+          // 如果未匹配到受众 ID，尝试直接向全局/默认通讯录写入
+          await resend.contacts.create({
+            email: email.trim(),
+            unsubscribed: false,
+          });
         }
       } catch (contactError) {
-        console.warn('Failed to add contact to audience:', contactError);
+        console.error('Contact creation failed:', contactError);
       }
 
       // 2. 发送 Welcome 欢迎邮件
