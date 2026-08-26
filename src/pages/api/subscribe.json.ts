@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const resend = new Resend(apiKey.trim());
 
-    // 1. 保存联系人到 Resend Audience
+   
     const contactRes = await fetch('https://api.resend.com/contacts', {
       method: 'POST',
       headers: {
@@ -32,16 +32,16 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     });
 
-    // 2. 发送硬核、大牛人设的欢迎邮件（终极优化版）
+  
     const emailRes = await resend.emails.send({
-      from: 'WENBOOM <onboarding@wenboom.com>',
+      from: 'Alex @ Alex Automation <onboarding@wenboom.com>',
       to: [email],
       subject: 'The 1-person architecture replacing your 5-person team',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; color: #111; line-height: 1.6;">
           <p style="font-size: 16px;">Hey,</p>
           
-          <p style="font-size: 16px;">Welcome to <strong>WENBOOM</strong>. If you are reading this, you are likely exhausted from bleeding cash on bloated SaaS subscriptions, brittle custom code, and redundant human overhead.</p>
+          <p style="font-size: 16px;">Welcome to <strong>Alex Automation</strong> (hosted at wenboom.com). If you are reading this, you are likely exhausted from bleeding cash on bloated SaaS subscriptions, brittle custom code, and redundant human overhead.</p>
           
           <p style="font-size: 16px;">Most SMB founders try to fix operational friction by throwing more headcount or expensive enterprise software at it. That is simply a tax on bad architecture.</p>
           
@@ -56,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
           <p style="font-size: 16px; margin-top: 30px;">Hit reply and tell me: <strong>What is the single most expensive manual workflow currently draining your margin?</strong> (I personally read and reply to every single message).</p>
 
           <p style="font-size: 16px; margin-top: 40px;">To your leverage,</p>
-          <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">The Architect @ WENBOOM</p>
+          <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">Alex, Chief Architect @ Alex Automation</p>
           
           <hr style="border: none; border-top: 1px solid #eaeaea; margin: 40px 0 20px 0;" />
           <p style="color: #888; font-size: 12px;">You are receiving this because you subscribed at wenboom.com. No fluff, un-sub anytime with a single click.</p>
