@@ -10,23 +10,28 @@ export const POST: APIRoute = async ({ request }) => {
     // 检查是否为 email.received 事件
     if (body.type === 'email.received') {
       const emailData = body.data;
-      const senderEmail = emailData.from; // 回复人的邮箱地址
-      
+      const rawSender = emailData.from || '';
+
+      // 提取纯邮箱地址 (排除 "Name <email@domain.com>" 中的姓名部分)
+      const emailMatch = rawSender.match(/<([^>]+)>/) || [null, rawSender];
+      const targetEmail = (emailMatch[1] || rawSender).trim();
+
       const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
-      if (apiKey) {
+
+      if (apiKey && targetEmail) {
         const resend = new Resend(apiKey.trim());
 
         // 给回复邮件的用户发送自动响应
         await resend.emails.send({
           from: 'Alex Automation <alex@wenboom.com>',
-          to: [senderEmail],
+          to: [targetEmail],
           subject: `Re: ${emailData.subject || 'Your message to Alex Automation'}`,
           html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;">
               <p>Hey,</p>
               <p>Thanks for reaching out! I've received your email regarding:</p>
               <blockquote style="border-left: 3px solid #ccc; margin: 10px 0; padding-left: 10px; color: #555;">
-                "${emailData.subject}"
+                "${emailData.subject || ''}"
               </blockquote>
               <p>I read every message personally and will get back to you shortly.</p>
               <br/>
