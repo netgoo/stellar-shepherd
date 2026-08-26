@@ -385,7 +385,7 @@
 		          const data = await res.json();
 
 		          if (res.ok && data.status === 'success') {
-		            statusMsg.innerText = '🎉 Success! Check your inbox for upcoming blueprints.';
+		            statusMsg.innerText = '🎉 Success! Welcome email sent. Please check your inbox (or spam) to confirm.';
 		            statusMsg.className = 'sub-status success';
 		            emailInput.value = '';
 		          } else {
