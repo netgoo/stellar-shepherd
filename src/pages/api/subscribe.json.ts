@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const resend = new Resend(apiKey.trim());
 
-   
+    
     const contactRes = await fetch('https://api.resend.com/contacts', {
       method: 'POST',
       headers: {
@@ -32,16 +32,16 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     });
 
-  
+    
     const emailRes = await resend.emails.send({
-      from: 'Alex @ Alex Automation <onboarding@wenboom.com>',
+      from: 'Alex Automation <onboarding@wenboom.com>',
       to: [email],
       subject: 'The 1-person architecture replacing your 5-person team',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; color: #111; line-height: 1.6;">
           <p style="font-size: 16px;">Hey,</p>
           
-          <p style="font-size: 16px;">Welcome to <strong>Alex Automation</strong> (hosted at wenboom.com). If you are reading this, you are likely exhausted from bleeding cash on bloated SaaS subscriptions, brittle custom code, and redundant human overhead.</p>
+          <p style="font-size: 16px;">Welcome to <strong>Alex Automation</strong> (hosted at <a href="https://wenboom.com" style="color: #000; font-weight: bold; text-decoration: underline;">wenboom.com</a>). If you are reading this, you are likely exhausted from bleeding cash on bloated SaaS subscriptions, brittle custom code, and redundant human overhead.</p>
           
           <p style="font-size: 16px;">Most SMB founders try to fix operational friction by throwing more headcount or expensive enterprise software at it. That is simply a tax on bad architecture.</p>
           
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request }) => {
 
           <p style="font-size: 16px;">Over the coming weeks, I’m going to unpack the exact JSON payloads, orchestration blueprints, and hard ROI accounting models we use to help lean teams achieve asymmetric leverage.</p>
 
-          <p style="font-size: 16px;">To start building your foundation today, secure your access to <a href="https://wenboom.com" style="color: #000; font-weight: bold; text-decoration: underline;">our battle-tested automation stack</a>—this is the exact protocol layer we rely on to cut operational overhead by 80%.</p>
+          <p style="font-size: 16px;">To start building your foundation right now, explore our core command center at <a href="https://wenboom.com" style="color: #000; font-weight: bold; text-decoration: underline;">wenboom.com</a>—this is the exact protocol layer we rely on to cut operational overhead by 80%.</p>
 
           <p style="font-size: 16px; margin-top: 30px;">Hit reply and tell me: <strong>What is the single most expensive manual workflow currently draining your margin?</strong> (I personally read and reply to every single message).</p>
 
