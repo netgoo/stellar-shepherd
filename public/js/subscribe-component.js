@@ -70,7 +70,7 @@ class SubscribeBox extends HTMLElement {
         .subscribe-form input:focus {
           border-color: #F3C653;
         }
-      
+        
         .subscribe-form .sub-cta-btn {
           background-color: #F3C653 !important;
           color: #000000 !important;
@@ -122,7 +122,8 @@ class SubscribeBox extends HTMLElement {
         statusMsg.className = 'sub-status hidden';
 
         try {
-          const res = await fetch('/api/subscribe.json', {
+         
+          const res = await fetch('/api/subscribe/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
