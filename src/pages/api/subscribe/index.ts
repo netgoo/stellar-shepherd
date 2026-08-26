@@ -13,13 +13,23 @@ export const POST: APIRoute = async ({ request }) => {
     if (apiKey) {
       const resend = new Resend(apiKey.trim());
 
-      // 1. 保存至 Resend Contacts 列表
-      await resend.contacts.create({
-        email: email.trim(),
-        unsubscribed: false,
-      });
+      // 1. 动态获取 Resend 账号里的 Audience ID 并同步联系人
+      try {
+        const { data: audiences } = await resend.audiences.list();
+        const targetAudienceId = audiences?.[0]?.id;
 
-      // 2. 发送 Welcome 欢迎邮件（已更新文本内容）
+        if (targetAudienceId) {
+          await resend.contacts.create({
+            email: email.trim(),
+            unsubscribed: false,
+            audienceId: targetAudienceId,
+          });
+        }
+      } catch (contactError) {
+        console.warn('Failed to add contact to audience:', contactError);
+      }
+
+      // 2. 发送 Welcome 欢迎邮件
       await resend.emails.send({
         from: 'Alex Automation <alex@wenboom.com>',
         to: [email.trim()],
