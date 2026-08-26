@@ -20,16 +20,15 @@ export const POST: APIRoute = async ({ request }) => {
         return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
       }
 
-      // 3. 规范邮件主题，避免重复叠加 "Re: Re: 回复:"
+      // 3. 彻底递归清洗所有中英文回复/转发前缀 (Re:, 回复:, Fwd: 等)
       let cleanSubject = emailData.subject || 'Your message to Alex Automation';
-      cleanSubject = cleanSubject.replace(/^(Re:\s*|回复:\s*)+/gi, '').trim();
+      cleanSubject = cleanSubject.replace(/^((Re|Fwd|回复|答复|轉發|转发):\s*)+/gi, '').trim();
 
       const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
 
       if (apiKey && targetEmail) {
         const resend = new Resend(apiKey.trim());
 
-        // 4. 发送优化后的方案 A 自动应答邮件
         await resend.emails.send({
           from: 'Alex Automation <alex@wenboom.com>',
           to: [targetEmail],
