@@ -29,6 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
       if (apiKey && targetEmail) {
         const resend = new Resend(apiKey.trim());
 
+        // 4. 发送优化后的方案 A 自动应答邮件
         await resend.emails.send({
           from: 'Alex Automation <alex@wenboom.com>',
           to: [targetEmail],
@@ -36,13 +37,21 @@ export const POST: APIRoute = async ({ request }) => {
           html: `
             <div style="font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;">
               <p>Hey,</p>
-              <p>Thanks for reaching out! I've received your email regarding:</p>
-              <blockquote style="border-left: 3px solid #ccc; margin: 10px 0; padding-left: 10px; color: #555;">
+              
+              <p>Got it! Thanks for reaching out. I've received your note regarding:</p>
+              
+              <blockquote style="border-left: 3px solid #F3C653; margin: 15px 0; padding-left: 15px; color: #555; font-style: italic;">
                 "${cleanSubject}"
               </blockquote>
-              <p>I read every message personally and will get back to you shortly.</p>
+              
+              <p>I review every message personally to see how we can optimize and automate these exact manual bottlenecks.</p>
+              
+              <p>I’m currently reviewing your note and will get back to you with a tailored breakdown shortly.</p>
+              
               <br/>
-              <p>Best regards,<br/><strong>Alex</strong><br/>Chief Architect @ Alex Automation</p>
+              <p>To your leverage,<br/>
+              <strong>Alex</strong><br/>
+              <span style="font-size: 0.85rem; color: #666;">Chief Architect @ Alex Automation</span></p>
             </div>
           `,
         });
