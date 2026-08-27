@@ -8,88 +8,7 @@
     <meta name="description" content="A hard-data technical comparison between Serverless (Vercel, Cloudflare, Supabase) and Traditional VPS (AWS EC2, Hetzner) for 2026. Calculate real TCO, cold-start latencies, and migration architecture.">
     <link rel="stylesheet" href="/site-common.css">
     <style>
-         
-        .cta-container {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.8) 100%);
-            border: 1px solid var(--border-color, #1F2937);
-            border-radius: 12px;
-            padding: 2.5rem 2rem;
-            margin-top: 4rem;
-            text-align: center;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-
-        .cta-tag {
-            color: var(--accent-blue, #3B82F6);
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
-        }
-
-        .cta-title {
-            font-size: 1.85rem;
-            font-weight: 800;
-            color: var(--text-primary, #F9FAFB);
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.02em;
-        }
-
-        .cta-desc {
-            color: var(--text-secondary, #9CA3AF);
-            font-size: 0.975rem;
-            max-width: 600px;
-            margin: 0 auto 1.75rem;
-            line-height: 1.6;
-        }
-
-        .cta-form {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 480px;
-            margin: 0 auto;
-            flex-direction: column;
-        }
-
-        @media (min-width: 640px) {
-            .cta-form {
-                flex-direction: row;
-            }
-        }
-
-        .cta-input {
-            flex: 1;
-            background-color: rgba(11, 15, 25, 0.8);
-            border: 1px solid var(--border-color, #374151);
-            border-radius: 6px;
-            padding: 0.85rem 1rem;
-            color: #FFFFFF;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .cta-input:focus {
-            border-color: var(--accent-gold, #F3C653);
-        }
-
-        .cta-button {
-            background-color: var(--accent-gold, #F3C653);
-            color: #000000;
-            font-weight: 700;
-            font-size: 0.95rem;
-            padding: 0.85rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            white-space: nowrap;
-        }
-
-        .cta-button:hover {
-            background-color: #D97706;
-        }
-
+        /* 仅保留文章局部高亮与 Callout 样式 */
         .badge-green { color: #10B981; font-weight: 600; }
         .badge-red { color: #EF4444; font-weight: 600; }
 
@@ -146,7 +65,6 @@
             <li><strong>Workload B (Sustained Compute Engine):</strong> 120 million continuous background worker runs and image processing workflows.</li>
         </ul>
 
-        
         <div class="table-scroll-wrap">
             <table>
                 <thead>
@@ -272,18 +190,8 @@ export default async function handler(req: Request) {
             <li><strong>Isolate Heavy Compute:</strong> Keep long-running video rendering or heavy LLM agent workflows on a dedicated node behind an automation queue via <a href="/links/zapier" class="magnet-cta-link">Connect Systems with Zapier &rarr;</a>.</li>
         </ol>
 
-        <!-- CRO Subscription Section -->
-        <div class="cta-container" id="subscribe">
-            <div class="cta-tag">Exclusively for SMBs &amp; AI Architects</div>
-            <div class="cta-title">Get Production-Ready AI Automation Insights</div>
-            <p class="cta-desc">
-                Join 2,000+ business leaders receiving high-ROI automation breakdowns, tool stack reviews, and agentic workflows. Zero spam.
-            </p>
-            <form class="cta-form" action="/api/subscribe" method="POST">
-                <input type="email" name="email" class="cta-input" placeholder="Enter your business email..." required />
-                <button type="submit" class="cta-button">Get Free Blueprints →</button>
-            </form>
-        </div>
+         
+        <subscribe-box></subscribe-box>
     </div>
 </main>
 
@@ -298,6 +206,9 @@ export default async function handler(req: Request) {
         <p>&copy; 2026‑2036 BY ALEX AUTOMATION. All Rights Reserved.</p>
     </div>
 </footer>
+
+ 
+<script src="/js/subscribe-component.js"></script>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
