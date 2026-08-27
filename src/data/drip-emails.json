@@ -1,0 +1,12 @@
+[
+  {
+    "dayOffset": 3,
+    "subject": "The 3 architecture bottlenecks destroying your SaaS margins",
+    "html": "<div style=\"font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;\"><p>Hey,</p><p>Three days ago, you unlocked the base architecture for protocol-level automation. Today, let's talk about the silent cost drivers in modern software stacks...</p><p>Most teams waste 40% of their cloud budget on over-provisioned servers and redundant SaaS subscriptions. When we re-architected our core pipeline, switching to lean serverless primitives and a unified database layer cut our infrastructure overhead by 82%.</p><p>If you want to optimize your backend database and serverless stack, we personally rely on <strong><a href=\"【在此替换为你的联盟URL_1，例如：你的Supabase或Hosting联盟链接】\" style=\"color: #0066cc; font-weight: bold;\">this high-concurrency infrastructure stack</a></strong> to maintain zero marginal cost.</p><p>Hit reply and let me know your current monthly cloud spend—I'd be glad to share a few quick optimization tips based on your setup.</p><br/><p>To your leverage,<br/><strong>Alex</strong>, Chief Architect @ Alex Automation</p></div>"
+  },
+  {
+    "dayOffset": 7,
+    "subject": "How we process 10,000 inbound triggers for $0/month",
+    "html": "<div style=\"font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;\"><p>Hey,</p><p>Handling scale without increasing headcount requires replacing slow API polling with event-driven webhook architecture...</p><p>To handle high-volume email workflows and automated lead scoring, we use <strong><a href=\"【在此替换为你的联盟URL_2，例如：你的Resend或通讯工具联盟链接】\" style=\"color: #0066cc; font-weight: bold;\">this high-deliverability developer protocol</a></strong>. It gives us sub-millisecond response times with zero monthly server costs.</p><p>You can test out our foundational command center anytime over at <a href=\"https://wenboom.com\" style=\"color: #0066cc;\">wenboom.com</a>.</p><br/><p>To your leverage,<br/><strong>Alex</strong>, Chief Architect @ Alex Automation</p></div>"
+  }
+]
