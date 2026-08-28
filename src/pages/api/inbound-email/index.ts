@@ -16,8 +16,17 @@ export const POST: APIRoute = async ({ request }) => {
         return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
       }
 
+      // --------------------------
+      // 升级：循环剥除所有回复前缀，多层叠加也全部清除
+      // --------------------------
       let cleanSubject = (emailData.subject || 'Your message').trim();
-      cleanSubject = cleanSubject.replace(/^(Re:\s*|RE:\s*|回复:\s*)+/gi, '').trim();
+      const replyPrefixReg = /^(Re:\s*|RE:\s*|回复:\s*)/gi;
+      // 循环，只要开头还匹配前缀，就继续替换
+      while (replyPrefixReg.test(cleanSubject)) {
+        cleanSubject = cleanSubject.replace(replyPrefixReg, '').trim();
+      }
+      console.log('raw subject:', emailData.subject);
+      console.log('cleaned subject:', cleanSubject);
 
       const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
       if (apiKey && targetEmail) {
@@ -34,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
                 "${cleanSubject}"
               </blockquote>
               <p>I personally go through every incoming message to identify opportunities for optimization and automation against manual bottlenecks.</p>
-              <p>I’m reviewing your input now and will follow up with a custom-tailored breakdown within 1-2 business days.</p>
+              <p>I’m reviewing your input now and will follow up with a custom‑tailored breakdown within 1‑2 business days.</p>
               <br />
               <p>Best regards,<br /><strong>Alex</strong><br/>Chief Architect @ Alex Automation</p>
             </div>
