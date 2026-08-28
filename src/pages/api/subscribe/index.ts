@@ -1,52 +1,12 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-import fs from "fs";
-import path from "path";
-
-const EMAIL_DB_PATH = path.resolve("./src/data/subscribers.json");
-const DRIP_EMAILS_PATH = path.resolve("./src/data/drip-emails.json");
-
-type SubscriberRecord = {
-  email: string;
-  subscribedAt: string;
-  sentDripIds: number[];
-};
-
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { email } = await request.json();
     if (!email) {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
-    const cleanEmail = email.trim().toLowerCase();
-
-    // local subscriber json db
-    if (!fs.existsSync(EMAIL_DB_PATH)) {
-      fs.writeFileSync(EMAIL_DB_PATH, JSON.stringify([] as SubscriberRecord[], null, 2));
-    }
-    const rawDb = fs.readFileSync(EMAIL_DB_PATH, "utf-8");
-    const subscribers: SubscriberRecord[] = JSON.parse(rawDb);
-
-    let subscriber = subscribers.find(s => s.email === cleanEmail);
-    if (!subscriber) {
-      subscriber = {
-        email: cleanEmail,
-        subscribedAt: new Date().toISOString(),
-        sentDripIds: []
-      };
-      subscribers.push(subscriber);
-    }
-
-    const dripRaw = fs.readFileSync(DRIP_EMAILS_PATH, "utf-8");
-    const dripList = JSON.parse(dripRaw);
-    const pendingDrips = dripList.filter((item:{id:number})=> !subscriber!.sentDripIds.includes(item.id));
-    for(const drip of pendingDrips){
-      subscriber!.sentDripIds.push(drip.id);
-    }
-    fs.writeFileSync(EMAIL_DB_PATH, JSON.stringify(subscribers,null,2));
-
-    // Resend original logic
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
     if (apiKey) {
       const resend = new Resend(apiKey.trim());
@@ -58,13 +18,13 @@ export const POST: APIRoute = async ({ request }) => {
         const targetAudienceId = audienceList[0]?.id;
         if (targetAudienceId) {
           await resend.contacts.create({
-            email: cleanEmail,
+            email: email.trim(),
             unsubscribed: false,
             audienceId: targetAudienceId,
           });
         } else {
           await resend.contacts.create({
-            email: cleanEmail,
+            email: email.trim(),
             unsubscribed: false,
           });
         }
@@ -74,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
 
       await resend.emails.send({
         from: 'Alex Automation <alex@wenboom.com>',
-        to: [cleanEmail],
+        to: [email.trim()],
         subject: 'The 1‑person architecture replacing your 5‑person team',
         html: `
           <div style="font-family: sans‑serif; line‑height: 1.6; color: #111; max‑width: 600px; padding: 20px;">
@@ -86,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
             </blockquote>
             <p>Over the coming weeks, I’m going to unpack the exact JSON payloads, orchestration blueprints, and hard ROI accounting models we use to help lean teams achieve asymmetric leverage.</p>
             <p>To start building your foundation right now, explore our core command center at <a href="https://wenboom.com" style="color: #0066cc;">wenboom.com</a>—this is the exact protocol layer we rely on to cut operational overhead by 80%.</p>
-            <p><strong>Hit reply and tell me:</strong> What is the single most expensive manual workflow currently draining your margin? (I personally read and reply to every single message).</p>
+            <p><strong>Hit reply and tell me:</strong> What is the single most expensive manual workflow draining your margin? (I personally read and reply to every single message).</p>
             <p>To your leverage,<br/>
             <strong>Alex</strong>, Chief Architect @ Alex Automation</p>
             <hr style="border: none; border‑top: 1px solid #eee; margin: 30px 0 15px 0;" />
@@ -97,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
         `,
       });
     }
-    return new Response(JSON.stringify({ status: 'success', pendingDripCount: pendingDrips.length }), { status: 200 });
+    return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
   } catch (error: any) {
     return new Response(JSON.stringify({ message: error.message }), { status: 500 });
   }
