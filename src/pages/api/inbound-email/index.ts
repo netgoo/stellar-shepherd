@@ -16,12 +16,9 @@ export const POST: APIRoute = async ({ request }) => {
         return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
       }
 
-      // --------------------------
-      // 升级：循环剥除所有回复前缀，多层叠加也全部清除
-      // --------------------------
       let cleanSubject = (emailData.subject || 'Your message').trim();
-      const replyPrefixReg = /^(Re:\s*|RE:\s*|回复:\s*)/gi;
-      // 循环，只要开头还匹配前缀，就继续替换
+      // 同时匹配：英文Re:、中文回复:、中文回复：（全角冒号）
+      const replyPrefixReg = /^(Re:\s*|RE:\s*|回复[:：]\s*)/gi;
       while (replyPrefixReg.test(cleanSubject)) {
         cleanSubject = cleanSubject.replace(replyPrefixReg, '').trim();
       }
