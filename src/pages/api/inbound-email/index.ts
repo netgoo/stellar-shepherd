@@ -9,16 +9,13 @@ export const POST: APIRoute = async ({ request }) => {
       const emailData = body.data;
       const rawSender = emailData.from || '';
 
-      // 提取纯邮箱
       const emailMatch = rawSender.match(/<([^>]+)>/) || [null, rawSender];
       const targetEmail = (emailMatch[1] || rawSender).trim().toLowerCase();
 
-      // 防死循环：自己的来信直接忽略，防止递归发邮件
       if (targetEmail.includes('alex@wenboom.com')) {
         return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
       }
 
-      // 清洗主题：移除 Re: / RE: /回复: 各类前缀，中英文全部清除
       let cleanSubject = (emailData.subject || 'Your message').trim();
       cleanSubject = cleanSubject.replace(/^(Re:\s*|RE:\s*|回复:\s*)+/gi, '').trim();
 
@@ -28,16 +25,16 @@ export const POST: APIRoute = async ({ request }) => {
         await resend.emails.send({
           from: 'Alex Automation <alex@wenboom.com>',
           to: [targetEmail],
-          subject: `Re: ${cleanSubject}`,
+          subject: cleanSubject,
           html: `
-            <div style="font‑family: sans‑serif; line‑height: 1.6; color: #111; max‑width: 600px; padding: 20px;">
+            <div style="font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;">
               <p>Hey,</p>
               <p>Thanks for reaching out. I have received your message regarding:</p>
-              <blockquote style="border‑left: 3px solid #ccc; margin: 10px 0; padding‑left: 10px; color: #555;">
+              <blockquote style="border-left: 3px solid #ccc; margin: 10px 0; padding-left: 10px; color: #555;">
                 "${cleanSubject}"
               </blockquote>
               <p>I personally go through every incoming message to identify opportunities for optimization and automation against manual bottlenecks.</p>
-              <p>I’m reviewing your input now and will follow up with a custom‑tailored breakdown within 1‑2 business days.</p>
+              <p>I’m reviewing your input now and will follow up with a custom-tailored breakdown within 1-2 business days.</p>
               <br />
               <p>Best regards,<br /><strong>Alex</strong><br/>Chief Architect @ Alex Automation</p>
             </div>
