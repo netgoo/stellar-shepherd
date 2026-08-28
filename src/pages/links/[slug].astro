@@ -1,7 +1,25 @@
 ---
-import affiliateLinks from "../../data/affiliate-links.json";
-
 export async function getStaticPaths() {
+  const affiliateLinks = [
+    {
+      "slug": "make",
+      "targetUrl": "https://www.make.com/en/register?pc=alexflow",
+      "pageTitle": "Redirecting to Make.com | ALEX AUTOMATION",
+      "linkText": "Open Make.com"
+    },
+    {
+      "slug": "clay",
+      "targetUrl": "https://clay.com?via=5edfad",
+      "pageTitle": "Redirecting to Clay | ALEX AUTOMATION",
+      "linkText": "Open Clay"
+    },
+    {
+      "slug": "smartlead",
+      "targetUrl": "https://app.smartlead.ai/sign-up/?via=wenboom",
+      "pageTitle": "Redirecting to Smartlead | ALEX AUTOMATION",
+      "linkText": "Open Smartlead"
+    }
+  ];
   return affiliateLinks.map(item => ({
     params: { slug: item.slug },
     props: item
