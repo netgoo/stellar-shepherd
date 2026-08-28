@@ -4,15 +4,13 @@ import { Resend } from 'resend';
 import { kvStore } from '../../../lib/kvServer';
 import { dripSequence } from '../../../config/dripEmails';
 
-export const POST: APIRoute = async ({ request }) => {
+async function handleDispatch(request: Request) {
   const isVercelCronTrigger = request.headers.get('x-vercel-cron-job') === '1';
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
-
   if (!isVercelCronTrigger && authHeader !== cronSecret) {
     return new Response(JSON.stringify({ ok: false, msg: 'unauthorized' }), { status: 403 });
   }
-
   try {
     const allKeys = await kvStore.keys('sub:*');
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
@@ -45,4 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.error(err);
     return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500 });
   }
-};
+}
+
+export const POST: APIRoute = async ({ request }) => handleDispatch(request);
+export const GET: APIRoute = async ({ request }) => handleDispatch(request);
