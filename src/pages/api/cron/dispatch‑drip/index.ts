@@ -14,9 +14,12 @@ type SubscriberRecord = {
 };
 
 export const POST: APIRoute = async ({ request }) => {
+  // Vercel Cron 内部调用会注入 VERCEL_CRON 环境变量；外部访问校验header密钥
+  const isVercelCronTrigger = !!import.meta.env.VERCEL_CRON;
   const authHeader = request.headers.get("x‑cron‑secret");
   const cronSecret = import.meta.env.CRON_SECRET;
-  if (!cronSecret || authHeader !== cronSecret) {
+
+  if(!isVercelCronTrigger && authHeader !== cronSecret){
     return new Response(JSON.stringify({ok:false,msg:"unauthorized"}),{status:403});
   }
 
