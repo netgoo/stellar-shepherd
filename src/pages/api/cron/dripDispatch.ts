@@ -5,7 +5,7 @@ import { kvStore } from '../../../lib/kvServer';
 import { dripSequence } from '../../../config/dripEmails';
 
 async function handleDispatch(request: Request) {
-  const isVercelCronTrigger = request.headers.get('x-vercel-cron-job') === '1';
+  const isVercelCronTrigger = !!request.headers.get('x-vercel-cron-job');
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
   if (!isVercelCronTrigger && authHeader !== cronSecret) {
