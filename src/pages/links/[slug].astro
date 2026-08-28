@@ -44,10 +44,10 @@ const { targetUrl, pageTitle, linkText } = Astro.props;
         If you are not redirected, click here:
         <a href={targetUrl} rel="noopener noreferrer nofollow" style="color:#F3C653;">{linkText}</a>
     </p>
-    <script>
-        (function(){
-            window.location.href = "{targetUrl}";
-        })();
+    <!-- 将url放到dataset，脚本读取，避免script标签内插值失效 -->
+    <script data-redirect={targetUrl}>
+        const dest = document.currentScript.dataset.redirect;
+        window.location.href = dest;
     </script>
 </body>
 </html>
