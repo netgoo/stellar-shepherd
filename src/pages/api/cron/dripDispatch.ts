@@ -7,8 +7,6 @@ import { dripSequence } from '../../../config/dripEmails';
 async function handleDispatch(request: Request) {
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
-
-  // Vercel生产cron内部调用：信任该来源；外部请求必须携带密钥
   const isInternalVercelCron = process.env.VERCEL === '1'
     && request.headers.get('user-agent')?.startsWith('vercel-cron/');
 
@@ -17,7 +15,9 @@ async function handleDispatch(request: Request) {
   }
 
   try {
+    console.log('dripDispatch start run');
     const allKeys = await kvStore.keys('sub:*');
+    console.log('found sub keys count:', allKeys.length);
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
     if (!apiKey) throw new Error('Missing Resend key');
     const resend = new Resend(apiKey.trim());
@@ -43,10 +43,11 @@ async function handleDispatch(request: Request) {
         }
       }
     }
+    console.log('dripDispatch finished, sendCount:', sendCount);
     return new Response(JSON.stringify({ ok: true, sent: sendCount }), { status: 200 });
   } catch (err: any) {
-    console.error(err);
-    return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500 });
+    console.error('dripDispatch error:', err);
+    return new Response(JSON.stringify({ ok: false, error: err?.message ?? 'unknown' }), { status: 500 });
   }
 }
 
