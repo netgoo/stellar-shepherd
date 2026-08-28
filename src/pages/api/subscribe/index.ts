@@ -1,12 +1,15 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
+import { kvStore } from '../../../lib/kvServer';
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { email } = await request.json();
     if (!email) {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
+    const cleanEmail = email.trim().toLowerCase();
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
     if (apiKey) {
       const resend = new Resend(apiKey.trim());
@@ -18,23 +21,22 @@ export const POST: APIRoute = async ({ request }) => {
         const targetAudienceId = audienceList[0]?.id;
         if (targetAudienceId) {
           await resend.contacts.create({
-            email: email.trim(),
+            email: cleanEmail,
             unsubscribed: false,
             audienceId: targetAudienceId,
           });
         } else {
           await resend.contacts.create({
-            email: email.trim(),
+            email: cleanEmail,
             unsubscribed: false,
           });
         }
       } catch (contactError) {
         console.error('Contact creation failed:', contactError);
       }
-
       await resend.emails.send({
         from: 'Alex Automation <alex@wenboom.com>',
-        to: [email.trim()],
+        to: [cleanEmail],
         subject: 'The 1‑person architecture replacing your 5‑person team',
         html: `
           <div style="font-family: sans‑serif; line‑height: 1.6; color: #111; max‑width: 600px; padding: 20px;">
@@ -56,9 +58,16 @@ export const POST: APIRoute = async ({ request }) => {
           </div>
         `,
       });
+
+      // KV写入订阅用户记录，drip任务依赖
+      await kvStore.set(`sub:${cleanEmail}`, {
+        subscribedAt: Date.now(),
+        sentDripIds: []
+      });
     }
     return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
   } catch (error: any) {
+    console.error('subscribe error', error);
     return new Response(JSON.stringify({ message: error.message }), { status: 500 });
   }
 };
