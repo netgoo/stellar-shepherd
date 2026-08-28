@@ -1,29 +1,23 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     if (body.type === 'email.received') {
       const emailData = body.data;
       const rawSender = emailData.from || '';
-
       const emailMatch = rawSender.match(/<([^>]+)>/) || [null, rawSender];
       const targetEmail = (emailMatch[1] || rawSender).trim().toLowerCase();
-
       if (targetEmail.includes('alex@wenboom.com')) {
         return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
       }
-
       let cleanSubject = (emailData.subject || 'Your message').trim();
       // 同时匹配：英文Re:、中文回复:、中文回复：（全角冒号）
       const replyPrefixReg = /^(Re:\s*|RE:\s*|回复[:：]\s*)/gi;
       while (replyPrefixReg.test(cleanSubject)) {
         cleanSubject = cleanSubject.replace(replyPrefixReg, '').trim();
       }
-      console.log('raw subject:', emailData.subject);
-      console.log('cleaned subject:', cleanSubject);
 
       const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
       if (apiKey && targetEmail) {
