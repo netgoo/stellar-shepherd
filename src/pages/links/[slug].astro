@@ -1,0 +1,36 @@
+---
+import affiliateLinks from '../../data/affiliate-links.json';
+
+export async function getStaticPaths() {
+  return affiliateLinks.map(item => ({
+    params: { slug: item.slug },
+    props: item
+  }));
+}
+
+const { targetUrl, pageTitle, linkText } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="robots" content="noindex, nofollow"/>
+    <meta name="referrer" content="strict-origin-when-cross-origin"/>
+    <meta http-equiv="refresh" content={`1;url=${targetUrl}`} />
+    <title>{pageTitle}</title>
+    <script>
+        (function(){
+            const target = {JSON.stringify(targetUrl)};
+            window.location.href = target;
+        })();
+    </script>
+</head>
+<body style="margin:3rem 1.5rem;font-family:system-ui,sans-serif;background:#0B0F19;color:#F3F4F6;text-align:center;">
+    <p>Redirecting, please wait...</p>
+    <p style="margin-top:1rem;">
+        If you are not redirected, click here:
+        <a href={targetUrl} rel="noopener noreferrer nofollow" style="color:#F3C653;">{linkText}</a>
+    </p>
+</body>
+</html>
