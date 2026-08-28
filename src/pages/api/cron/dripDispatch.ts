@@ -5,12 +5,17 @@ import { kvStore } from '../../../lib/kvServer';
 import { dripSequence } from '../../../config/dripEmails';
 
 async function handleDispatch(request: Request) {
-  const isVercelCronTrigger = !!request.headers.get('x-vercel-cron-job');
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
-  if (!isVercelCronTrigger && authHeader !== cronSecret) {
+
+  // Vercel生产cron内部调用：信任该来源；外部请求必须携带密钥
+  const isInternalVercelCron = process.env.VERCEL === '1'
+    && request.headers.get('user-agent')?.startsWith('vercel-cron/');
+
+  if (!isInternalVercelCron && authHeader !== cronSecret) {
     return new Response(JSON.stringify({ ok: false, msg: 'unauthorized' }), { status: 403 });
   }
+
   try {
     const allKeys = await kvStore.keys('sub:*');
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
