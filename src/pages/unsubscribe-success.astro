@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+export const prerender = false;
+
+const email = Astro.url.searchParams.get('email') || 'your email address';
+
+// 页面 URL 含邮箱（PII）：禁止缓存
+Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+---
+
+<Layout title="Unsubscribed - Wenboom AI Infrastructure Hub" noindex>
+  <main class="unsub-wrapper">
+    <div class="unsub-card">
+      <div class="status-icon">✓</div>
+      <h2>You Have Been Unsubscribed</h2>
+      <p class="desc">
+        <strong>{email}</strong> has been successfully removed from all Wenboom AI &amp; Automation Blueprint email sequences.
+      </p>
+      <p class="subtext">
+        No further automated emails will be sent to this address. If this was a mistake, you can resubscribe anytime on our homepage.
+      </p>
+      <a href="/" class="btn-primary">Return to Homepage</a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .unsub-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 75vh;
+    padding: 24px;
+  }
+  .unsub-card {
+    background-color: #111111;
+    border: 1px solid #222222;
+    border-radius: 12px;
+    padding: 48px 36px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+  .status-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 24px auto;
+  }
+  h2 {
+    color: #ffffff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .desc {
+    color: #cccccc;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .desc strong {
+    color: #ffffff;
+  }
+  .subtext {
+    color: #666666;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: opacity 0.2s ease;
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+</style>
