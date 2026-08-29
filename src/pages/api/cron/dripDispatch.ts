@@ -29,18 +29,17 @@ async function handleDispatch(request: Request) {
       const elapsedHours = (Date.now() - subscribedAt) / (1000 * 60 * 60);
       console.log('[drip] process:', userEmail, 'elapsedHours:', elapsedHours, 'sent:', sentDripIds);
       for (const drip of dripSequence) {
-        // === 临时测试1：强制重发，测试完恢复 ===
-        // if (sentDripIds.includes(drip.dripId)) continue;
-        // === 临时测试2：忽略发送时间，测试完恢复 ===
-        if (true) {
+        if (sentDripIds.includes(drip.dripId)) {
+          console.log('[drip] skip already sent:', drip.dripId);
+          continue;
+        }
+        if (elapsedHours >= drip.delayHours) {
           console.log('[drip] ready to send:', drip.dripId, 'to:', userEmail);
           const normalizedEmail = userEmail.trim().toLowerCase();
           const token = generateUnsubscribeToken(normalizedEmail);
           const unsubscribeUrl = `${SITE_URL}/api/unsubscribe?email=${encodeURIComponent(normalizedEmail)}&token=${token}`;
           const unsubscribeLink = `<a href="${unsubscribeUrl}" style="color:#888888;text-decoration:underline;">Unsubscribe Here</a>`;
-          // 先替换模板占位符
           let finalHtml = drip.htmlBody.replace(/\[Unsubscribe Here\]/g, unsubscribeLink);
-          // 若模板里没有占位符，强制在末尾追加
           if (!finalHtml.includes('Unsubscribe Here')) {
             finalHtml = `${finalHtml}<br><br>${unsubscribeLink}`;
           }
