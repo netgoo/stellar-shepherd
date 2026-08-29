@@ -18,19 +18,34 @@ async function handleDispatch(request: Request) {
     console.log('dripDispatch start run');
     const allKeys = await kvStore.keys('sub:*');
     console.log('found sub keys count:', allKeys.length);
+
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
     if (!apiKey) throw new Error('Missing Resend key');
     const resend = new Resend(apiKey.trim());
+
     let sendCount = 0;
+    console.log('dripSequence length:', dripSequence.length);
+
     for (const key of allKeys) {
       const record = await kvStore.get(key);
       if (!record) continue;
-      const { subscribedAt, sentDripIds } = record as { subscribedAt: number; sentDripIds: string[] };
       const userEmail = key.replace('sub:', '');
+      console.log('process subscriber:', userEmail, JSON.stringify(record));
+
+      const subscribedAt:number = record.subscribedAt;
+      let sentDripIds:string[] = record.sentDripIds ?? [];
+
       const elapsedHours = (Date.now() - subscribedAt) / (1000 * 60 * 60);
+      console.log('elapsedHours:', elapsedHours);
+
       for (const drip of dripSequence) {
-        if (sentDripIds.includes(drip.dripId)) continue;
+        console.log('check dripId:', drip.dripId, 'delayHours:', drip.delayHours);
+        if (sentDripIds.includes(drip.dripId)) {
+          console.log('already sent, skip:', drip.dripId);
+          continue;
+        }
         if (elapsedHours >= drip.delayHours) {
+          console.log('ready to send:', drip.dripId);
           await resend.emails.send({
             from: 'Alex Automation <alex@wenboom.com>',
             to: [userEmail],
@@ -43,6 +58,7 @@ async function handleDispatch(request: Request) {
         }
       }
     }
+
     console.log('dripDispatch finished, sendCount:', sendCount);
     return new Response(JSON.stringify({ ok: true, sent: sendCount }), { status: 200 });
   } catch (err: any) {
