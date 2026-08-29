@@ -7,7 +7,7 @@ import { generateUnsubscribeToken } from '../../../utils/unsubscribeToken';
 
 const SITE_URL = import.meta.env.PUBLIC_SITE_URL || process.env.PUBLIC_SITE_URL || 'https://wenboom.com';
 
-export const POST: APIRoute = async ({ request }) => {
+async function handleDispatch(request: Request) {
   const isVercelCronTrigger = request.headers.get('x-vercel-cron-job') === '1';
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
@@ -57,4 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
     console.error(err);
     return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 500 });
   }
-};
+}
+
+export const POST: APIRoute = async ({ request }) => handleDispatch(request);
+export const GET: APIRoute = async ({ request }) => handleDispatch(request);
