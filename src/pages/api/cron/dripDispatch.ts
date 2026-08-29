@@ -29,10 +29,8 @@ async function handleDispatch(request: Request) {
       const elapsedHours = (Date.now() - subscribedAt) / (1000 * 60 * 60);
       console.log('[drip] process:', userEmail, 'elapsedHours:', elapsedHours, 'sent:', sentDripIds);
       for (const drip of dripSequence) {
-        if (sentDripIds.includes(drip.dripId)) {
-          console.log('[drip] skip already sent:', drip.dripId);
-          continue;
-        }
+        // === 临时测试：强制重发，测试完恢复下一行 ===
+        // if (sentDripIds.includes(drip.dripId)) continue;
         if (elapsedHours >= drip.delayHours) {
           console.log('[drip] ready to send:', drip.dripId, 'to:', userEmail);
           const normalizedEmail = userEmail.trim().toLowerCase();
