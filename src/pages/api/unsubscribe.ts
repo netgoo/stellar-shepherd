@@ -8,7 +8,7 @@ const normalizeEmail = (e: string) => e.trim().toLowerCase();
 
 // 幂等退订：已退订/从未订阅的邮箱同样静默成功（防邮箱枚举）
 async function markUnsubscribed(email: string): Promise<void> {
-  const key = `subscriber:${email}`;
+  const key = `sub:${email}`;
   const subscriber = await kv.get<Record<string, any>>(key);
   if (subscriber && subscriber.status !== 'unsubscribed') {
     subscriber.status = 'unsubscribed';
