@@ -24,8 +24,13 @@ async function handleDispatch(request: Request) {
     for (const key of allKeys) {
       const record = await kvStore.get(key);
       if (!record) continue;
-      const { subscribedAt, sentDripIds } = record as { subscribedAt: number; sentDripIds: string[] };
       const userEmail = key.replace('sub:', '');
+      // 退订用户直接跳过，不再发送任何邮件
+      if (record.status === 'unsubscribed') {
+        console.log('[drip] skip unsubscribed:', userEmail);
+        continue;
+      }
+      const { subscribedAt, sentDripIds } = record as { subscribedAt: number; sentDripIds: string[] };
       const elapsedHours = (Date.now() - subscribedAt) / (1000 * 60 * 60);
       console.log('[drip] process:', userEmail, 'elapsedHours:', elapsedHours, 'sent:', sentDripIds);
       for (const drip of dripSequence) {
