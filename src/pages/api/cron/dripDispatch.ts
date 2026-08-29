@@ -7,8 +7,11 @@ import { dripSequence } from '../../../config/dripEmails';
 async function handleDispatch(request: Request) {
   const authHeader = request.headers.get('x-cron-secret');
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
-  const isInternalVercelCron = process.env.VERCEL === '1'
-    && request.headers.get('user-agent')?.startsWith('vercel-cron/');
+
+  // Vercel内置cron可信来源双重判断
+  const hasVercelCronHeader = !!request.headers.get('x-vercel-cron');
+  const isVercelCronUA = request.headers.get('user-agent')?.startsWith('vercel-cron/');
+  const isInternalVercelCron = process.env.VERCEL === '1' && (hasVercelCronHeader || isVercelCronUA);
 
   if (!isInternalVercelCron && authHeader !== cronSecret) {
     return new Response(JSON.stringify({ ok: false, msg: 'unauthorized' }), { status: 403 });
@@ -29,12 +32,12 @@ async function handleDispatch(request: Request) {
     for (const key of allKeys) {
       const record = await kvStore.get(key);
       if (!record) continue;
+
       const userEmail = key.replace('sub:', '');
       console.log('process subscriber:', userEmail, JSON.stringify(record));
 
-      const subscribedAt:number = record.subscribedAt;
-      let sentDripIds:string[] = record.sentDripIds ?? [];
-
+      const subscribedAt: number = record.subscribedAt;
+      let sentDripIds: string[] = record.sentDripIds ?? [];
       const elapsedHours = (Date.now() - subscribedAt) / (1000 * 60 * 60);
       console.log('elapsedHours:', elapsedHours);
 
