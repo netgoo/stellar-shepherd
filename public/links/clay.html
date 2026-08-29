@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+<meta http-equiv="Cache‑Control" content="no‑cache, no‑store, must‑revalidate"/>
+<meta http‑equiv="refresh" content="3">
+<link rel="stylesheet" href="/site‑common.css">
+<title>Redirecting to partner site...</title>
+</head>
+<body>
+<div class="redirect-wrap" style="text‑align:center;margin:6rem auto 2rem;max‑width:520px;padding:0 1rem;">
+  <h3>Redirecting to partner website</h3>
+  <p>If you are not redirected within 3 seconds:</p>
+  <p><a id="manual‑link" href="/404" target="_blank">Click here to continue</a></p>
+  <p style="font‑size:0.8rem;color:#666;margin‑top:2rem;">
+    Affiliate disclosure: This link is an affiliate partner link. We may earn commission on qualifying sign‑ups.
+  </p>
+</div>
+
+<script>
+(function(){
+  const rawAffiliateUrl = "https://clay.com?via=5edfad";
+  try {
+    const baseTarget = new URL(rawAffiliateUrl);
+    if(!["http:","https:"].includes(baseTarget.protocol)){
+      window.location.href = "/404";
+      return;
+    }
+    baseTarget.searchParams.set("via", "wenboom");
+    const finalUrl = baseTarget.toString();
+    document.getElementById("manual‑link").href = finalUrl;
+    window.location.href = finalUrl;
+  } catch (err) {
+    console.error("Redirect parse error", err);
+    window.location.href = "/404";
+  }
+})();
+</script>
+</body>
+</html>
