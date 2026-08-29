@@ -4,5 +4,14 @@
       "path": "/api/cron/dripDispatch",
       "schedule": "0 9 * * *"
     }
+  ],
+  "redirects": [
+    {"source":"/links/make","destination":"/links/make.html","permanent":false},
+    {"source":"/links/clay","destination":"/links/clay.html","permanent":false},
+    {"source":"/links/smartlead","destination":"/links/smartlead.html","permanent":false},
+    {"source":"/links/n8n","destination":"/links/n8n.html","permanent":false},
+    {"source":"/links/voiceflow","destination":"/links/voiceflow.html","permanent":false},
+    {"source":"/links/bland","destination":"/links/bland.html","permanent":false},
+    {"source":"/links/activecampaign","destination":"/links/activecampaign.html","permanent":false}
   ]
 }
