@@ -37,10 +37,13 @@ async function handleDispatch(request: Request) {
           const normalizedEmail = userEmail.trim().toLowerCase();
           const token = generateUnsubscribeToken(normalizedEmail);
           const unsubscribeUrl = `${SITE_URL}/api/unsubscribe?email=${encodeURIComponent(normalizedEmail)}&token=${token}`;
-          const finalHtml = drip.htmlBody.replace(
-            /\[Unsubscribe Here\]/g,
-            `<a href="${unsubscribeUrl}" style="color:#888888;text-decoration:underline;">Unsubscribe Here</a>`
-          );
+          const unsubscribeLink = `<a href="${unsubscribeUrl}" style="color:#888888;text-decoration:underline;">Unsubscribe Here</a>`;
+          // 先替换模板占位符
+          let finalHtml = drip.htmlBody.replace(/\[Unsubscribe Here\]/g, unsubscribeLink);
+          // 若模板里没有占位符，强制在末尾追加
+          if (!finalHtml.includes('Unsubscribe Here')) {
+            finalHtml = `${finalHtml}<br><br>${unsubscribeLink}`;
+          }
           const result = await resend.emails.send({
             from: 'Alex Automation <alex@wenboom.com>',
             to: [userEmail],
