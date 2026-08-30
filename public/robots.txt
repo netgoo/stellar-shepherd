@@ -1,6 +1,25 @@
+
 User-agent: *
 Allow: /
 Disallow: /links/
-Disallow: /links
+Disallow: /api/
+Disallow: /unsubscribe-success
 
-Sitemap: https://wenboom.com
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+Crawl-delay: 1
+
+Sitemap: https://wenboom.com/sitemap.xml
