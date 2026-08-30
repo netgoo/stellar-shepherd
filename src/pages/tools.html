@@ -4,115 +4,353 @@
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Top AI Infrastructure Stack | Wenboom</title>
-    <meta name="description" content="The standard production infrastructure stack verified, stress-tested, and deployed for high-scale agentic operations. 7 core tools across data waterfall, orchestration, and agentic CRM.">
+    <title>The 7-Core Production Stack | Wenboom</title>
+    <meta name="description" content="The strict 7-core production AI infrastructure stack: Make, n8n, Clay, Smartlead, Voiceflow, Bland.ai, and ActiveCampaign. Each tool stress-tested in live deployment with hard data, use cases, and limitations." />
     <link rel="stylesheet" href="/site-common.css">
+    <style>
+        .tools-hero {
+            padding: 4rem 5% 2rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .stack-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        .tool-review-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            transition: 0.3s;
+        }
+        .tool-review-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(243, 198, 83, 0.2);
+        }
+        .tool-header-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .tool-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        .tool-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            background: rgba(243, 198, 83, 0.1);
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        .tool-review-card .desc {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        .tool-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .metric-inline {
+            font-size: 0.82rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        .tool-fit {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .fit-block {
+            background-color: rgba(255,255,255,0.02);
+            border-radius: 6px;
+            padding: 0.85rem 1rem;
+        }
+        .fit-block h4 {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.35rem;
+            font-weight: 700;
+        }
+        .fit-block.good-for h4 { color: #10B981; }
+        .fit-block.not-for h4 { color: #EF4444; }
+        .fit-block p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+        .deploy-btn {
+            display: inline-block;
+            background-color: var(--accent-gold);
+            color: #000;
+            padding: 0.7rem 1.8rem;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .deploy-btn:hover {
+            background-color: #ffe082;
+            transform: translateY(-1px);
+        }
+    </style>
+
+    <!-- Schema.org ItemList: 7-Core Production Stack -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Wenboom 7-Core Production Stack",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Clay", "url": "https://wenboom.com/links/clay.html" },
+        { "@type": "ListItem", "position": 2, "name": "Smartlead", "url": "https://wenboom.com/links/smartlead.html" },
+        { "@type": "ListItem", "position": 3, "name": "Make.com", "url": "https://wenboom.com/links/make.html" },
+        { "@type": "ListItem", "position": 4, "name": "n8n", "url": "https://wenboom.com/links/n8n.html" },
+        { "@type": "ListItem", "position": 5, "name": "Voiceflow", "url": "https://wenboom.com/links/voiceflow.html" },
+        { "@type": "ListItem", "position": 6, "name": "Bland.ai", "url": "https://wenboom.com/links/bland.html" },
+        { "@type": "ListItem", "position": 7, "name": "ActiveCampaign", "url": "https://wenboom.com/links/activecampaign.html" }
+      ]
+    }
+    </script>
 </head>
 <body>
-<header>
-    <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
-    <nav>
-        <a href="/trends">Future Trends</a>
-        <a href="/tools" style="color: var(--accent-gold);">Top AI Stack</a>
-        <a href="/blueprints">Master Blueprints</a>
-    </nav>
-</header>
+    <header>
+        <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
+        <nav>
+            <a href="/trends">Future Trends</a>
+            <a href="/tools" style="color: var(--accent-gold);">Top AI Stack</a>
+            <a href="/blueprints">Master Blueprints</a>
+            <a href="/about">About Alex</a>
+        </nav>
+    </header>
 
-<main>
-    <section class="tools-hero">
-        <h1>Vetted <span>Enterprise Automation Stack</span></h1>
-        <p class="sub-text">The rigid, industry-standard production infrastructure we review, stress-test, and deploy for high-scale automated operations. 7 core tools across data waterfall, orchestration, and agentic CRM. Absolute transparency. Pure infrastructure.</p>
-    </section>
+    <main>
+        <section class="tools-hero">
+            <div class="tagline">THE 7-CORE PRODUCTION MATRIX</div>
+            <h1>Vetted <span>Enterprise Automation Stack</span></h1>
+            <p class="sub-text">Wenboom delivers 7 production-grade AI tools across 4 pillars—data waterfall, orchestration, voice AI, and lifecycle CRM—each stress-tested in live deployment with hard data, use cases, and documented limitations.</p>
+        </section>
 
-    <section class="matrix-section">
-        <div class="stack-list">
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">Make.com</div>
-                    <span class="tool-badge">Top Pick</span>
+        <section class="matrix-section">
+            <div class="stack-list">
+
+                <!-- Tool 1: Clay -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">Clay</div>
+                        <span class="tool-badge">Pillar 1 — Data Intelligence</span>
+                    </div>
+                    <p class="desc">Programmatic multi-provider lead enrichment engine. Combines 50+ data providers into a unified waterfall schema, automatically qualifies leads, and scores prospects via semantic modeling. The core data layer for any high-volume outbound pipeline.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">WCEI 0.94+ across 50+ providers</span>
+                        <span class="metric-inline">40% stale data reduction</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>Agencies and outbound teams needing multi-provider enrichment at scale, ICP qualification automation, and dedup pipelines.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams with under 5k records/month where single-vendor enrichment suffices, or teams needing on-premise data residency.</p>
+                        </div>
+                    </div>
+                    <a href="/links/clay.html" class="deploy-btn">Deploy Clay Enrichment Stack &rarr;</a>
                 </div>
-                <p>The core orchestration platform for high-frequency workflows. Advanced multi-app logic nesting, conditioning arrays, and seamless raw API variable manipulation. The single most efficient semantic gateway for asset data management across lean mid-market scaling matrix ecosystems.</p>
-                <a href="/links/make.html" class="deploy-btn">Deploy Infrastructure on Make.com &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">Clay.com</div>
-                    <span class="tool-badge">Data Intelligence</span>
+                <!-- Tool 2: Smartlead -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">Smartlead</div>
+                        <span class="tool-badge">Pillar 1 — Outbound Engine</span>
+                    </div>
+                    <p class="desc">Dedicated IP warmup protocols, multi-account rotation, and zero-drop webhook outreach infrastructure. The delivery layer that ensures enriched leads actually reach the inbox without burning domain reputation.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">98.4% deliverability rate</span>
+                        <span class="metric-inline">Zero-drop webhook triggers</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>High-volume outbound teams needing multi-account rotation, dedicated IP warmup, and API-driven campaign management.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams sending under 1k emails/month, or teams requiring built-in CRM with full lifecycle automation (use ActiveCampaign instead).</p>
+                        </div>
+                    </div>
+                    <a href="/links/smartlead.html" class="deploy-btn">Deploy Smartlead Outbound Engine &rarr;</a>
                 </div>
-                <p>Next-generation data verification and parsing platform. Combines over 50 premium validation providers to systematically scrub context records, map target outbound pipelines, and score leads via automated semantic modeling with minimal maintenance debt.</p>
-                <a href="/links/clay.html" class="deploy-btn">Deploy Lead Enrichment Stack &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">Smartlead</div>
-                    <span class="tool-badge">Cold Outreach</span>
+                <!-- Tool 3: Make.com -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">Make.com</div>
+                        <span class="tool-badge">Pillar 2 — Visual Middleware</span>
+                    </div>
+                    <p class="desc">Deterministic visual middleware builder for array aggregation, complex conditional branching, and custom API nesting. The visual DAG orchestrator that processes multi-destination routing as single operations, eliminating the per-task tax of linear chains.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">83.4% cost reduction vs Zapier at 500k executions</span>
+                        <span class="metric-inline">Visual DAG with native array handling</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>Lean teams needing complex multi-app logic, array aggregation, and visual scenario building without engineering overhead.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams running 100k+ daily executions needing full data residency control, or teams requiring unlimited concurrency at static cost (use n8n self-hosted).</p>
+                        </div>
+                    </div>
+                    <a href="/links/make.html" class="deploy-btn">Deploy Make.com Visual Orchestration &rarr;</a>
                 </div>
-                <p>Unlimited cold outreach with AI reply handling. Dedicated IP warmup protocol, automated follow-ups, and zero-drop pipeline delivery. WCEI-optimized credit efficiency for high-volume outbound operations.</p>
-                <a href="/links/smartlead.html" class="deploy-btn">Deploy Outbound Infrastructure &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">n8n</div>
-                    <span class="tool-badge">Open Source</span>
+                <!-- Tool 4: n8n -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">n8n (Self-Hosted)</div>
+                        <span class="tool-badge">Pillar 2 — High Concurrency</span>
+                    </div>
+                    <p class="desc">Dedicated worker-node orchestration engineered for unlimited concurrent workflows at static server cost. Self-hosted determinism with full data retention control, PgBouncer connection pooling, and zero vendor lock-in. The heavy-compute layer for production-grade pipelines.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">Near-zero marginal cost at 100k+ daily executions</span>
+                        <span class="metric-inline">Full data residency & source-code access</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>Engineering-led teams needing self-hosted determinism, high concurrency, full auditability, and static cost predictability.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Non-technical teams without server management capability, or teams needing fully managed hosting with SLA guarantees (use Make.com).</p>
+                        </div>
+                    </div>
+                    <a href="/links/n8n.html" class="deploy-btn">Deploy n8n Self-Hosted Orchestration &rarr;</a>
                 </div>
-                <p>Open-source, self-hostable workflow automation with 400+ integrations. Built for engineering teams that need deterministic pipelines, PgBouncer-level concurrency control, and zero vendor lock-in.</p>
-                <a href="/links/n8n.html" class="deploy-btn">Deploy Self-Hosted Engine &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">Voiceflow</div>
-                    <span class="tool-badge">Conversational AI</span>
+                <!-- Tool 5: Voiceflow -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">Voiceflow</div>
+                        <span class="tool-badge">Pillar 3 — Agentic Logic</span>
+                    </div>
+                    <p class="desc">Visual conversation flow orchestrator for complex conversational state machines and multi-turn context retention. The dialogue logic layer that powers AI voice agents with structured branching, variable management, and integration hooks.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">Multi-turn conversational state management</span>
+                        <span class="metric-inline">Visual dialogue design with API hooks</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>Teams building AI voice agents, conversational IVRs, or multi-turn qualification flows needing visual dialogue design and context retention.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams needing a full telephony carrier with SIP trunking (use Bland.ai), or teams needing simple one-way voice broadcasts without dialogue logic.</p>
+                        </div>
+                    </div>
+                    <a href="/links/voiceflow.html" class="deploy-btn">Deploy Voiceflow Conversation Engine &rarr;</a>
                 </div>
-                <p>Conversational AI platform for designing, testing, and launching production-grade voice and chat agents at scale. Deterministic LLM orchestration with native webhook payload transfer.</p>
-                <a href="/links/voiceflow.html" class="deploy-btn">Deploy Agent Platform &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">Bland.ai</div>
-                    <span class="tool-badge">Phone AI</span>
+                <!-- Tool 6: Bland.ai -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">Bland.ai</div>
+                        <span class="tool-badge">Pillar 3 — Voice Automation</span>
+                    </div>
+                    <p class="desc">Ultra-low-latency real-time phone dispatch API with dynamic custom webhook responses and live transfers. The telephony execution layer that turns Voiceflow dialogue logic into actual phone calls with sub-800ms response latency.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">Sub-800ms voice response latency</span>
+                        <span class="metric-inline">Real-time SIP/telephony webhook routing</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>Teams needing automated inbound/outbound voice agents, real-time call routing, and API-driven telephony at scale.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams needing visual dialogue design without coding (use Voiceflow), or teams needing traditional call center software with agent desktops.</p>
+                        </div>
+                    </div>
+                    <a href="/links/bland.html" class="deploy-btn">Deploy Bland.ai Voice Automation &rarr;</a>
                 </div>
-                <p>AI-powered phone calling with natural language understanding, live transcription, and CRM integration. RLRP-optimized webhook architecture for real-time phone qualification with latency-controlled voice agents.</p>
-                <a href="/links/bland.html" class="deploy-btn">Deploy Voice Engine &rarr;</a>
-            </div>
 
-            <div class="tool-review-card">
-                <div class="tool-header-grid">
-                    <div class="tool-title">ActiveCampaign</div>
-                    <span class="tool-badge">CRM & Lifecycle</span>
+                <!-- Tool 7: ActiveCampaign -->
+                <div class="tool-review-card">
+                    <div class="tool-header-grid">
+                        <div class="tool-title">ActiveCampaign</div>
+                        <span class="tool-badge">Pillar 4 — Lifecycle CRM</span>
+                    </div>
+                    <p class="desc">High-deliverability lifecycle CRM for automated behavioral retention, lead scoring, and revenue attribution. The closed-loop layer that syncs enriched outbound leads into nurture pools without state loss, converting cold outreach into recurring revenue.</p>
+                    <div class="tool-metrics">
+                        <span class="metric-inline">Closed-loop lead attribution & scoring</span>
+                        <span class="metric-inline">Event-driven lifecycle automation</span>
+                    </div>
+                    <div class="tool-fit">
+                        <div class="fit-block good-for">
+                            <h4>Best For</h4>
+                            <p>B2B teams needing lifecycle automation, behavioral lead scoring, and closed-loop attribution from cold outreach to customer retention.</p>
+                        </div>
+                        <div class="fit-block not-for">
+                            <h4>Not For</h4>
+                            <p>Teams needing a pure outbound sending engine (use Smartlead), or teams needing enterprise-grade sales CRM with full pipeline management (use a dedicated CRM).</p>
+                        </div>
+                    </div>
+                    <a href="/links/activecampaign.html" class="deploy-btn">Deploy ActiveCampaign Lifecycle CRM &rarr;</a>
                 </div>
-                <p>All-in-one customer experience automation. Email marketing, CRM, and sales automation with advanced segmentation. Custom webhook lead scoring for behavior-triggered workflows and closed-loop lifecycle nurturing.</p>
-                <a href="/links/activecampaign.html" class="deploy-btn">Deploy CRM Engine &rarr;</a>
+
             </div>
+        </section>
+    </main>
+
+    <subscribe-box></subscribe-box>
+
+    <footer>
+        <div class="footer-links-wrap">
+            <a href="/about" class="footer-link-item">About Alex</a>
+            <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
+            <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
+            <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
         </div>
-    </section>
-</main>
 
-<subscribe-box></subscribe-box>
+        <!-- FTC affiliate glass-box transparency disclosure -->
+        <div style="max-width: 800px; margin: 1.5rem auto 0; font-size: 0.75rem; opacity: 0.5; text-align: center; line-height: 1.4;">
+            Engineering Transparency: Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool]</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you.
+        </div>
 
-<footer>
-    <div class="footer-links-wrap">
-        <a href="/about" class="footer-link-item">About Us</a>
-        <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
-        <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
-        <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
-    </div>
-    <div class="footer-copyright">
-        <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved.</p>
-    </div>
-</footer>
+        <div class="footer-copyright">
+            <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved. Principal Architect: Alex.</p>
+        </div>
+    </footer>
 
-<script src="/js/subscribe-component.js"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-BV4E7FGY3P');
-</script>
+    <script src="/js/subscribe-component.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BV4E7FGY3P');
+    </script>
 </body>
 </html>
