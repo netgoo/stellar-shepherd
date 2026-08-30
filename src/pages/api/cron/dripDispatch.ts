@@ -25,7 +25,6 @@ async function handleDispatch(request: Request) {
       const record = await kvStore.get(key);
       if (!record) continue;
       const userEmail = key.replace('sub:', '');
-      // 退订用户直接跳过，不再发送任何邮件
       if (record.status === 'unsubscribed') {
         console.log('[drip] skip unsubscribed:', userEmail);
         continue;
@@ -49,7 +48,7 @@ async function handleDispatch(request: Request) {
             finalHtml = `${finalHtml}<br><br>${unsubscribeLink}`;
           }
           const result = await resend.emails.send({
-            from: 'Alex Automation <alex@wenboom.com>',
+            from: 'Alex @ Wenboom <alex@wenboom.com>',
             to: [userEmail],
             subject: drip.subject,
             html: finalHtml,
