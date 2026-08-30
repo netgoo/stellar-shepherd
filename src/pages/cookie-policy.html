@@ -5,13 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cookie Policy | Wenboom</title>
-    <meta name="description" content="Cookie Policy for Wenboom—uncompromising disclosure on how we track affiliate attributions securely." />
-    <link rel="stylesheet" href="./site-common.css">
+    <meta name="description" content="Cookie Policy for Wenboom—transparent disclosure on analytics, affiliate attribution, and email subscription storage. IP anonymization enabled, no third-party tracking bloatware." />
+    <link rel="stylesheet" href="/site-common.css">
     <style>
-        /* Page‑only local divider style */
         .divider {
             border-top: 1px dashed rgba(255,255,255,0.05);
-            margin: 3rem 0;
+            margin: 2.5rem 0;
+        }
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -22,39 +26,74 @@
             <a href="/trends">Future Trends</a>
             <a href="/tools">Top AI Stack</a>
             <a href="/blueprints">Master Blueprints</a>
+            <a href="/about">About Alex</a>
         </nav>
     </header>
+
     <main class="article-container">
-        <h1>Cookie Asset <span style="color:var(--accent-gold);">Disclosures</span></h1>
+        <span class="meta-tag">Legal & Transparency</span>
+        <h1>Cookie & Tracking <span style="color:var(--accent-gold);">Disclosure</span></h1>
+        <p class="last-updated">Last updated: August 30, 2026</p>
+
         <div class="content">
-            <p>Wenboom does not deploy manipulative tracking bloatware. Our pure static digital asset operates on a policy of baseline telemetry. We use minimal browser storage tokens solely to maintain fluid interface layouts, cross‑device image rendering, and high‑frequency caching logs.</p>
-            <h2>1. Analytics and Cohort Instrumentation</h2>
-            <p>Through our secure integration with Google Analytics (GA4), this platform utilizes basic cookie scripts to evaluate generalized user behavioral pathways. These metrics track variables such as how many visitors route from public forums (like Reddit automation lists or X threads) into our deep tactical reports. All tracking code forces absolute IP anonymization natively, ensuring your session context stays entirely private.</p>
+            <p>Wenboom does not deploy manipulative tracking bloatware. Our static digital asset operates on a policy of minimal, transparent telemetry. We use browser storage tokens solely to maintain interface functionality, analytics measurement, and affiliate attribution. No cross-site tracking, no advertising networks, no data brokerage.</p>
+
+            <h2>1. Analytics & Cohort Measurement</h2>
+            <p>Through our integration with Google Analytics (GA4), this platform utilizes basic cookie scripts to evaluate generalized user behavioral pathways. These metrics track aggregate variables such as page views, session duration, and referral sources (including public forums like Reddit automation communities or X threads linking into our technical reports).</p>
+            <p>All tracking code enforces absolute IP anonymization natively. No personally identifiable information (PII) is collected, stored, or transmitted. Your session context remains entirely private.</p>
+
             <h2>2. Affiliate Attribution Networks (How We Monetize)</h2>
-            <p>Let's remain completely transparent regarding our outbound routing nodes (such as `/links/make.html`). Wenboom is an independent technical archive sustained through performance‑based affiliate commissions. When you click our vetted card matrices to deploy infrastructure platforms or unlock resource quotas on Make.com, Clay, Smartlead, n8n, Voiceflow, Bland.ai, or ActiveCampaign, the vendor's database drops a standard attribution cookie onto your browser.</p>
-            <p>This tracking file operates with a singular operational mandate: <strong>to register our referral code if you choose to onboard onto their systems.</strong> This attribution ensures we receive credit for our engineering reviews and cost‑accounting reports, allowing us to keep this directory 100% free and open to independent operators without charging a subscription wall. These corporate cookies are fully managed by the security protocols of the respective platforms.</p>
-            <h2>3. Client‑Side Mitigation Parameters</h2>
-            <p>If you prefer to navigate our technical directory without leaving any referral footprints, you maintain complete administrative control. You can instantly flush your browser storage logs, restrict third‑party cookie handling parameters inside your settings panel, or browse our entire architecture footprint using a secure Incognito session. Restricting these tokens will not break or corrupt your visual experience on Wenboom.</p>
+            <p>Wenboom is an independent technical archive sustained through performance-based affiliate commissions. When you click our vetted tool links to deploy infrastructure platforms or unlock resource quotas on our 7-core stack—Make.com, n8n, Clay, Smartlead, Voiceflow, Bland.ai, or ActiveCampaign—the vendor's system may drop a standard attribution cookie onto your browser.</p>
+            <p>This tracking file operates with a singular purpose: <strong>to register our referral code if you choose to onboard onto their systems.</strong> This attribution ensures we receive credit for our engineering reviews and cost-accounting reports, allowing us to keep this directory 100% free and open without charging a subscription wall. These cookies are fully managed by the security protocols of the respective vendor platforms.</p>
+            <p>All affiliate links route through clean static redirect pages at <code>/links/[tool].html</code>. No JavaScript-based tracking or hidden redirects are employed.</p>
+
+            <h2>3. Email Subscription & Storage</h2>
+            <p>When you subscribe to our blueprint delivery list, we store your email address and subscription metadata (subscription timestamp, sent drip email IDs) in Vercel KV (Upstash Redis) using the key prefix <code>sub:</code>. This storage is necessary to manage our 5-email drip sequence and prevent duplicate sends. No third-party email marketing platform processes your data without your explicit consent.</p>
+            <p>You may unsubscribe at any time via the unsubscribe link included in every email, or by contacting us directly. Upon unsubscription, your record is marked as inactive and no further automated emails are sent.</p>
+
+            <h2>4. Essential Functional Storage</h2>
+            <p>Our site may use minimal local storage or session cookies to maintain basic interface functionality, such as remembering your theme preference or preventing duplicate form submissions. These tokens are strictly first-party, contain no tracking data, and are automatically cleared when your browser session ends.</p>
+
+            <h2>5. Client-Side Control & Opt-Out</h2>
+            <p>If you prefer to navigate our technical directory without leaving any referral footprints, you maintain complete administrative control. You can instantly flush your browser storage logs, restrict third-party cookie handling inside your browser settings panel, or browse our entire architecture footprint using a secure Incognito session.</p>
+            <p>Restricting these tokens will not break or degrade your visual experience on Wenboom. All core content—blueprints, JSON payloads, failure-mode protocols—remains fully accessible without cookies.</p>
+
+            <h2>6. Policy Updates</h2>
+            <p>Wenboom reserves the right to update this Cookie Policy as our infrastructure evolves. Material changes will be reflected by updating the "Last updated" date at the top of this page. Your continued use of the site constitutes acceptance of the updated policy.</p>
+
+            <div class="divider"></div>
+
+            <p>If you have questions about our tracking practices or data storage, contact us through the channels listed on our <a href="/about" style="color: var(--accent-gold);">About Alex</a> page.</p>
         </div>
     </main>
+
+    <subscribe-box></subscribe-box>
+
     <footer>
         <div class="footer-links-wrap">
-            <a href="/about" class="footer-link-item">About Us</a>
+            <a href="/about" class="footer-link-item">About Alex</a>
             <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
-            <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
+            <a href="/cookie-policy" class="footer-link-item" style="color: var(--accent-gold);">Cookie Policy</a>
             <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
         </div>
+
+        <!-- FTC affiliate glass-box transparency disclosure -->
+        <div style="max-width: 800px; margin: 1.5rem auto 0; font-size: 0.75rem; opacity: 0.5; text-align: center; line-height: 1.4;">
+            Engineering Transparency: Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool]</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you.
+        </div>
+
         <div class="footer-copyright">
-            <p>&copy; 2026‑2036 Wenboom.com. All Rights Reserved.</p>
+            <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved. Principal Architect: Alex.</p>
         </div>
     </footer>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G‑BV4E7FGY3P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G‑BV4E7FGY3P');
-</script>
+
+    <script src="/js/subscribe-component.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BV4E7FGY3P');
+    </script>
 </body>
 </html>
