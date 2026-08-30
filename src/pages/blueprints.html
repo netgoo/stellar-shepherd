@@ -5,114 +5,226 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Master Blueprints | Wenboom</title>
-    <meta name="description" content="Access our exclusive library of production-grade AI automation blueprints, agent deployment scripts, and MCP data gateway templates.">
+    <meta name="description" content="Production-grade AI automation blueprints across 4 pillars: multi-agent outbound mesh, zero-glue orchestration, sub-800ms voice AI pipeline, and lifecycle revenue CRM. Each includes JSON payloads, failure protocols, and deployment schematics." />
     <link rel="stylesheet" href="/site-common.css">
+    <style>
+        .hero-section {
+            padding: 4rem 5% 2rem;
+            text-align: center;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.75rem;
+            margin-top: 1.5rem;
+        }
+        .blueprint-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+        .blueprint-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(243, 198, 83, 0.2);
+        }
+        .bp-meta {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+        .blueprint-card h2 {
+            font-size: 1.25rem;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        .blueprint-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            line-height: 1.55;
+        }
+        .bp-tools {
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .bp-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .bp-metric {
+            font-size: 0.75rem;
+            background: rgba(243, 198, 83, 0.08);
+            color: var(--accent-gold);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .bp-btn {
+            display: block;
+            text-align: center;
+            background-color: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 0.65rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .blueprint-card:hover .bp-btn {
+            background-color: var(--accent-gold);
+            color: #000;
+        }
+    </style>
+
+    <!-- Schema.org ItemList: Master Blueprints -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Wenboom Master Blueprints",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Multi-Agent Outbound Mesh Blueprint", "url": "https://wenboom.com/trends/beyond-saas-multi-agent-outbound-pipeline" },
+        { "@type": "ListItem", "position": 2, "name": "Zero-Glue Orchestration Blueprint", "url": "https://wenboom.com/trends/make-vs-zapier-2026-roi-v2" },
+        { "@type": "ListItem", "position": 3, "name": "Sub-800ms Voice AI Pipeline Blueprint", "url": "https://wenboom.com/trends/mcp-protocol-enterprise-impact" },
+        { "@type": "ListItem", "position": 4, "name": "Lifecycle Revenue CRM Blueprint", "url": "https://wenboom.com/trends/serverless-vs-vps-2026-cloud-cost-roi" }
+      ]
+    }
+    </script>
 </head>
 <body>
-<header>
-    <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
-    <nav>
-        <a href="/trends">Future Trends</a>
-        <a href="/tools">Top AI Stack</a>
-        <a href="/blueprints" style="color: var(--accent-gold);">Master Blueprints</a>
-    </nav>
-</header>
+    <header>
+        <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
+        <nav>
+            <a href="/trends">Future Trends</a>
+            <a href="/tools">Top AI Stack</a>
+            <a href="/blueprints" style="color: var(--accent-gold);">Master Blueprints</a>
+            <a href="/about">About Alex</a>
+        </nav>
+    </header>
 
-<main>
-    <section class="hero-section">
-        <h1>Production-Grade <span>Automation Blueprints</span></h1>
-        <p class="sub-text">Deploy hard-vetted semantic routers, data enrichment scripts, and autonomous agent node networks. Standardized operational architecture engineered to run with zero marginal cost.</p>
-    </section>
+    <main>
+        <section class="hero-section">
+            <div class="tagline">PRODUCTION-GRADE BLUEPRINT LIBRARY</div>
+            <h1>Master <span>Automation Blueprints</span></h1>
+            <p class="sub-text">Wenboom delivers 4 production-grade blueprints across 4 pillars—data waterfall, orchestration, voice AI, and lifecycle CRM—each with raw JSON payloads, failure-mode protocols, and exact deployment schematics. Stress-tested in live deployment before publication.</p>
+        </section>
 
-    <section class="matrix-section">
-        <div class="grid">
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Make.com Gateway</span>
-                    <h2>Visual MCP Semantic Routing Module</h2>
-                    <p>Enables non-technical mid-market operators to instantly bridge split corporate data layers straight into Claude Code swarms using native webhook triggers.</p>
+        <section class="matrix-section">
+            <div class="grid">
+
+                <!-- Blueprint 1: Pillar 1 -->
+                <div class="blueprint-card">
+                    <div>
+                        <span class="bp-meta">Pillar 1 — Data Waterfall & Outbound</span>
+                        <h2>Multi-Agent Outbound Mesh Blueprint</h2>
+                        <p>3-tier agent mesh architecture: intelligence scraper (Apify + webhooks), ICP qualification engine (LLM reasoning with JSON schema validation), and dynamic copy synthesizer (GPT-4o-mini). WCEI-optimized Clay enrichment waterfall with 50+ provider fallback routing, Smartlead zero-drop delivery with dedicated IP warmup.</p>
+                        <div class="bp-tools">Tools: Clay + Smartlead + Make.com</div>
+                        <div class="bp-metrics">
+                            <span class="bp-metric">98.4% deliverability</span>
+                            <span class="bp-metric">WCEI 0.94+</span>
+                            <span class="bp-metric">4 failure protocols</span>
+                        </div>
+                    </div>
+                    <a href="/trends/beyond-saas-multi-agent-outbound-pipeline" class="bp-btn">Read Full Blueprint &rarr;</a>
                 </div>
-                <a href="/links/make.html" class="bp-btn">Deploy Infrastructure on Make.com &rarr;</a>
-            </div>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Data Infrastructure</span>
-                    <h2>Automated High-Scale Outbound Scoring Grid</h2>
-                    <p>Connects 50+ background verification providers into a unified context table. Automatically qualifies leads and filters data poisoning synchronously.</p>
+                <!-- Blueprint 2: Pillar 2 -->
+                <div class="blueprint-card">
+                    <div>
+                        <span class="bp-meta">Pillar 2 — Orchestration & Cost Control</span>
+                        <h2>Zero-Glue Orchestration Blueprint</h2>
+                        <p>Zero-Glue Theorem applied to orchestration: eliminate unstable middleware by enforcing native protocol boundaries between data ingestion, transformation, and delivery. Production MCP bridge JSON schema for HubSpot to Clay to Smartlead with saga compensation transactions. Make.com visual DAG for agility, n8n self-hosted for high-concurrency determinism.</p>
+                        <div class="bp-tools">Tools: Make.com + n8n + MCP Protocol</div>
+                        <div class="bp-metrics">
+                            <span class="bp-metric">83.4% cost reduction</span>
+                            <span class="bp-metric">14-22% failure reduction</span>
+                            <span class="bp-metric">Saga compensation</span>
+                        </div>
+                    </div>
+                    <a href="/trends/make-vs-zapier-2026-roi-v2" class="bp-btn">Read Full Blueprint &rarr;</a>
                 </div>
-                <a href="/links/clay.html" class="bp-btn">Initialize Routing System &rarr;</a>
-            </div>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Cold Outreach</span>
-                    <h2>Unlimited Email Sending with AI Reply Handling</h2>
-                    <p>Dedicated IP warmup protocol, automated follow-ups, and AI-powered reply classification. Zero-drop pipeline delivery with WCEI-optimized credit efficiency.</p>
+                <!-- Blueprint 3: Pillar 3 -->
+                <div class="blueprint-card">
+                    <div>
+                        <span class="bp-meta">Pillar 3 — Agentic Voice & Real-Time Flow</span>
+                        <h2>Sub-800ms Voice AI Pipeline Blueprint</h2>
+                        <p>Real-time voice AI qualification pipeline combining Voiceflow dialogue state machines with Bland.ai ultra-low-latency telephony API. Dynamic custom webhook routing, multi-turn context retention, and live transfer capabilities. MCP protocol layer for native agent-to-agent communication, eliminating custom REST middleware and 14-22% execution failure rates.</p>
+                        <div class="bp-tools">Tools: Voiceflow + Bland.ai + MCP Protocol</div>
+                        <div class="bp-metrics">
+                            <span class="bp-metric">Sub-800ms latency</span>
+                            <span class="bp-metric">Multi-turn context</span>
+                            <span class="bp-metric">Zero-glue MCP layer</span>
+                        </div>
+                    </div>
+                    <a href="/trends/mcp-protocol-enterprise-impact" class="bp-btn">Read Full Blueprint &rarr;</a>
                 </div>
-                <a href="/links/smartlead.html" class="bp-btn">Deploy Outbound Infrastructure &rarr;</a>
-            </div>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Open Source Orchestration</span>
-                    <h2>Self-Hosted Deterministic Pipeline Engine</h2>
-                    <p>400+ integrations, code-friendly, built for engineering teams that need PgBouncer-level concurrency control and zero vendor lock-in.</p>
+                <!-- Blueprint 4: Pillar 4 -->
+                <div class="blueprint-card">
+                    <div>
+                        <span class="bp-meta">Pillar 4 — Lifecycle Revenue CRM</span>
+                        <h2>Lifecycle Revenue CRM Blueprint</h2>
+                        <p>Closed-loop lead attribution and dynamic scoring engine syncing enriched outbound leads directly into ActiveCampaign nurture pools without state loss. Event-driven lifecycle automation, behavioral retention triggers, and revenue attribution from cold outreach to customer retention. Hybrid edge infrastructure with RLRP cold-start resilience and n8n self-hosted worker queues for heavy compute.</p>
+                        <div class="bp-tools">Tools: ActiveCampaign + n8n + Vercel Edge</div>
+                        <div class="bp-metrics">
+                            <span class="bp-metric">Closed-loop attribution</span>
+                            <span class="bp-metric">RLRP sub-50ms</span>
+                            <span class="bp-metric">Zero state loss</span>
+                        </div>
+                    </div>
+                    <a href="/trends/serverless-vs-vps-2026-cloud-cost-roi" class="bp-btn">Read Full Blueprint &rarr;</a>
                 </div>
-                <a href="/links/n8n.html" class="bp-btn">Deploy Self-Hosted Engine &rarr;</a>
-            </div>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Conversational AI</span>
-                    <h2>Voice & Chat Agent Orchestration Platform</h2>
-                    <p>Design, test, and launch production-grade voice and chat agents at scale. Deterministic LLM orchestration with native webhook payload transfer.</p>
-                </div>
-                <a href="/links/voiceflow.html" class="bp-btn">Deploy Agent Platform &rarr;</a>
             </div>
+        </section>
+    </main>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">Phone AI</span>
-                    <h2>Latency-Controlled AI Voice Calling Engine</h2>
-                    <p>Natural language understanding, live transcription, and CRM integration. RLRP-optimized webhook architecture for real-time phone qualification.</p>
-                </div>
-                <a href="/links/bland.html" class="bp-btn">Deploy Voice Engine &rarr;</a>
-            </div>
+    <subscribe-box></subscribe-box>
 
-            <div class="blueprint-card">
-                <div>
-                    <span class="bp-meta">CRM & Lifecycle</span>
-                    <h2>Closed-Loop Customer Experience Automation</h2>
-                    <p>Email marketing, CRM, and sales automation with advanced segmentation. Custom webhook lead scoring for behavior-triggered workflows.</p>
-                </div>
-                <a href="/links/activecampaign.html" class="bp-btn">Deploy CRM Engine &rarr;</a>
-            </div>
+    <footer>
+        <div class="footer-links-wrap">
+            <a href="/about" class="footer-link-item">About Alex</a>
+            <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
+            <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
+            <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
         </div>
-    </section>
-</main>
 
-<subscribe-box></subscribe-box>
+        <!-- FTC affiliate glass-box transparency disclosure -->
+        <div style="max-width: 800px; margin: 1.5rem auto 0; font-size: 0.75rem; opacity: 0.5; text-align: center; line-height: 1.4;">
+            Engineering Transparency: Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool]</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you.
+        </div>
 
-<footer>
-    <div class="footer-links-wrap">
-        <a href="/about" class="footer-link-item">About Us</a>
-        <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
-        <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
-        <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
-    </div>
-    <div class="footer-copyright">
-        <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved.</p>
-    </div>
-</footer>
+        <div class="footer-copyright">
+            <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved. Principal Architect: Alex.</p>
+        </div>
+    </footer>
 
-<script src="/js/subscribe-component.js"></script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-BV4E7FGY3P');
-</script>
+    <script src="/js/subscribe-component.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BV4E7FGY3P');
+    </script>
 </body>
 </html>
