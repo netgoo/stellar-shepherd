@@ -2,6 +2,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { kvStore } from '../../../lib/kvServer';
+import { generateUnsubscribeToken } from '../../../utils/unsubscribeToken';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -9,10 +10,15 @@ export const POST: APIRoute = async ({ request }) => {
     if (!email) {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
+
     const cleanEmail = email.trim().toLowerCase();
+    const unsubscribeToken = generateUnsubscribeToken(cleanEmail);
+    const unsubscribeUrl = `https://wenboom.com/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}&token=${unsubscribeToken}`;
+
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
     if (apiKey) {
       const resend = new Resend(apiKey.trim());
+
       try {
         const response = await resend.audiences.list();
         const audienceList = Array.isArray(response.data)
@@ -34,26 +40,41 @@ export const POST: APIRoute = async ({ request }) => {
       } catch (contactError) {
         console.error('Contact creation failed:', contactError);
       }
+
       await resend.emails.send({
         from: 'Alex @ Wenboom <alex@wenboom.com>',
         to: [cleanEmail],
-        subject: 'The 1\u2011person architecture replacing your 5\u2011person team',
+        subject: 'Welcome to Wenboom: 7 tools, 4 pillars, zero glue',
         html: `
-          <div style="font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;">
+          <div style="font-family: sans-serif; line-height: 1.65; color: #1a1a1a; max-width: 600px; margin: 0 auto; padding: 24px;">
             <p>Hey,</p>
-            <p>Welcome to Wenboom (hosted at <a href="https://wenboom.com" style="color: #0066cc;">wenboom.com</a>). If you are reading this, you are likely exhausted from bleeding cash on bloated SaaS subscriptions, brittle custom code, and redundant human overhead.</p>
-            <p>Most SMB founders try to fix operational friction by throwing more headcount or expensive enterprise software at it. That is simply a tax on bad architecture.</p>
-            <blockquote style="border-left: 3px solid #ccc; margin: 20px 0; padding-left: 15px; color: #555; font-style: italic;">
-              "The goal isn't to work harder. It's to build a protocol-level automated infrastructure where marginal cost approaches zero."
-            </blockquote>
-            <p>Over the coming weeks, I'm going to unpack the exact JSON payloads, orchestration blueprints, and hard ROI accounting models we use to help lean teams achieve asymmetric leverage.</p>
-            <p>To start building your foundation right now, explore our core command center at <a href="https://wenboom.com" style="color: #0066cc;">wenboom.com</a>&mdash;this is the exact protocol layer we rely on to cut operational overhead by 80%.</p>
-            <p><strong>Hit reply and tell me:</strong> What is the single most expensive manual workflow draining your margin? (I personally read and reply to every single message.)</p>
-            <p>To your leverage,<br/>
-            <strong>Alex</strong>, Principal AI Infrastructure Architect | Wenboom.com</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0 15px 0;" />
-            <p style="font-size: 0.85rem; color: #777;">
-              You are receiving this email because you subscribed at wenboom.com. Reply directly to this email if you'd like to unsubscribe or reach out to us!
+
+            <p>Welcome to <strong>Wenboom</strong> — a production-grade AI infrastructure hub for lean B2B teams. If you are reading this, you are likely tired of brittle middleware setups, unmonitored webhooks, and SaaS seat fees that scale with your execution volume.</p>
+
+            <p>Wenboom is not a news outlet or a generic tutorial farm. It is an engineering repository built around a strict <strong>4-pillar architecture</strong>:</p>
+
+            <ul style="margin: 12px 0; padding-left: 20px;">
+              <li><strong>Pillar 01 — Data Waterfall &amp; Outbound:</strong> Clay + Smartlead. Multi-provider enrichment with zero-drop deliverability.</li>
+              <li><strong>Pillar 02 — Orchestration &amp; Cost Control:</strong> Make + n8n. Visual DAG agility with self-hosted determinism.</li>
+              <li><strong>Pillar 03 — Agentic Voice &amp; Real-Time Flow:</strong> Voiceflow + Bland.ai. Sub-800ms voice AI pipeline orchestration.</li>
+              <li><strong>Pillar 04 — Lifecycle Revenue CRM:</strong> ActiveCampaign. Closed-loop attribution from cold outreach to retention.</li>
+            </ul>
+
+            <p>Every blueprint published here is stress-tested in live deployment before release. No paid sponsorships, no paid reviews — editorial and technical independence is non-negotiable.</p>
+
+            <p>To start exploring, visit the <a href="https://wenboom.com/trends" style="color: #0066cc; text-decoration: underline;">Blueprint &amp; Failure Protocol library</a> or the <a href="https://wenboom.com/tools" style="color: #0066cc; text-decoration: underline;">7-core stack breakdown</a>.</p>
+
+            <p><strong>Hit reply and tell me:</strong> What is the single most expensive or brittle workflow in your current stack? I personally read every reply.</p>
+
+            <p>To your leverage,<br />
+            <strong>Alex</strong><br />
+            Principal AI Infrastructure Architect | Wenboom.com</p>
+
+            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 28px 0 14px 0;" />
+
+            <p style="font-size: 0.8rem; color: #888; line-height: 1.5; margin: 0;">
+              You are receiving this because you subscribed at wenboom.com.<br />
+              <a href="${unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe</a> from Wenboom emails.
             </p>
           </div>
         `,
@@ -64,6 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
         sentDripIds: []
       });
     }
+
     return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
   } catch (error: any) {
     console.error('subscribe error', error);
