@@ -6,11 +6,10 @@ export const prerender = false;
 
 const normalizeEmail = (e: string) => e.trim().toLowerCase();
 
-// 幂等退订：已退订/从未订阅的邮箱同样静默成功（防邮箱枚举）
 async function markUnsubscribed(email: string): Promise<void> {
   const key = `sub:${email}`;
   const subscriber = await kv.get<Record<string, any>>(key);
-  if (subscriber && subscriber.status !== 'unsubscribed') {
+  if (subscriber) {
     subscriber.status = 'unsubscribed';
     subscriber.unsubscribedAt = Date.now();
     await kv.set(key, subscriber);
@@ -39,7 +38,6 @@ export const GET: APIRoute = async ({ request, redirect }) => {
   }
 };
 
-// RFC 8058 One-Click：Gmail/Yahoo 的 POST 请求，参数位于 List-Unsubscribe 头指向的 URL 中
 export const POST: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const email = url.searchParams.get('email') ?? '';
