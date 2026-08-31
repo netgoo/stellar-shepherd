@@ -3,16 +3,9 @@ class SubscribeBox extends HTMLElement {
     this.innerHTML = `
       <section class="lead-magnet-box subscribe-component">
         <div class="subscribe-content">
-          <span class="meta-tag">ENGINEERED BY ALEX — PRINCIPAL AI INFRASTRUCTURE ARCHITECT</span>
-          <h2>Get the Blueprints That Kill 429s &amp; Cut SaaS Tax by 83%</h2>
-          <p class="subscribe-lede">Tired of rate limits burning your domain, 504 timeouts stalling your pipelines, and per-seat SaaS fees eating your margins? Every week, Alex publishes one production-grade blueprint and one failure protocol—battle-tested in live deployment, with raw JSON payloads and n8n workflow exports you can import today.</p>
-          
-          <ul class="subscribe-benefits">
-            <li>Raw JSON payloads &amp; n8n workflow export files</li>
-            <li>429/504 rate-limit backoff &amp; recovery protocols</li>
-            <li>7-core stack cost benchmarks (Make vs n8n vs Zapier)</li>
-            <li>MCP bridge schemas &amp; Zero-Glue architecture patterns</li>
-          </ul>
+          <span class="meta-tag">EXCLUSIVELY FOR SMBS & AI ARCHITECTS</span>
+          <h2>Get Production-Ready AI Automation Insights</h2>
+          <p>Join 2,000+ business leaders receiving high-ROI automation breakdowns, tool stack reviews, and agentic workflows. Zero spam.</p>
           
           <form id="global-subscribe-form" class="subscribe-form">
             <input 
@@ -21,9 +14,11 @@ class SubscribeBox extends HTMLElement {
               placeholder="Enter your business email..." 
               required 
             />
-            <button type="submit" id="sub-submit-btn" class="sub-cta-btn">Get Weekly Blueprints &rarr;</button>
+            <button type="submit" id="sub-submit-btn" class="sub-cta-btn">Get Free Blueprints &rarr;</button>
           </form>
-          <p class="subscribe-fineprint">No fluff. No spam. Unsubscribe anytime.</p>
+          <p class="subscribe-privacy">
+            By subscribing, you agree to our <a href="https://wenboom.com/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and consent to receive emails from Wenboom. Unsubscribe anytime.
+          </p>
           <p id="sub-status-msg" class="sub-status hidden"></p>
         </div>
       </section>
@@ -46,41 +41,16 @@ class SubscribeBox extends HTMLElement {
           text-transform: uppercase;
         }
         .subscribe-content h2 {
-          margin: 0.8rem 0 0.75rem 0;
-          font-size: 1.55rem;
+          margin: 0.8rem 0 0.5rem 0;
+          font-size: 1.6rem;
           color: #ffffff;
           font-weight: 700;
-          line-height: 1.35;
         }
-        .subscribe-content .subscribe-lede {
+        .subscribe-content p {
           color: #9CA3AF;
-          font-size: 0.92rem;
-          margin-bottom: 1.25rem;
-          line-height: 1.65;
-          max-width: 640px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .subscribe-benefits {
-          list-style: none;
-          padding: 0;
-          margin: 0 auto 1.5rem auto;
-          text-align: left;
-          max-width: 480px;
-        }
-        .subscribe-benefits li {
-          color: #D1D5DB;
-          font-size: 0.88rem;
-          padding: 0.3rem 0 0.3rem 1.5rem;
-          position: relative;
-          line-height: 1.4;
-        }
-        .subscribe-benefits li::before {
-          content: "\\2713";
-          position: absolute;
-          left: 0;
-          color: #F3C653;
-          font-weight: 700;
+          font-size: 0.95rem;
+          margin-bottom: 1.5rem;
+          line-height: 1.6;
         }
         .subscribe-form {
           display: flex;
@@ -103,6 +73,7 @@ class SubscribeBox extends HTMLElement {
         .subscribe-form input:focus {
           border-color: #F3C653;
         }
+        
         .subscribe-form .sub-cta-btn {
           background-color: #F3C653 !important;
           color: #000000 !important;
@@ -124,11 +95,19 @@ class SubscribeBox extends HTMLElement {
           opacity: 0.6;
           cursor: not-allowed;
         }
-        .subscribe-fineprint {
-          color: #6B7280;
-          font-size: 0.8rem;
-          margin-top: 0.75rem;
-          margin-bottom: 0;
+        .subscribe-privacy {
+          font-size: 0.78rem !important;
+          color: #6B7280 !important;
+          margin-top: 0.75rem !important;
+          margin-bottom: 0 !important;
+          line-height: 1.5 !important;
+        }
+        .subscribe-privacy a {
+          color: #9CA3AF !important;
+          text-decoration: underline !important;
+        }
+        .subscribe-privacy a:hover {
+          color: #F3C653 !important;
         }
         .sub-status {
           margin-top: 1rem;
@@ -140,9 +119,6 @@ class SubscribeBox extends HTMLElement {
         @media (max-width: 640px) {
           .subscribe-form {
             flex-direction: column;
-          }
-          .subscribe-content h2 {
-            font-size: 1.3rem;
           }
         }
       </style>
@@ -159,6 +135,7 @@ class SubscribeBox extends HTMLElement {
         submitBtn.innerText = 'Subscribing...';
         statusMsg.className = 'sub-status hidden';
         try {
+         
           const res = await fetch('/api/subscribe/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -166,19 +143,19 @@ class SubscribeBox extends HTMLElement {
           });
           const data = await res.json();
           if (res.ok && data.status === 'success') {
-            statusMsg.innerText = "You're in. Check your inbox for the first blueprint.";
+            statusMsg.innerText = "🎉 You're in! Email sent, please check your inbox or spam folder.";
             statusMsg.className = 'sub-status success';
             emailInput.value = '';
           } else {
-            statusMsg.innerText = 'Subscription failed. Please try again later.';
+            statusMsg.innerText = '❌ Subscription failed. Please try again later.';
             statusMsg.className = 'sub-status error';
           }
         } catch (err) {
-          statusMsg.innerText = 'Network error. Please check your connection.';
+          statusMsg.innerText = '❌ Network error. Please check your connection.';
           statusMsg.className = 'sub-status error';
         } finally {
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Get Weekly Blueprints →';
+          submitBtn.innerText = 'Get Free Blueprints →';
         }
       });
     }
