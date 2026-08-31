@@ -1,10 +1,42 @@
 import type { APIRoute } from 'astro';
 import { kv } from '@vercel/kv';
+import { Resend } from 'resend';
 import { verifyUnsubscribeToken } from '../../utils/unsubscribeToken';
 
 export const prerender = false;
 
 const normalizeEmail = (e: string) => e.trim().toLowerCase();
+
+async function syncResendUnsubscribe(email: string): Promise<void> {
+  try {
+    const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+    if (!apiKey) return;
+    const resend = new Resend(apiKey.trim());
+
+    const audiences = await resend.audiences.list();
+    const audienceList = Array.isArray(audiences.data)
+      ? audiences.data
+      : (audiences.data as any)?.data || [];
+    const audienceId = audienceList[0]?.id;
+    if (!audienceId) return;
+
+    const contacts = await resend.contacts.list({ audienceId });
+    const contactList = Array.isArray(contacts.data)
+      ? contacts.data
+      : (contacts.data as any)?.data || [];
+    const contact = contactList.find((c: any) => c.email === email);
+    if (!contact) return;
+
+    await resend.contacts.update({
+      id: contact.id,
+      audienceId,
+      unsubscribed: true
+    });
+    console.log('[unsubscribe] Resend contact synced:', email);
+  } catch (err) {
+    console.error('[unsubscribe] Resend sync failed (non-blocking):', err);
+  }
+}
 
 async function markUnsubscribed(email: string): Promise<void> {
   const key = `sub:${email}`;
@@ -14,6 +46,7 @@ async function markUnsubscribed(email: string): Promise<void> {
     subscriber.unsubscribedAt = Date.now();
     await kv.set(key, subscriber);
   }
+  await syncResendUnsubscribe(email);
 }
 
 export const GET: APIRoute = async ({ request, redirect }) => {
