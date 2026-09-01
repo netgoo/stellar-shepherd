@@ -166,6 +166,21 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 1024px) {
+            .pillar-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .pillar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     <script type="application/ld+json">
     {
@@ -244,7 +259,7 @@
         <section class="matrix-section">
             <h2 class="section-title">Production Infrastructure Pillars</h2>
             <p class="section-subtitle">Rigid, battle-tested architectural pillars engineered to eliminate middleware fragility and rate-limit drops.</p>
-            <div class="grid">
+            <div class="pillar-grid">
                 <div class="card">
                     <div class="card-icon">🌊</div>
                     <h3>01. Data Waterfall &amp; Outbound</h3>
