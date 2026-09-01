@@ -1,0 +1,49 @@
+name: Inject Header & Footer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/partials/header.html'
+      - 'src/partials/footer.html'
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Inject header & footer templates
+        run: |
+          python3 -c "
+          import glob
+
+          with open('src/partials/header.html', 'r') as f:
+              header = f.read()
+          with open('src/partials/footer.html', 'r') as f:
+              footer = f.read()
+
+          for filepath in glob.glob('src/pages/**/*.html', recursive=True):
+              with open(filepath, 'r') as f:
+                  content = f.read()
+              if '<!-- HEADER -->' in content:
+                  content = content.replace('<!-- HEADER -->', header)
+              if '<!-- FOOTER -->' in content:
+                  content = content.replace('<!-- FOOTER -->', footer)
+              with open(filepath, 'w') as f:
+                  f.write(content)
+          print('Injection complete.')
+          "
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --staged --quiet; then
+            echo 'No changes to commit.'
+          else
+            git commit -m 'chore: inject updated header & footer templates'
+            git push
+          fi
