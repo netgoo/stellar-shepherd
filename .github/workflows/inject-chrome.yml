@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/partials/header.html'
       - 'src/partials/footer.html'
+      - 'src/pages/**/*.html'
 
 jobs:
   inject:
