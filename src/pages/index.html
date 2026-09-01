@@ -11,9 +11,31 @@
     <style>
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin: 2rem 0;
+        }
+        .metrics-grid .metric-card:last-child {
+            grid-column: 1 / -1;
+            max-width: 25%;
+            margin: 0 auto;
+        }
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .metrics-grid .metric-card:last-child {
+                grid-column: 1 / -1;
+                max-width: 50%;
+            }
+        }
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .metrics-grid .metric-card:last-child {
+                max-width: 100%;
+            }
         }
         .metric-card {
             background-color: var(--card-bg);
