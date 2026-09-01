@@ -140,6 +140,22 @@
         .synergy-section {
             margin-top: 3rem;
         }
+        .synergy-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        @media (max-width: 1024px) {
+            .synergy-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .synergy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
         .author-section {
             text-align: center;
             margin-top: 3rem;
@@ -199,7 +215,7 @@
         <section class="matrix-section synergy-section" style="background: rgba(255,255,255,0.01);">
             <h2 class="section-title">How the 7 Tools Work Together</h2>
             <p class="section-subtitle">Each tool occupies a strict layer in the 4-pillar architecture. No overlaps, no vendor lock-in, zero-glue boundaries.</p>
-            <div class="grid">
+            <div class="synergy-grid">
                 <div class="card">
                     <div class="card-icon">🌊</div>
                     <h3>Pillar 01 — Data Waterfall</h3>
