@@ -1,0 +1,22 @@
+<header>
+    <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
+    <nav>
+        <a href="/trends">Future Trends</a>
+        <a href="/tools">Top AI Stack</a>
+        <a href="/blueprints">Master Blueprints</a>
+        <a href="/about">About Alex</a>
+    </nav>
+</header>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    if (path === '') path = '/';
+    var links = document.querySelectorAll('header nav a');
+    links.forEach(function(link) {
+        var href = link.getAttribute('href').replace(/\/$/, '');
+        if (href === path || (path !== '/' && path.indexOf(href) === 0)) {
+            link.style.color = 'var(--accent-gold)';
+        }
+    });
+});
+</script>
