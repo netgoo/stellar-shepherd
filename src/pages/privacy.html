@@ -20,7 +20,30 @@
     </style>
 </head>
 <body>
-<!-- HEADER -->
+<header>
+    <div class="logo"><a href="/">WEN<span>BOOM</span></a></div>
+    <nav>
+        <a href="/trends">Future Trends</a>
+        <a href="/tools">Top AI Stack</a>
+        <a href="/blueprints">Master Blueprints</a>
+        <a href="/about">About Alex</a>
+    </nav>
+</header>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    if (path === '') path = '/';
+    var links = document.querySelectorAll('header nav a');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path || (path !== '/' && path.indexOf(href) === 0)) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
+</script> 
+ 
+
     <main class="article-container">
         <span class="meta-tag">Legal & Transparency</span>
         <h1>Privacy Operational <span style="color:var(--accent-gold);">Protocols</span></h1>
@@ -91,6 +114,41 @@
             <p>If you have questions about this privacy policy, our data practices, or wish to exercise your data rights, contact us through the channels listed on our <a href="/about" style="color: var(--accent-gold);">About Alex</a> page.</p>
         </div>
     </main>
-<!-- FOOTER -->
+<subscribe-box></subscribe-box>
+<footer>
+    <div class="footer-links-wrap">
+        <a href="/about" class="footer-link-item">About Alex</a>
+        <a href="/privacy-policy" class="footer-link-item">Privacy Policy</a>
+        <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
+        <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
+    </div>
+    <div style="max-width: 800px; margin: 1.5rem auto 0; font-size: 0.75rem; opacity: 0.5; text-align: center; line-height: 1.4;">
+        Engineering Transparency: Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool]</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you.
+    </div>
+    <div class="footer-copyright">
+        <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved. Principal Architect: Alex.</p>
+    </div>
+</footer>
+<script src="/js/subscribe-component.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BV4E7FGY3P');
+</script>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    var links = document.querySelectorAll('.footer-link-item');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
+</script>
+
 </body>
 </html>
