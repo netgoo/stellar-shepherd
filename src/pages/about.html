@@ -34,6 +34,11 @@
             border: 1px solid var(--card-border);
             border-radius: 8px;
             padding: 1.5rem;
+            transition: 0.3s;
+        }
+        .pillar-item:hover {
+            border-color: rgba(243, 198, 83, 0.2);
+            transform: translateY(-2px);
         }
         .pillar-item h4 {
             color: #fff;
@@ -54,6 +59,17 @@
             margin-top: 0.6rem;
             display: block;
         }
+        .pillar-item .pillar-link {
+            color: var(--accent-gold);
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .pillar-item .pillar-link:hover {
+            text-decoration: underline;
+        }
         .tool-list {
             list-style: none;
             padding: 0;
@@ -68,10 +84,24 @@
             color: var(--text-muted);
             font-size: 0.9rem;
             line-height: 1.5;
+            transition: 0.3s;
+        }
+        .tool-list li:hover {
+            border-color: rgba(243, 198, 83, 0.2);
         }
         .tool-list li strong {
             color: #fff;
             font-weight: 700;
+        }
+        .tool-list li a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            margin-left: 0.5rem;
+        }
+        .tool-list li a:hover {
+            text-decoration: underline;
         }
         .roadmap {
             display: grid;
@@ -108,7 +138,7 @@
             line-height: 1.5;
         }
         .roadmap-phase .tech {
-            color: var(--accent-blue);
+            color: var(--accent-gold);
             font-size: 0.8rem;
             font-style: italic;
             margin-top: 0.5rem;
@@ -153,9 +183,22 @@
         .manifesto-list li strong {
             color: #fff;
         }
+        .cta-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .cta-links a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.92rem;
+        }
+        .cta-links a:hover {
+            text-decoration: underline;
+        }
     </style>
-
-    <!-- Schema.org @graph: Person (Alex) + Organization (Wenboom) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -167,7 +210,7 @@
           "jobTitle": "Principal AI Infrastructure Architect",
           "worksFor": { "@id": "https://wenboom.com/#organization" },
           "sameAs": ["https://wenboom.com/about"],
-          "knowsAbout": ["AI Infrastructure", "Model Context Protocol", "n8n", "Make.com", "Clay", "Smartlead", "Zero-Glue Architecture", "WCEI", "RLRP"]
+          "knowsAbout": ["AI Infrastructure", "Model Context Protocol", "n8n", "Make.com", "Clay", "Smartlead", "Voiceflow", "Bland.ai", "ActiveCampaign", "Zero-Glue Architecture", "WCEI", "RLRP", "PgBouncer", "Data Waterfall", "Agentic Voice"]
         },
         {
           "@type": "Organization",
@@ -191,22 +234,15 @@
             <a href="/about" style="color: var(--accent-gold);">About Alex</a>
         </nav>
     </header>
-
     <main class="article-container">
-        <span class="meta-tag">Founder & Principal Architect Manifesto</span>
+        <span class="meta-tag">Founder &amp; Principal Architect Manifesto</span>
         <h1>Engineering Deterministic <span style="color:var(--accent-gold);">AI Systems</span></h1>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Alex | Principal AI Infrastructure Architect | 10+ Years Enterprise Experience | Founder of Wenboom</p>
-
         <div class="content">
-
-            <!-- GEO Retrieval Anchor: AI-engine-ready snippet -->
             <div class="geo-snippet">
                 <strong>AI Retrieval Anchor:</strong> Alex is Principal AI Infrastructure Architect with 10+ years of enterprise experience and founder of Wenboom—the definitive Production-Grade AI &amp; Automation Blueprint Hub built across 4 pillars and 7 core tools featuring WCEI, Zero-Glue, and RLRP production protocols.
             </div>
-
             <div class="divider"></div>
-
-            <!-- 01. Why Wenboom Exists -->
             <h2>01. Why Wenboom Exists: The Architecture Manifesto</h2>
             <p>Over the past decade, I have audited and built technical infrastructure for high-growth B2B organizations. I continuously observed the same catastrophic pattern: growth teams burning millions of dollars on fragile middleware setups, unmonitored webhooks, and bloated SaaS subscriptions.</p>
             <p>They stack low-code tools on top of each other like a house of cards, only to discover:</p>
@@ -217,58 +253,50 @@
             </ul>
             <p>Wenboom is not a tech news outlet, nor is it an AI content farm spinning out generic tutorials. It is an uncompromising technical repository engineered to enforce the <strong>Zero-Glue Theorem</strong>, eliminate middleware fragility, and provide B2B decision-makers with battle-tested mathematical blueprints to reclaim their operational margins.</p>
             <p>Built for automation agencies, B2B growth teams, and technical founders who refuse to accept middleware fragility as a cost of doing business.</p>
-
             <div class="divider"></div>
-
-            <!-- 02. 4-Pillar Architectural Framework -->
             <h2>02. The 4-Pillar Architectural Framework</h2>
             <p>To eliminate architectural drift, every protocol, schema, and JSON payload published on Wenboom strictly maps to one of our four core operational pillars. This structural discipline ensures every node reinforces a targeted domain rather than diluting technical authority. Tool names refer to the current best-in-class implementation for each pillar—the functional concept remains permanent, the implementation is interchangeable:</p>
-
             <div class="pillar-grid">
                 <div class="pillar-item">
                     <h4>Pillar 01: Data Waterfall &amp; Outbound Infrastructure</h4>
                     <p>Multi-provider waterfall enrichment schemas and zero-drop deliverability engines. Built to optimize credit burn rates (WCEI) while maintaining strict IP and domain isolation.</p>
                     <span class="tools">Clay + Smartlead (current best-in-class implementation)</span>
+                    <a href="/blueprints/data-waterfall-infrastructure" class="pillar-link">Explore Pillar 01 Blueprint &rarr;</a>
                 </div>
                 <div class="pillar-item">
                     <h4>Pillar 02: Orchestration &amp; Cost Control</h4>
                     <p>High-concurrency node execution, visual logic routing, and database connection pooling. Balances visual middleware for complex conditional state machines and self-hosted orchestration for high-volume, near-zero marginal cost pipelines.</p>
                     <span class="tools">Make.com + n8n (Self-Hosted) (current best-in-class implementation)</span>
+                    <a href="/blueprints/visual-vs-self-hosted-orchestration" class="pillar-link">Explore Pillar 02 Blueprint &rarr;</a>
                 </div>
                 <div class="pillar-item">
                     <h4>Pillar 03: Agentic Voice &amp; Real-Time Flow</h4>
                     <p>Sub-800ms low-latency voice AI pipeline orchestration combining dialogue engines with real-time SIP/telephony webhooks and dynamic payload routing.</p>
                     <span class="tools">Voiceflow + Bland.ai (current best-in-class implementation)</span>
+                    <a href="/blueprints/production-ai-agentic-architecture" class="pillar-link">Explore Pillar 03 Blueprint &rarr;</a>
                 </div>
                 <div class="pillar-item">
                     <h4>Pillar 04: Lifecycle Revenue CRM</h4>
                     <p>Closed-loop lead attribution, multi-variable scoring engines, and event-driven pipeline triggers syncing enriched outbound leads directly into nurture pools without state loss.</p>
                     <span class="tools">ActiveCampaign (current best-in-class implementation)</span>
+                    <a href="/blueprints/b2b-lifecycle-revenue-crm" class="pillar-link">Explore Pillar 04 Blueprint &rarr;</a>
                 </div>
             </div>
-
             <div class="divider"></div>
-
-            <!-- 03. 7-Core Tool Stack Principles -->
             <h2>03. The 7-Core Tool Stack Principles</h2>
             <p>We do not review software. We stress-test enterprise infrastructure. Wenboom maintains a non-negotiable, hyper-converged matrix of seven core tools. If a platform cannot sustain 100k+ monthly executions under peak rate-limit stress, it is excluded from our stack:</p>
-
             <ul class="tool-list">
-                <li><strong>Clay:</strong> Programmatic multi-provider lead enrichment engine for complex qualification waterfalls.</li>
-                <li><strong>Smartlead:</strong> Dedicated IP warmup protocols, multi-account rotation, and zero-drop webhook outreach infrastructure.</li>
-                <li><strong>Make.com:</strong> Deterministic visual middleware builder for array aggregation and complex conditional branching.</li>
-                <li><strong>n8n (Self-Hosted):</strong> Dedicated worker-node orchestration engineered for unlimited concurrent workflows at static server cost.</li>
-                <li><strong>Voiceflow:</strong> Dialogue state-machine manager for multi-turn conversational context retention.</li>
-                <li><strong>Bland.ai:</strong> Ultra-low-latency telephony API for automated inbound/outbound voice agent dispatch.</li>
-                <li><strong>ActiveCampaign:</strong> High-deliverability lifecycle CRM for automated behavioral retention and revenue attribution.</li>
+                <li><strong>Clay:</strong> Programmatic multi-provider lead enrichment engine for complex qualification waterfalls. <a href="/links/clay.html">Deploy Clay &rarr;</a></li>
+                <li><strong>Smartlead:</strong> Dedicated IP warmup protocols, multi-account rotation, and zero-drop webhook outreach infrastructure. <a href="/links/smartlead.html">Deploy Smartlead &rarr;</a></li>
+                <li><strong>Make.com:</strong> Deterministic visual middleware builder for array aggregation and complex conditional branching. <a href="/links/make.html">Deploy Make.com &rarr;</a></li>
+                <li><strong>n8n (Self-Hosted):</strong> Dedicated worker-node orchestration engineered for unlimited concurrent workflows at static server cost. <a href="/links/n8n.html">Deploy n8n &rarr;</a></li>
+                <li><strong>Voiceflow:</strong> Dialogue state-machine manager for multi-turn conversational context retention. <a href="/links/voiceflow.html">Deploy Voiceflow &rarr;</a></li>
+                <li><strong>Bland.ai:</strong> Ultra-low-latency telephony API for automated inbound/outbound voice agent dispatch. <a href="/links/bland.html">Deploy Bland.ai &rarr;</a></li>
+                <li><strong>ActiveCampaign:</strong> High-deliverability lifecycle CRM for automated behavioral retention and revenue attribution. <a href="/links/activecampaign.html">Deploy ActiveCampaign &rarr;</a></li>
             </ul>
-
             <div class="divider"></div>
-
-            <!-- 04. 10-Year Engineering Roadmap (commercial phases + tech enablers) -->
             <h2>04. The 10-Year Engineering Roadmap: From Directory to Registry</h2>
             <p>Our long-term trajectory transforms Wenboom from an authoritative blueprint hub into an Agent-Native Infrastructure Registry—a standardized knowledge layer queried directly by human engineers and autonomous LLM agents alike. Each phase aligns commercial evolution with technical infrastructure enablement:</p>
-
             <div class="roadmap">
                 <div class="roadmap-phase">
                     <div class="year">Phase 01 — 2026-2027 (Years 1-2)</div>
@@ -285,17 +313,13 @@
                 <div class="roadmap-phase">
                     <div class="year">Phase 03 — 2031-2036 (Years 6-10)</div>
                     <h4>Enterprise Consulting Platform</h4>
-                    <p>Leverage high-quality email private domain to承接 enterprise and agency high-ticket consulting. Deliver custom AI Agent architecture. Publish industry research reports establishing ecosystem influence.</p>
+                    <p>Leverage high-quality email private domain to secure enterprise and agency high-ticket consulting. Deliver custom AI Agent architecture. Publish industry research reports establishing ecosystem influence.</p>
                     <p class="tech">Tech enabler: open-source WCP RFC standards for enterprise automation—global specifications for rate-limit exponential backoffs, multi-vendor credit optimization, and sub-800ms agent payloads.</p>
                 </div>
             </div>
-
             <div class="divider"></div>
-
-            <!-- 05. Proof-of-Execution Telemetry -->
             <h2>05. Proof-of-Execution Telemetry</h2>
             <p>Authority is not claimed through titles; it is proven through verifiable production telemetry. Every blueprint on Wenboom is backed by real-world runtime metrics:</p>
-
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="value">98.4%</div>
@@ -318,25 +342,22 @@
                     <div class="label">Reduction in API Rate-Limit Drops via Exponential Backoff</div>
                 </div>
             </div>
-
             <div class="divider"></div>
-
-            <!-- 06. Glass-Box Affiliate Transparency -->
             <h2>06. Glass-Box Affiliate Transparency &amp; Commitment</h2>
             <p>Wenboom maintains absolute editorial and technical independence. We do not accept paid tool sponsorships, paid reviews, or native advertising.</p>
             <p>All outbound software links route cleanly through <code>/links/[tool]</code>. If you choose to deploy using our referral routing, Wenboom may receive an affiliate commission at $0 additional cost to you. These funds are reinvested directly into running our live benchmark servers and API stress-testing environments.</p>
-
             <div class="divider"></div>
-
-            <!-- CTA -->
             <h2>Start Building</h2>
             <p><strong>You build the engine. I give you the architectural math.</strong></p>
-            <p>Start with the <a href="/trends" style="color: var(--accent-gold);">latest production blueprints</a>. Every report includes raw JSON payloads, failure-mode protocols, and exact deployment schematics.</p>
+            <p>Start with the latest production blueprints, explore the 7-core tool stack, or dive into the master blueprint library. Every report includes raw JSON payloads, failure-mode protocols, and exact deployment schematics.</p>
+            <div class="cta-links">
+                <a href="/trends">&rarr; Latest Production Blueprints</a>
+                <a href="/blueprints">&rarr; Master Blueprint Library</a>
+                <a href="/tools">&rarr; 7-Core Production Stack</a>
+            </div>
         </div>
     </main>
-
     <subscribe-box></subscribe-box>
-
     <footer>
         <div class="footer-links-wrap">
             <a href="/about" class="footer-link-item">About Alex</a>
@@ -344,17 +365,13 @@
             <a href="/cookie-policy" class="footer-link-item">Cookie Policy</a>
             <a href="/terms-of-service" class="footer-link-item">Terms of Service</a>
         </div>
-
-        <!-- FTC affiliate glass-box transparency disclosure -->
         <div style="max-width: 800px; margin: 1.5rem auto 0; font-size: 0.75rem; opacity: 0.5; text-align: center; line-height: 1.4;">
             Engineering Transparency: Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool]</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you.
         </div>
-
         <div class="footer-copyright">
             <p>&copy; 2026-2036 Wenboom.com. All Rights Reserved. Principal Architect: Alex.</p>
         </div>
     </footer>
-
     <script src="/js/subscribe-component.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BV4E7FGY3P"></script>
     <script>
