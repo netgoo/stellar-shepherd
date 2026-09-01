@@ -8,12 +8,15 @@ on:
       - 'src/partials/footer.html'
       - 'src/pages/**/*.html'
 
+permissions:
+  contents: write
+
 jobs:
   inject:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Inject header & footer templates
         run: |
