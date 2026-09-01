@@ -8,15 +8,15 @@
     </nav>
 </header>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
     var path = window.location.pathname.replace(/\/$/, '');
     if (path === '') path = '/';
     var links = document.querySelectorAll('header nav a');
-    links.forEach(function(link) {
-        var href = link.getAttribute('href').replace(/\/$/, '');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
         if (href === path || (path !== '/' && path.indexOf(href) === 0)) {
-            link.style.color = 'var(--accent-gold)';
+            links[i].style.color = 'var(--accent-gold)';
         }
-    });
-});
+    }
+})();
 </script>
