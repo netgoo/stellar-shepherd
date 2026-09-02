@@ -124,6 +124,31 @@ function getResend(): Resend {
   return new Resend(apiKey.trim());
 }
 
+// ------------------------------------------------------------
+// HTML rendering helpers (human-like email layout)
+// ------------------------------------------------------------
+function textToHtml(text: string): string {
+  let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color: #2563eb; text-decoration: underline;">$1</a>');
+  const paragraphs = html.split(/\n\n+/).map(p =>
+    `<p style="margin: 0 0 16px 0; line-height: 1.65;">${p.replace(/\n/g, '<br>')}</p>`
+  ).join('');
+  return paragraphs;
+}
+
+function hasAffiliateLink(text: string, links: { name: string; url: string }[]): boolean {
+  return links.some(link => text.includes(link.url));
+}
+
+function buildPsAffiliateLinks(links: { name: string; url: string }[]): string {
+  if (links.length === 0) return '';
+  const linkText = links.map(l => `[${l.name}](${l.url})`).join(' and ');
+  return `\n\nP.S. I've put together detailed benchmarks for ${linkText} on the site if you want to dig deeper.`;
+}
+
+// ------------------------------------------------------------
+// Main processor
+// ------------------------------------------------------------
 export async function processInboundEmail(payload: any): Promise<ProcessResult> {
   const data = extractEmailData(payload);
   const senderField = data.from || '';
@@ -178,6 +203,11 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
   }
 
   try {
+    // Simulate human reply delay (5-8 seconds)
+    const delayMs = 5000 + Math.floor(Math.random() * 3000);
+    console.log(`[inbound] Simulating human reply delay: ${delayMs}ms`);
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+
     const matchedLinks = selectAffiliateLinks(`${subject} ${bodyText}`);
     console.log(`[inbound] Matched affiliate links: ${matchedLinks.map(l => l.name).join(', ')}`);
 
@@ -189,9 +219,20 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
       replyContent = getFallbackReply(subject, bodyText);
     }
 
+    // P.S. fallback: add affiliate links if AI didn't include them
+    if (!hasAffiliateLink(replyContent, matchedLinks)) {
+      replyContent += buildPsAffiliateLinks(matchedLinks);
+      console.log('[inbound] Added P.S. affiliate links (AI did not include them)');
+    }
+
     const unsubscribeToken = generateUnsubscribeToken(senderEmail);
     const unsubscribeUrl = `https://wenboom.com/api/unsubscribe?email=${encodeURIComponent(senderEmail)}&token=${unsubscribeToken}`;
     const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
+
+    const htmlContent = `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; color: #1a1a1a; font-size: 15px;">
+  ${textToHtml(replyContent)}
+</div>`;
 
     await resend.emails.send({
       from: 'Alex @ Wenboom <alex@wenboom.com>',
@@ -202,7 +243,7 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
         'List-Unsubscribe': `<${unsubscribeUrl}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
-      text: replyContent,
+      html: htmlContent,
     });
 
     console.log(`[inbound] Auto-replied to: ${senderEmail}`);
