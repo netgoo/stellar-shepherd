@@ -1,0 +1,56 @@
+name: IndexNow URL Submission
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'public/**/*.html'
+      - 'public/sitemap.xml'
+      - 'src/pages/**/*.html'
+  workflow_dispatch:
+
+jobs:
+  submit-indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract URLs from Sitemap and Submit to IndexNow
+        run: |
+          python3 -c "
+          import xml.etree.ElementTree as ET
+          import json
+          import urllib.request
+
+          tree = ET.parse('public/sitemap.xml')
+          root = tree.getroot()
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          urls = [loc.text for loc in root.findall('.//sm:loc', ns)]
+
+          payload = json.dumps({
+              'host': 'wenboom.com',
+              'key': '8f81014168c14f96ba5e917d5267a57a',
+              'keyLocation': 'https://wenboom.com/8f81014168c14f96ba5e917d5267a57a.txt',
+              'urlList': urls
+          }).encode('utf-8')
+
+          req = urllib.request.Request(
+              'https://api.indexnow.org/indexnow',
+              data=payload,
+              headers={'Content-Type': 'application/json; charset=utf-8'},
+              method='POST'
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  if resp.status in (200, 202):
+                      print(f'IndexNow Success: {resp.status}')
+                      print(f'Submitted {len(urls)} URLs')
+                  else:
+                      print(f'IndexNow Unexpected Status: {resp.status}')
+          except urllib.error.HTTPError as e:
+              print(f'IndexNow Error: {e.code} {e.reason}')
+              print(e.read().decode())
+          except Exception as e:
+              print(f'IndexNow Request Failed: {e}')
+          "
