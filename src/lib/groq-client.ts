@@ -1,5 +1,5 @@
 // ============================================================
-// Groq API Client - Generate email replies with Llama 3.3
+// Groq API Client - Generate email replies with Llama 3.1
 // ============================================================
 import { AI_SYSTEM_PROMPT, MAX_EMAIL_BODY_LENGTH } from '../config/reply-config';
 
@@ -9,7 +9,7 @@ interface MatchedLink {
 }
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_MODEL = 'llama-3.1-8b-instant';
 
 function stripReplyHistory(text: string): string {
   const lines = text.split('\n');
