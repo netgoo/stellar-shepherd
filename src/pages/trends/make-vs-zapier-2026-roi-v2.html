@@ -220,7 +220,7 @@
       "author": { "@type": "Person", "name": "Alex", "jobTitle": "Principal AI Infrastructure Architect" },
       "publisher": { "@type": "Organization", "name": "Wenboom", "url": "https://wenboom.com" },
       "datePublished": "2026-09-01",
-      "dateModified": "2026-09-01",
+      "dateModified": "2026-09-02",
       "mainEntityOfPage": "https://wenboom.com/trends/make-vs-zapier-2026-roi-v2",
       "keywords": "Make vs Zapier 2026, 500k executions ROI, Zero-Glue architecture, n8n self-hosted deep dive, PgBouncer, Saga compensation, hybrid orchestration, 83.4% TCO reduction, production scale automation"
     }
@@ -236,6 +236,19 @@
         <a href="/about">About Alex</a>
     </nav>
 </header>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    if (path === '') path = '/';
+    var links = document.querySelectorAll('header nav a');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path || (path !== '/' && path.indexOf(href) === 0)) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
+</script>
 <main class="article-container">
     <span class="meta-tag">Production Scale ROI / Cluster B</span>
     <h1>Make vs Zapier 2026: Production ROI at 500k Executions, Zero-Glue Architecture and n8n Deep Dive</h1>
@@ -391,7 +404,6 @@
 <span class="comment">// PgBouncer Configuration: n8n Production Cluster</span>
 [databases]
 n8n = host=postgres-primary port=5432 dbname=n8n
-
 [pgbouncer]
 listen_port = 6432
 listen_addr = *
@@ -459,7 +471,7 @@ log_disconnections = 1
                 </tbody>
             </table>
         </div>
-        <p>Note: The $180/mo figure in the Verdict includes a 12.5% contingency buffer for unexpected scaling events. The base infrastructure cost is $160/mo. Even with the buffer, n8n self-hosted delivers 92.5% TCO reduction vs Zapier at 500k executions.</p>
+        <p>Note: The $180/mo figure in the Verdict includes a 12.5% contingency buffer for unexpected scaling events. The base infrastructure cost is $160/mo. Even with the buffer, n8n self-hosted delivers 92.5% TCO reduction vs Zapier at 500k executions. For the complete VPS vs serverless cost analysis, see the <a href="/trends/serverless-vs-vps-2026-cloud-cost-roi" style="color: var(--accent-gold);">Serverless vs VPS 2026 Cloud Cost ROI analysis</a>.</p>
         <h2>05. Production JSON Schema: n8n Worker Cluster Configuration</h2>
         <p>To deploy a production-grade n8n self-hosted worker cluster with deterministic error handling and PgBouncer concurrency control, the cluster must expose configuration through a strictly bounded JSON schema. Below is the production configuration for a 4-worker n8n cluster processing 500k executions/month:</p>
         <div class="code-block">
@@ -545,7 +557,8 @@ log_disconnections = 1
             <li><a href="/blueprints/visual-vs-self-hosted-orchestration">Pillar 02: Visual vs Self-Hosted Orchestration (Make + n8n, 83.4% TCO Reduction)</a></li>
             <li><a href="/trends/make-vs-zapier-2026-roi">Make vs Zapier 2026: Hard-Numbered TCO Comparison and Visual DAG Architecture Analysis (Basic Version)</a></li>
             <li><a href="/trends/mcp-protocol-enterprise-impact">The 10-Year Paradigm Shift: Model Context Protocol (MCP) and the Death of REST APIs</a></li>
-            <li><a href="/links/n8n.html">n8n — Self-Hosted High-Concurrency Orchestration Engine (Zero Vendor Lock-In)</a></li>
+            <li><a href="/trends/serverless-vs-vps-2026-cloud-cost-roi">Serverless vs VPS 2026: Cloud Cost ROI for Self-Hosted n8n Infrastructure</a></li>
+            <li><a href="/links/n8n.html">n8n - Self-Hosted High-Concurrency Orchestration Engine (Zero Vendor Lock-In)</a></li>
         </ul>
         <div class="engineering-transparency">
             <strong>Engineering Transparency:</strong> Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool].html</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you. Performance metrics (TCO figures, cost comparisons, execution volume pricing, infrastructure costs, failure rate reductions) are derived from internal benchmark testing, public pricing data, and production deployment experience under specific configurations. Actual results may vary based on your usage patterns, plan tiers, infrastructure choices, and feature selections. n8n self-hosted cost estimates include engineering overhead assumptions; actual costs depend on your team's DevOps capacity. See our <a href="/terms-of-service">Terms of Service</a> for full disclaimer.
@@ -574,6 +587,18 @@ log_disconnections = 1
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-BV4E7FGY3P');
+</script>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    var links = document.querySelectorAll('.footer-link-item');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
 </script>
 </body>
 </html>
