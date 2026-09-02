@@ -63,9 +63,11 @@ export const POST: APIRoute = async ({ request }) => {
             <strong>Alex</strong><br />
             Principal AI Infrastructure Architect | Wenboom.com</p>
             <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 28px 0 14px 0;" />
-            <p style="font-size: 0.8rem; color: #888; line-height: 1.5; margin: 0;">
+            <p style="font-size: 0.8rem; color: #888; line-height: 1.6; margin: 0;">
               You are receiving this because you subscribed at wenboom.com.<br />
-              <a href="${unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe</a> from Wenboom emails.
+              <a href="${unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe</a> from Wenboom emails.&nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="https://wenboom.com/privacy-policy" style="color: #888; text-decoration: underline;">Privacy Policy</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="https://wenboom.com/terms-of-service" style="color: #888; text-decoration: underline;">Terms of Service</a>
             </p>
           </div>
         `,
