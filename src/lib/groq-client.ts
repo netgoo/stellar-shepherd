@@ -1,5 +1,5 @@
 // ============================================================
-// Groq API Client - Generate email replies with Llama 3.1
+// Groq API Client - Generate email replies with Llama 3.3
 // ============================================================
 import { AI_SYSTEM_PROMPT, MAX_EMAIL_BODY_LENGTH } from '../config/reply-config';
 
@@ -9,7 +9,7 @@ interface MatchedLink {
 }
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'llama-3.1-70b-versatile';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
 function stripReplyHistory(text: string): string {
   const lines = text.split('\n');
@@ -39,7 +39,6 @@ export async function generateAIReply(
   matchedLinks: MatchedLink[]
 ): Promise<string> {
   const apiKey = import.meta.env.GROQ_API_KEY || process.env.GROQ_API_KEY;
-
   if (!apiKey) {
     throw new Error('[groq] GROQ_API_KEY is not configured');
   }
@@ -95,7 +94,6 @@ export async function generateAIReply(
     }
 
     return replyText.trim();
-
   } catch (error: any) {
     if (error.name === 'AbortError') {
       throw new Error('[groq] Request timed out after 30s');
@@ -107,15 +105,10 @@ export async function generateAIReply(
 
 export function getFallbackReply(userSubject: string, userBody: string): string {
   return `Hey,
-
 Thanks for reaching out and for your thoughtful message about "${userSubject}".
-
 I appreciate you taking the time to share this. Your perspective is valuable, and I am glad to hear from readers who are actually building and deploying these systems.
-
 I would love to dive deeper into this. Could you share a bit more about your current setup and what specific challenge you are trying to solve? That way I can give you a more targeted recommendation.
-
 In the meantime, you might find the blueprints at wenboom.com useful - each one includes raw JSON payloads and workflow exports you can import directly.
-
 To your leverage,
 Alex
 Principal AI Infrastructure Architect | Wenboom.com`;
