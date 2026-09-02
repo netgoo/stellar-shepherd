@@ -37,7 +37,6 @@ interface ProcessResult {
 // ------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------
-
 function extractEmail(fromField: string): string {
   const match = fromField.match(/<([^>]+)>/);
   return match ? match[1].trim().toLowerCase() : fromField.trim().toLowerCase();
@@ -100,7 +99,6 @@ function needsHumanIntervention(subject: string, body: string): boolean {
 
 function selectAffiliateLinks(content: string): { name: string; url: string }[] {
   const lowerContent = content.toLowerCase();
-
   const scoredLinks = AFFILIATE_LINKS.map(link => {
     let score = 0;
     link.keywords.forEach(kw => {
@@ -138,7 +136,6 @@ function getResend(): Resend {
 // ------------------------------------------------------------
 export async function processInboundEmail(payload: any): Promise<ProcessResult> {
   const data = extractEmailData(payload);
-
   const senderField = data.from || '';
   const senderEmail = extractEmail(senderField);
   const subject = data.subject || 'No Subject';
@@ -155,7 +152,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
   // 2. Deduplication
   const emailId = data.id || `${senderEmail}-${subject}-${bodyText.substring(0, 100)}`;
   const dedupKey = `inbound:${Buffer.from(emailId).toString('hex').substring(0, 64)}`;
-
   try {
     const alreadyProcessed = await kvStore.get(dedupKey);
     if (alreadyProcessed) {
@@ -172,7 +168,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
   // 3. Human intervention check
   if (needsHumanIntervention(subject, bodyText)) {
     console.log(`[inbound] Human intervention needed, forwarding: ${senderEmail}`);
-
     await resend.emails.send({
       from: 'Alex (Inbound System) <alex@wenboom.com>',
       to: FORWARD_EMAILS,
@@ -192,7 +187,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
         </div>
       `,
     });
-
     return { status: 'forwarded', sender: senderEmail };
   }
 
@@ -211,11 +205,10 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
     const unsubscribeToken = generateUnsubscribeToken(senderEmail);
     const unsubscribeUrl = `https://wenboom.com/api/unsubscribe?email=${encodeURIComponent(senderEmail)}&token=${unsubscribeToken}`;
-
     const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
 
     await resend.emails.send({
-      from: 'Alex | Wenboom <alex@wenboom.com>',
+      from: 'Alex @ Wenboom <alex@wenboom.com>',
       to: [senderEmail],
       subject: replySubject,
       replyTo: 'alex@wenboom.com',
@@ -228,7 +221,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
     console.log(`[inbound] Auto-replied to: ${senderEmail}`);
     return { status: 'replied', sender: senderEmail };
-
   } catch (error: any) {
     console.error('[inbound] Auto-reply failed:', error?.message || error);
     try {
