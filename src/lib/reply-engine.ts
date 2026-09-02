@@ -13,7 +13,7 @@ import {
   DEDUP_TTL_SECONDS,
   AffiliateLink,
 } from '../config/reply-config';
-import { generateAIReply, getFallbackReply } from './gemini-client';
+import { generateAIReply, getFallbackReply } from './groq-client';
 
 // ------------------------------------------------------------
 // Types
@@ -38,13 +38,11 @@ interface ProcessResult {
 // Helpers
 // ------------------------------------------------------------
 
-// Extract pure email from "Name <email@example.com>" format
 function extractEmail(fromField: string): string {
   const match = fromField.match(/<([^>]+)>/);
   return match ? match[1].trim().toLowerCase() : fromField.trim().toLowerCase();
 }
 
-// Case-insensitive header lookup
 function getHeader(headers: Record<string, string> | undefined, name: string): string | undefined {
   if (!headers) return undefined;
   const lowerName = name.toLowerCase();
@@ -56,7 +54,6 @@ function getHeader(headers: Record<string, string> | undefined, name: string): s
   return undefined;
 }
 
-// Resend webhook payload may be { type, data: {...} } or direct {...}
 function extractEmailData(payload: any): InboundEmailData {
   if (payload?.data?.from) {
     return payload.data as InboundEmailData;
@@ -64,7 +61,6 @@ function extractEmailData(payload: any): InboundEmailData {
   return payload as InboundEmailData;
 }
 
-// Check if this is an automated/system email (prevent loops)
 function isAutomatedEmail(data: InboundEmailData): boolean {
   const sender = (data.from || '').toLowerCase();
   const subject = (data.subject || '').toLowerCase();
@@ -86,21 +82,15 @@ function isAutomatedEmail(data: InboundEmailData): boolean {
     'mail delivery', 'returned mail', 'bounce',
   ];
 
-  // Check sender
   if (automatedSenders.some(s => sender.includes(s))) return true;
-
-  // Check subject
   if (automatedSubjects.some(s => subject.includes(s))) return true;
-
-  // Check headers
   if (autoSubmitted && autoSubmitted !== 'no') return true;
-  if (listId) return true; // Mailing list, don't reply
+  if (listId) return true;
   if (precedence && ['bulk', 'list', 'junk'].includes(precedence.toLowerCase())) return true;
 
   return false;
 }
 
-// Check if email needs human intervention
 function needsHumanIntervention(subject: string, body: string): boolean {
   const fullContent = `${subject} ${body}`.toLowerCase();
   return HUMAN_INTERVENTION_KEYWORDS.some(keyword =>
@@ -108,7 +98,6 @@ function needsHumanIntervention(subject: string, body: string): boolean {
   );
 }
 
-// Select best-matching affiliate links by keyword score
 function selectAffiliateLinks(content: string): { name: string; url: string }[] {
   const lowerContent = content.toLowerCase();
 
@@ -120,14 +109,12 @@ function selectAffiliateLinks(content: string): { name: string; url: string }[] 
     return { link, score };
   });
 
-  // Filter scored > 0, sort desc, take top N
   const topLinks = scoredLinks
     .filter(item => item.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, MAX_AFFILIATE_LINKS)
     .map(item => ({ name: item.link.name, url: item.link.url }));
 
-  // If no match, recommend Make.com (most universally useful)
   if (topLinks.length === 0) {
     const makeLink = AFFILIATE_LINKS.find(l => l.name === 'Make.com');
     if (makeLink) {
@@ -138,7 +125,6 @@ function selectAffiliateLinks(content: string): { name: string; url: string }[] 
   return topLinks;
 }
 
-// Get Resend instance (lazy init with validation)
 function getResend(): Resend {
   const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -166,7 +152,7 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
     return { status: 'skipped', reason: 'automated-email' };
   }
 
-  // 2. Deduplication (prevent duplicate replies from webhook retries)
+  // 2. Deduplication
   const emailId = data.id || `${senderEmail}-${subject}-${bodyText.substring(0, 100)}`;
   const dedupKey = `inbound:${Buffer.from(emailId).toString('hex').substring(0, 64)}`;
 
@@ -195,7 +181,7 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
-            <strong>⚠️ ACTION REQUIRED:</strong> This email matched human-intervention keywords. Please review and reply manually.
+            <strong>ACTION REQUIRED:</strong> This email matched human-intervention keywords. Please review and reply manually.
           </div>
           <p><strong>Original Sender:</strong> ${senderField}</p>
           <p><strong>Reply-To:</strong> ${senderEmail}</p>
@@ -212,11 +198,9 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
   // 4. Auto-reply path
   try {
-    // Select affiliate links based on content
     const matchedLinks = selectAffiliateLinks(`${subject} ${bodyText}`);
     console.log(`[inbound] Matched affiliate links: ${matchedLinks.map(l => l.name).join(', ')}`);
 
-    // Generate AI reply (with fallback)
     let replyContent: string;
     try {
       replyContent = await generateAIReply(subject, bodyText, matchedLinks);
@@ -225,11 +209,9 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
       replyContent = getFallbackReply(subject, bodyText);
     }
 
-    // Generate unsubscribe URL for this sender
     const unsubscribeToken = generateUnsubscribeToken(senderEmail);
     const unsubscribeUrl = `https://wenboom.com/api/unsubscribe?email=${encodeURIComponent(senderEmail)}&token=${unsubscribeToken}`;
 
-    // Send reply
     const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
 
     await resend.emails.send({
@@ -249,7 +231,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
   } catch (error: any) {
     console.error('[inbound] Auto-reply failed:', error?.message || error);
-    // On failure, forward to human for manual handling
     try {
       await resend.emails.send({
         from: 'Alex (Inbound System) <alex@wenboom.com>',
