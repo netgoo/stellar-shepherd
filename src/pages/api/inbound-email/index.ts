@@ -1,50 +1,97 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-import { Resend } from 'resend';
-export const POST: APIRoute = async ({ request }) => {
-  try {
-    const body = await request.json();
-    if (body.type === 'email.received') {
-      const emailData = body.data;
-      const rawSender = emailData.from || '';
-      const emailMatch = rawSender.match(/<([^>]+)>/) || [null, rawSender];
-      const targetEmail = (emailMatch[1] || rawSender).trim().toLowerCase();
-      if (targetEmail.includes('alex@wenboom.com')) {
-        return new Response(JSON.stringify({ status: 'ignored_self_reply' }), { status: 200 });
-      }
-      let cleanSubject = (emailData.subject || 'Your message').trim();
-      // 同时匹配：英文Re:、中文回复:、中文回复：（全角冒号）
-      const replyPrefixReg = /^(Re:\s*|RE:\s*|回复[:：]\s*)/gi;
-      while (replyPrefixReg.test(cleanSubject)) {
-        cleanSubject = cleanSubject.replace(replyPrefixReg, '').trim();
-      }
+import { processInboundEmail } from '../../../lib/reply-engine';
+import { kvStore } from '../../../lib/kvServer';
 
-      const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
-      if (apiKey && targetEmail) {
-        const resend = new Resend(apiKey.trim());
-        await resend.emails.send({
-          from: 'Alex Automation <alex@wenboom.com>',
-          to: [targetEmail],
-          subject: cleanSubject,
-          html: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #111; max-width: 600px; padding: 20px;">
-              <p>Hey,</p>
-              <p>Thanks for reaching out. I have received your message regarding:</p>
-              <blockquote style="border-left: 3px solid #ccc; margin: 10px 0; padding-left: 10px; color: #555;">
-                "${cleanSubject}"
-              </blockquote>
-              <p>I personally go through every incoming message to identify opportunities for optimization and automation against manual bottlenecks.</p>
-              <p>I’m reviewing your input now and will follow up with a custom‑tailored breakdown within 1‑2 business days.</p>
-              <br />
-              <p>Best regards,<br /><strong>Alex</strong><br/>Chief Architect @ Alex Automation</p>
-            </div>
-          `,
-        });
-      }
+// Idempotency TTL: 24 hours (same email replayed within 24h is ignored)
+const IDEMPOTENCY_TTL_SECONDS = 86400;
+
+export const POST: APIRoute = async ({ request }) => {
+  // ------------------------------------------------------------
+  // Step 1: Safe JSON parse (malformed payload -> 400, not 500)
+  // ------------------------------------------------------------
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    console.warn('[inbound-email] Invalid JSON body received');
+    return new Response(
+      JSON.stringify({ status: 'error', message: 'Invalid JSON body' }),
+      { status: 400 }
+    );
+  }
+
+  try {
+    // ------------------------------------------------------------
+    // Step 2: Only process email.received events
+    // ------------------------------------------------------------
+    if (body?.type !== 'email.received') {
+      return new Response(
+        JSON.stringify({ status: 'ignored', type: body?.type }),
+        { status: 200 }
+      );
     }
-    return new Response(JSON.stringify({ status: 'success' }), { status: 200 });
+
+    const emailData = body.data || {};
+    const rawFrom = String(emailData.from || '');
+
+    // ------------------------------------------------------------
+    // Step 3: Extract pure email address (prevents name-injection bypass)
+    //   "alex@wenboom.com Fans" <hacker@gmail.com> -> hacker@gmail.com
+    // ------------------------------------------------------------
+    const emailMatch = rawFrom.match(/<([^>]+)>/) || [null, rawFrom];
+    const senderEmail = (emailMatch[1] || rawFrom).trim().toLowerCase();
+
+    // ------------------------------------------------------------
+    // Step 4: Ignore self-replies (exact match, not includes)
+    // ------------------------------------------------------------
+    if (senderEmail === 'alex@wenboom.com') {
+      console.log('[inbound-email] Ignored self-reply');
+      return new Response(
+        JSON.stringify({ status: 'ignored_self_reply' }),
+        { status: 200 }
+      );
+    }
+
+    // ------------------------------------------------------------
+    // Step 5: Idempotency check (prevents duplicate replies from webhook retries)
+    // ------------------------------------------------------------
+    const emailId = emailData.email_id || emailData.id;
+    if (emailId) {
+      const idempotencyKey = `processed_email:${emailId}`;
+      const alreadyProcessed = await kvStore.get(idempotencyKey);
+      if (alreadyProcessed) {
+        console.log('[inbound-email] Duplicate webhook, ignoring:', emailId);
+        return new Response(
+          JSON.stringify({ status: 'already_processed' }),
+          { status: 200 }
+        );
+      }
+      // Mark as processed BEFORE running AI logic (crash-safe idempotency)
+      await kvStore.set(idempotencyKey, 'true', { ex: IDEMPOTENCY_TTL_SECONDS });
+    }
+
+    // ------------------------------------------------------------
+    // Step 6: Process with AI reply engine
+    //   Groq Llama 3.1 70B + affiliate link matching + human intervention
+    //   Typical latency: 3-6s (well within Vercel 10s serverless limit)
+    // ------------------------------------------------------------
+    console.log('[inbound-email] Processing from:', senderEmail);
+
+    const result = await processInboundEmail(body);
+
+    console.log('[inbound-email] Result:', result.status, result.reason || '');
+
+    return new Response(
+      JSON.stringify({ status: 'success', result }),
+      { status: 200 }
+    );
+
   } catch (error: any) {
-    console.error('Webhook error:', error);
-    return new Response(JSON.stringify({ status: 'error', message: error.message }), { status: 500 });
+    console.error('[inbound-email] Processing error:', error?.message || error);
+    return new Response(
+      JSON.stringify({ status: 'error', message: error?.message || 'Unknown error' }),
+      { status: 500 }
+    );
   }
 };
