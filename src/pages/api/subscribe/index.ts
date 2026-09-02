@@ -4,6 +4,8 @@ import { Resend } from 'resend';
 import { kvStore } from '../../../lib/kvServer';
 import { generateUnsubscribeToken } from '../../../utils/unsubscribeToken';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { email } = await request.json();
@@ -11,6 +13,9 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ message: 'Email is required' }), { status: 400 });
     }
     const cleanEmail = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      return new Response(JSON.stringify({ message: 'Invalid email format' }), { status: 400 });
+    }
     const unsubscribeToken = generateUnsubscribeToken(cleanEmail);
     const unsubscribeUrl = `https://wenboom.com/api/unsubscribe?email=${encodeURIComponent(cleanEmail)}&token=${unsubscribeToken}`;
     const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
@@ -65,8 +70,8 @@ export const POST: APIRoute = async ({ request }) => {
             <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 28px 0 14px 0;" />
             <p style="font-size: 0.8rem; color: #888; line-height: 1.6; margin: 0;">
               You are receiving this because you subscribed at wenboom.com.<br />
-              <a href="${unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe</a> from Wenboom emails.&nbsp;&nbsp;|&nbsp;&nbsp;
-              <a href="https://wenboom.com/privacy-policy" style="color: #888; text-decoration: underline;">Privacy Policy</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+              <a href="${unsubscribeUrl}" style="color: #888; text-decoration: underline;">Unsubscribe</a> | 
+              <a href="https://wenboom.com/privacy-policy" style="color: #888; text-decoration: underline;">Privacy Policy</a> | 
               <a href="https://wenboom.com/terms-of-service" style="color: #888; text-decoration: underline;">Terms of Service</a>
             </p>
           </div>
