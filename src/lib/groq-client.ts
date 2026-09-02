@@ -9,7 +9,7 @@ interface MatchedLink {
 }
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_MODEL = 'mixtral-8x7b-32768';
+const GROQ_MODEL = 'llama-3.3-70b-specdec';
 
 function stripReplyHistory(text: string): string {
   const lines = text.split('\n');
