@@ -11,13 +11,9 @@ import {
   FORWARD_SUBJECT_PREFIX,
   MAX_AFFILIATE_LINKS,
   DEDUP_TTL_SECONDS,
-  AffiliateLink,
 } from '../config/reply-config';
 import { generateAIReply, getFallbackReply } from './groq-client';
 
-// ------------------------------------------------------------
-// Types
-// ------------------------------------------------------------
 interface InboundEmailData {
   id?: string;
   from: string;
@@ -34,9 +30,6 @@ interface ProcessResult {
   sender?: string;
 }
 
-// ------------------------------------------------------------
-// Helpers
-// ------------------------------------------------------------
 function extractEmail(fromField: string): string {
   const match = fromField.match(/<([^>]+)>/);
   return match ? match[1].trim().toLowerCase() : fromField.trim().toLowerCase();
@@ -131,9 +124,6 @@ function getResend(): Resend {
   return new Resend(apiKey.trim());
 }
 
-// ------------------------------------------------------------
-// Main processor
-// ------------------------------------------------------------
 export async function processInboundEmail(payload: any): Promise<ProcessResult> {
   const data = extractEmailData(payload);
   const senderField = data.from || '';
@@ -143,13 +133,11 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
   console.log(`[inbound] Processing email from: ${senderEmail}, subject: ${subject}`);
 
-  // 1. Skip automated/system emails (loop prevention)
   if (isAutomatedEmail(data)) {
     console.log(`[inbound] Skipped: automated/system email from ${senderEmail}`);
     return { status: 'skipped', reason: 'automated-email' };
   }
 
-  // 2. Deduplication
   const emailId = data.id || `${senderEmail}-${subject}-${bodyText.substring(0, 100)}`;
   const dedupKey = `inbound:${Buffer.from(emailId).toString('hex').substring(0, 64)}`;
   try {
@@ -165,7 +153,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
 
   const resend = getResend();
 
-  // 3. Human intervention check
   if (needsHumanIntervention(subject, bodyText)) {
     console.log(`[inbound] Human intervention needed, forwarding: ${senderEmail}`);
     await resend.emails.send({
@@ -190,7 +177,6 @@ export async function processInboundEmail(payload: any): Promise<ProcessResult> 
     return { status: 'forwarded', sender: senderEmail };
   }
 
-  // 4. Auto-reply path
   try {
     const matchedLinks = selectAffiliateLinks(`${subject} ${bodyText}`);
     console.log(`[inbound] Matched affiliate links: ${matchedLinks.map(l => l.name).join(', ')}`);
