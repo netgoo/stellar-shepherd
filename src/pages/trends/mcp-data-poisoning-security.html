@@ -167,7 +167,7 @@
       "author": { "@type": "Person", "name": "Alex", "jobTitle": "Principal AI Infrastructure Architect" },
       "publisher": { "@type": "Organization", "name": "Wenboom", "url": "https://wenboom.com" },
       "datePublished": "2026-09-01",
-      "dateModified": "2026-09-01",
+      "dateModified": "2026-09-02",
       "mainEntityOfPage": "https://wenboom.com/trends/mcp-data-poisoning-security",
       "keywords": "data poisoning, WCEI, Clay enrichment, JSON schema validation, Zero-Glue Theorem, outbound pipeline, data integrity, 429 rate limit, deduplication, Smartlead"
     }
@@ -183,6 +183,19 @@
         <a href="/about">About Alex</a>
     </nav>
 </header>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    if (path === '') path = '/';
+    var links = document.querySelectorAll('header nav a');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path || (path !== '/' && path.indexOf(href) === 0)) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
+</script>
 <main class="article-container">
     <span class="meta-tag">Data Integrity / Cluster A</span>
     <h1>The Ghost in the CRM: Eradicating Silent Data Poisoning in Automated Pipelines</h1>
@@ -260,7 +273,7 @@
 }
 </pre>
         </div>
-        <p>Records failing this schema are auto-routed to a quarantine queue for manual review, never reaching the enrichment waterfall or LLM context window. This is the <strong>Zero-Glue Theorem</strong> in practice: eliminating unstable middleware by enforcing deterministic protocol boundaries at the ingestion edge.</p>
+        <p>Records failing this schema are auto-routed to a quarantine queue for manual review, never reaching the enrichment waterfall or LLM context window. This is the <strong>Zero-Glue Theorem</strong> in practice: eliminating unstable middleware by enforcing deterministic protocol boundaries at the ingestion edge. The same principle drives the <a href="/trends/mcp-protocol-enterprise-impact" style="color: var(--accent-gold);">MCP protocol paradigm shift</a> across enterprise API layers.</p>
         <div class="lead-magnet-box">
             <h3>Initialize Your WCEI-Optimized Enrichment Stack</h3>
             <p>Stop wasting pipeline capital on poisoned CRM variables and brittle manual scrubbing routines. Consolidate your data verification, multi-vendor validation, and semantic logic inside Clay's unified data workspace today.</p>
@@ -272,7 +285,8 @@
         <ul class="cluster-list">
             <li><a href="/blueprints/data-waterfall-infrastructure">Pillar 01: Data Waterfall &amp; Cold Enrichment Architecture (WCEI Optimization)</a></li>
             <li><a href="/trends/beyond-saas-multi-agent-outbound-pipeline">Beyond SaaS: Deploying Multi-Agent Systems in Cold Outbound Pipelines</a></li>
-            <li><a href="/links/smartlead.html">Smartlead — Zero-Drop Outreach Execution Engine (98.4% Deliverability)</a></li>
+            <li><a href="/trends/mcp-protocol-enterprise-impact">The 10-Year Paradigm Shift: Model Context Protocol (MCP) and the Death of REST APIs</a></li>
+            <li><a href="/links/smartlead.html">Smartlead - Zero-Drop Outreach Execution Engine (98.4% Deliverability)</a></li>
         </ul>
         <div class="engineering-transparency">
             <strong>Engineering Transparency:</strong> Wenboom benchmarks and deploys enterprise architectures internally. Product links use clean router paths (<code>/links/[tool].html</code>). If you deploy through them, we may earn an affiliate commission at $0 added cost to you. Performance metrics (deliverability rates, WCEI scores, credit efficiency figures, failure reduction rates) are derived from internal benchmark testing under specific configurations. Actual results may vary. See our <a href="/terms-of-service">Terms of Service</a> for full disclaimer.
@@ -301,6 +315,18 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-BV4E7FGY3P');
+</script>
+<script>
+(function() {
+    var path = window.location.pathname.replace(/\/$/, '');
+    var links = document.querySelectorAll('.footer-link-item');
+    for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href').replace(/\/$/, '');
+        if (href === path) {
+            links[i].style.color = 'var(--accent-gold)';
+        }
+    }
+})();
 </script>
 </body>
 </html>
