@@ -3,6 +3,7 @@
 // 4-class intent classification + anti-injection sanitization
 // + link whitelist validation + thread-aware prompt building.
 // Preserves processInboundEmail() for QStash fallback path.
+// v4.1.1: SIGN-OFF simplified — no "Best,", direct name + role.
 // ============================================================
 import { createHash } from 'crypto';
 import { Resend } from 'resend';
@@ -228,7 +229,7 @@ FORMATTING RULES:
 ${affiliateLinksSection}
 Embed links as markdown: [ToolName](url). If a matched tool is not relevant to your answer, skip it. Maximum 2 links total.
 4. CLOSING: End with 1 specific open-ended question about their current setup or blockers, encouraging them to hit reply.
-5. SIGN-OFF: Use "Best," then "Alex" then "${SENDER.role}".
+5. SIGN-OFF: End with exactly two lines: "Alex" then "Principal AI Infrastructure Architect @ Wenboom.com". Do NOT use "Best," "Thanks," "Regards," or any other closing word before your name.
 6. LENGTH: Keep the entire reply under 300 words (excluding sign-off). Every sentence must add actionable value.
 7. LANGUAGE: Reply in the SAME language as the user's email.
 8. DATA ACCURACY: Never invent specific numbers, prices, or API parameters. Use approximate ranges ("sub-second", "roughly 80-90%") and encourage verifying on vendor pages.
