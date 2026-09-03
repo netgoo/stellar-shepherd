@@ -1,6 +1,7 @@
 // ============================================================
-// QStash Worker - Process delayed email reply (v4.1.2)
-// v4.1.2: Added body debug logging + empty-body fallback + firstName log.
+// QStash Worker - Process delayed email reply (v4.1.3)
+// v4.1.3: Added markdownToHtml + HTML email rendering (clickable links).
+//         Fixed CLASSIFICATION import missing in v4.1.2.
 // ============================================================
 export const prerender = false;
 import type { APIRoute } from 'astro';
@@ -16,6 +17,7 @@ import {
   DEBOUNCE,
   SENDER,
   FALLBACK_REPLY_TEMPLATE,
+  CLASSIFICATION,
 } from '../../../config/reply-config';
 import {
   fastPathClassify,
@@ -28,6 +30,30 @@ import {
 import type { QueuedReply } from '../../../lib/qstash-client';
 
 const IDEMPOTENCY_TTL_SECONDS = 86400;
+
+// ------------------------------------------------------------
+// Markdown to HTML converter (clickable links + formatting)
+// ------------------------------------------------------------
+function markdownToHtml(text: string): string {
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  // Links [text](url)
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2" style="color:#2563eb;text-decoration:underline;">$1</a>');
+  // Bold **text**
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Italic *text*
+  html = html.replace(/(^|\s)\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  // Paragraphs
+  const paragraphs = html.split(/\n\n+/);
+  html = paragraphs.map(p => {
+    p = p.replace(/\n/g, '<br>');
+    return `<p style="margin:0 0 14px 0;line-height:1.65;">${p}</p>`;
+  }).join('');
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;color:#222;line-height:1.65;">${html}</div>`;
+}
 
 function getResend(): Resend {
   const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
@@ -107,10 +133,10 @@ export const POST: APIRoute = async ({ request }) => {
     threadId, inReplyTo, firstMessageAt,
   } = data;
 
-  // === DEBUG: Log body content to diagnose empty-body issue ===
+  // === DEBUG: Log body content ===
   console.log(`[worker] DEBUG: from=${senderEmail}, subject="${subject}", bodyLength=${body?.length || 0}, bodyPreview="${(body || '').substring(0, 150).replace(/\n/g, ' ')}"`);
 
-  // === FIX: If body is empty, use subject as fallback content ===
+  // === FIX: If body is empty, use subject as fallback ===
   let effectiveBody = body || '';
   if (effectiveBody.trim().length < 5) {
     console.warn(`[worker] Body too short (${effectiveBody.length} chars), using subject as fallback`);
@@ -173,7 +199,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   } catch { /* ignore */ }
 
-  // Step 8: Intent classification (use effectiveBody, not raw body)
+  // Step 8: Intent classification
   let intent;
   const fastIntent = fastPathClassify(effectiveBody, {});
   if (fastIntent) {
@@ -249,7 +275,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // Step 13: Match affiliate links (use effectiveBody)
+  // Step 13: Match affiliate links
   const matchedTools = matchAffiliateLinks(effectiveBody).slice(0, 2);
   console.log(`[worker] Matched tools: ${matchedTools.map(t => t.name).join(', ') || 'none'}`);
 
@@ -261,11 +287,11 @@ export const POST: APIRoute = async ({ request }) => {
     } catch { /* ignore */ }
   }
 
-  // Step 15: Extract first name + debug log
+  // Step 15: Extract first name
   const firstName = extractFirstName(senderField);
   console.log(`[worker] firstName extracted: "${firstName}" (senderField="${senderField}")`);
 
-  // Step 16: Generate reply (use effectiveBody)
+  // Step 16: Generate reply
   let replyText: string;
   try {
     replyText = await generateReplyContent(intent, history, effectiveBody, firstName, matchedTools, senderEmail);
@@ -276,13 +302,15 @@ export const POST: APIRoute = async ({ request }) => {
     replyText = FALLBACK_REPLY_TEMPLATE;
   }
 
-  // Step 17: Send via Resend
+  // Step 17: Send via Resend (HTML + text multipart)
   const resend = getResend();
+  const htmlContent = markdownToHtml(replyText);
   const sendResult = await resend.emails.send({
     from: SENDER.from,
     to: senderEmail,
     subject: subject.startsWith('Re:') ? subject : `Re: ${subject}`,
     text: replyText,
+    html: htmlContent,
     headers: inReplyTo ? {
       'In-Reply-To': `<${inReplyTo}>`,
       'References': `<${inReplyTo}>`,
@@ -290,13 +318,13 @@ export const POST: APIRoute = async ({ request }) => {
   });
   console.log(`[worker] Reply sent: ${sendResult?.id || 'unknown'}, intent: ${intent}, length: ${replyText.length}`);
 
-  // Step 18: ACK count increment (after send success)
+  // Step 18: ACK count increment
   if (intent === 'TYPE_A_ACK' && threadId) {
     const newAck = await incrementAckCount(threadId);
     console.log(`[worker] ACK count incremented: ${newAck}`);
   }
 
-  // Step 19: Rate limit increment (after send success)
+  // Step 19: Rate limit increment
   if (intent === 'TYPE_B_QUESTION') {
     const newCount = await incrementRateLimit(senderEmail);
     console.log(`[worker] Rate limit incremented: ${newCount}/${RATE_LIMIT_MAX_REPLIES}`);
