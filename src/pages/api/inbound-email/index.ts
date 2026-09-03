@@ -1,5 +1,5 @@
 // ============================================================
-// Inbound Email Webhook v4.1.3
+// Inbound Email Webhook v4.1.4
 // Fixes:
 //   BUG1: Split messageId and inReplyToHeader (was merged, caused
 //         threadId to use message-id -> debounce never merged).
@@ -12,6 +12,10 @@
 //   v4.1.3: DEBUG payload structure (bodyLength=0 + firstName=null
 //           investigation). Enhanced bodyText extraction with multi-field
 //           fallback. Headers extracted before bodyText for debug logging.
+//   v4.1.4: Dump full payload JSON to locate body field. Email-prefix
+//           firstName fallback (jacky1319@proton.me -> "Jacky").
+//           forwardToHuman uses subject as body fallback (fixes empty
+//           forwarded emails to guixinji@outlook.com).
 // v4.1 base: KV debounce merge, OOO pre-filter, unsubscribe detect,
 //             human keyword forwarding, thread ID + latest tracking.
 // ============================================================
@@ -91,6 +95,22 @@ function extractEmailBody(emailData: any): string {
   }
   return '';
 }
+// ------------------------------------------------------------
+// v4.1.4: Extract a human-readable name from email prefix
+// e.g., "jacky1319@proton.me" -> "Jacky", "john.doe@gmail.com" -> "John Doe"
+// Used as fallback when Resend doesn't provide display name or headers.
+// ------------------------------------------------------------
+function extractNameFromEmail(email: string): string | null {
+  if (!email || !email.includes('@')) return null;
+  const prefix = email.split('@')[0];
+  if (!prefix || prefix.length < 2 || prefix.length > 30) return null;
+  // Strip trailing numbers (jacky1319 -> jacky), replace separators with spaces
+  let cleaned = prefix.replace(/[0-9]+$/, '').replace(/[._-]+/g, ' ').trim();
+  if (!cleaned || cleaned.length < 2) return null;
+  // Capitalize each word
+  cleaned = cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+  return cleaned;
+}
 async function addToBlacklist(email: string, reason: string): Promise<void> {
   try {
     const key = `${BLACKLIST_KEY_PREFIX}${email}`;
@@ -122,6 +142,10 @@ async function forwardToHuman(
   body: string,
   reason: string,
 ): Promise<void> {
+  // v4.1.4: If body is empty, use subject as fallback so forwarded email isn't blank
+  const displayBody = body && body.trim().length > 0
+    ? body
+    : `(Email body was empty or not provided by Resend. Original subject: "${subject}")`;
   await resend.emails.send({
     from: 'Alex (Inbound System) <alex@wenboom.com>',
     to: FORWARD_EMAILS,
@@ -136,7 +160,7 @@ async function forwardToHuman(
         <p><strong>Subject:</strong> ${subject}</p>
         <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 20px 0;" />
         <p><strong>Email Content:</strong></p>
-        <pre style="white-space: pre-wrap; background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 14px; line-height: 1.6;">${body.substring(0, 5000)}</pre>
+        <pre style="white-space: pre-wrap; background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 14px; line-height: 1.6;">${displayBody.substring(0, 5000)}</pre>
       </div>
     `,
   });
@@ -211,16 +235,28 @@ export const POST: APIRoute = async ({ request }) => {
     console.log(`[inbound-email] DEBUG payload: eventType=${eventType}, dataKeys=[${allKeys}], headerKeys=[${headerKeys}]`);
     console.log(`[inbound-email] DEBUG fields: textLen=${(emailData.text || '').length}, htmlLen=${(emailData.html || '').length}, bodyLen=${bodyText.length}, dataFrom="${emailData.from || 'N/A'}", headerFrom="${headers['from'] || 'N/A'}"`);
     console.log(`[inbound-email] DEBUG bodyPreview: "${bodyText.substring(0, 120).replace(/\n/g, ' ')}"`);
+    // v4.1.4: Dump full payload JSON (first 3000 chars) to locate where Resend puts the body
+    try {
+      const payloadDump = JSON.stringify(emailData).substring(0, 3000);
+      console.log(`[inbound-email] DEBUG fullPayload: ${payloadDump}`);
+    } catch (dumpErr) {
+      console.log(`[inbound-email] DEBUG fullPayload dump failed: ${dumpErr}`);
+    }
     // v4.1.2: Override rawFrom with From header if it contains a display name
     // (Resend's data.from is often just the bare email; headers.from has "Name <email>")
     if (headers['from'] && headers['from'].includes('<') && headers['from'].includes('>')) {
       rawFrom = headers['from'];
       console.log(`[inbound-email] Using From header display name: ${rawFrom}`);
-    } else {
+    } else if (emailData.from && String(emailData.from).includes('<') && String(emailData.from).includes('>')) {
       // v4.1.3: Also try data.from if it has display name (some Resend versions put it there)
-      if (emailData.from && String(emailData.from).includes('<') && String(emailData.from).includes('>')) {
-        rawFrom = String(emailData.from);
-        console.log(`[inbound-email] Using data.from display name: ${rawFrom}`);
+      rawFrom = String(emailData.from);
+      console.log(`[inbound-email] Using data.from display name: ${rawFrom}`);
+    } else {
+      // v4.1.4: Fallback — extract name from email prefix (jacky1319@proton.me -> "Jacky")
+      const nameFromEmail = extractNameFromEmail(senderEmail);
+      if (nameFromEmail) {
+        rawFrom = `${nameFromEmail} <${senderEmail}>`;
+        console.log(`[inbound-email] Using email-prefix fallback name: "${nameFromEmail}" from ${senderEmail}`);
       } else {
         console.log(`[inbound-email] No display name found (dataFrom="${emailData.from}", headerFrom="${headers['from']}"), will use "Hey there,"`);
       }
