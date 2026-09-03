@@ -14,6 +14,11 @@
 //   BUG3 (MED): Rewrite markdownToHtml with extract-then-escape
 //         pattern so URL query params (&utm_*) are NOT corrupted
 //         by HTML entity escaping. Added target=_blank + rel safety.
+//   DEBOUNCE ALIGN: latestKey/buffer keyed by senderEmail (not
+//         threadId) to match inbound-email v4.1.5. Resend free tier
+//         omits In-Reply-To headers, so threadId degrades to
+//         sender+subject hash — different subjects never merged.
+//         Keying by senderEmail ensures cross-subject debounce works.
 // ============================================================
 export const prerender = false;
 import type { APIRoute } from 'astro';
@@ -183,11 +188,14 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
   // Step 5: Latest check (v4.1.5: READ-ONLY — do NOT delete buffer here)
+  // v4.1.5 DEBOUNCE ALIGN: latestKey keyed by senderEmail (not threadId)
+  // to match inbound-email v4.1.5. This ensures stale-job detection works
+  // across different subjects from the same sender.
   // Defer buffer cleanup until after Resend send success (Step 21) to
   // preserve state for QStash retries and concurrent inbound emails.
-  if (threadId) {
+  if (senderEmail) {
     try {
-      const latestKey = `latest:${threadId}`;
+      const latestKey = `latest:${senderEmail}`;
       const latestId = await kvStore.get(latestKey);
       if (latestId && latestId !== qstashMessageId) {
         console.log(`[worker] Stale job (latest=${latestId}, this=${qstashMessageId}), skipping`);
@@ -357,13 +365,14 @@ export const POST: APIRoute = async ({ request }) => {
   if (qstashMessageId) {
     await kvStore.set(`processed_qstash:${qstashMessageId}`, 'true', { ex: IDEMPOTENCY_TTL_SECONDS });
   }
-  // v4.1.5 BUG2 FIX: Delete buffer/latestKey ONLY after Resend send success.
-  // This preserves state for QStash retries (on 500) and prevents
-  // concurrent inbound emails from creating duplicate pending tasks.
-  if (threadId) {
+  // v4.1.5 BUG2 FIX + DEBOUNCE ALIGN: Delete buffer/latestKey ONLY after
+  // Resend send success, keyed by senderEmail (not threadId) to match
+  // inbound-email v4.1.5. This preserves state for QStash retries (on 500)
+  // and prevents concurrent inbound emails from creating duplicate pending tasks.
+  if (senderEmail) {
     try {
-      await kvStore.del(`buffer:${threadId}`);
-      await kvStore.del(`latest:${threadId}`);
+      await kvStore.del(`buffer:${senderEmail}`);
+      await kvStore.del(`latest:${senderEmail}`);
     } catch { /* ignore */ }
   }
   return new Response(JSON.stringify({ status: 'replied', intent, messageId: sendResult?.id }), { status: 200 });
