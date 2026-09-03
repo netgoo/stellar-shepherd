@@ -1,5 +1,9 @@
 // ============================================================
 // QStash Client - Delayed task queue for human-like email replies
+// v3.3: Fixed JWS body hash verification - try multiple computation
+//       methods (raw / re-stringified / trimmed) to match QStash
+//       signing logic. QStash may hash based on parsed+re-serialized
+//       JSON rather than raw request bytes.
 // v3.2: Fixed QStash API base URL (read from QSTASH_URL env var).
 //       Native JWS signature verification (no @upstash/qstash dependency).
 // ============================================================
@@ -115,14 +119,12 @@ async function verifyJwsSignature(signature: string, rawBody: string, signingKey
       console.warn('[qstash] JWS does not have 3 parts');
       return false;
     }
-
     const [headerB64, payloadB64, signatureB64] = parts;
 
     // 1. Verify HMAC-SHA256 signature over header.payload
     const data = `${headerB64}.${payloadB64}`;
     const expectedSig = createHmac('sha256', signingKey).update(data).digest();
     const expectedSigB64url = base64UrlEncode(expectedSig);
-
     if (signatureB64 !== expectedSigB64url) {
       console.warn('[qstash] JWS signature mismatch');
       return false;
@@ -131,11 +133,57 @@ async function verifyJwsSignature(signature: string, rawBody: string, signingKey
     // 2. Decode and validate payload
     const payload = JSON.parse(base64UrlDecode(payloadB64).toString('utf-8'));
 
-    // 3. Verify body hash (sha256 of raw request body, base64url)
-    const bodyHash = base64UrlEncode(createHash('sha256').update(rawBody).digest());
-    if (payload.body !== bodyHash) {
-      console.warn('[qstash] JWS body hash mismatch');
+    // 3. Verify body hash - try multiple computation methods to match QStash signing logic.
+    //    QStash may hash based on parsed+re-serialized JSON (official SDK uses
+    //    JSON.stringify(req.body)) rather than raw request bytes.
+    const expectedBodyHash = payload.body;
+    let bodyMatched = false;
+    let matchMethod = 'raw';
+
+    // Method 1: raw body bytes
+    const rawHash = base64UrlEncode(createHash('sha256').update(rawBody).digest());
+    if (rawHash === expectedBodyHash) {
+      bodyMatched = true;
+      matchMethod = 'raw';
+    }
+
+    // Method 2: parse JSON then re-stringify (matches @upstash/qstash/nextjs official behavior)
+    if (!bodyMatched) {
+      try {
+        const parsed = JSON.parse(rawBody);
+        const restringified = JSON.stringify(parsed);
+        const reHash = base64UrlEncode(createHash('sha256').update(restringified).digest());
+        if (reHash === expectedBodyHash) {
+          bodyMatched = true;
+          matchMethod = 'restringified';
+        }
+      } catch {
+        // not valid JSON, skip this method
+      }
+    }
+
+    // Method 3: trimmed body (remove leading/trailing whitespace/newlines)
+    if (!bodyMatched) {
+      const trimmed = rawBody.trim();
+      if (trimmed !== rawBody) {
+        const trimHash = base64UrlEncode(createHash('sha256').update(trimmed).digest());
+        if (trimHash === expectedBodyHash) {
+          bodyMatched = true;
+          matchMethod = 'trimmed';
+        }
+      }
+    }
+
+    if (!bodyMatched) {
+      console.warn(
+        `[qstash] JWS body hash mismatch. rawBody length: ${rawBody.length}, ` +
+        `rawHash: ${rawHash}, expected: ${expectedBodyHash}`
+      );
       return false;
+    }
+
+    if (matchMethod !== 'raw') {
+      console.warn(`[qstash] body hash matched via "${matchMethod}" method (non-raw, QStash re-serialized the body)`);
     }
 
     // 4. Verify time window (nbf <= now <= exp)
