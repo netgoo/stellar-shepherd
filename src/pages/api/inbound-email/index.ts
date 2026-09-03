@@ -1,22 +1,36 @@
 // ============================================================
-// Inbound Email Webhook (v3.0 - Async QStash Queue Architecture)
-// Receives Resend webhooks, validates, then enqueues to QStash
-// for delayed human-like reply processing. Returns 200 in ~100ms.
+// Inbound Email Webhook v4.1.1
+// Fixes:
+//   BUG1: Split messageId and inReplyToHeader (was merged, caused
+//         threadId to use message-id -> debounce never merged).
+//   BUG2: Restore pessimistic idempotency lock (mark immediately
+//         after check, delete on enqueue failure). Prevents Resend
+//         retry during enqueue from causing duplicate queue entries.
+// v4.1 base: KV debounce merge, OOO pre-filter, unsubscribe detect,
+//             human keyword forwarding, thread ID + latest tracking.
 // ============================================================
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { kvStore } from '../../../lib/kvServer';
-import { processInboundEmail } from '../../../lib/reply-engine';
+import { processInboundEmail, fastPathClassify, generateThreadId } from '../../../lib/reply-engine';
 import {
   BLACKLIST_KEY_PREFIX,
   RATE_LIMIT_MAX_REPLIES,
   RATE_LIMIT_KEY_PREFIX,
   FORWARD_EMAILS,
+  FORWARD_SUBJECT_PREFIX,
+  HUMAN_INTERVENTION_KEYWORDS,
+  SENDER,
+  DEBOUNCE,
 } from '../../../config/reply-config';
-import { enqueueReply, calculateHumanDelay, type QueuedReply } from '../../../lib/qstash-client';
+import {
+  enqueueReply,
+  calculateHumanDelay,
+  cancelQstashMessage,
+  type QueuedReply,
+} from '../../../lib/qstash-client';
 
-// Idempotency TTL: 24 hours (same email replayed within 24h is ignored)
 const IDEMPOTENCY_TTL_SECONDS = 86400;
 
 // ------------------------------------------------------------
@@ -64,25 +78,30 @@ async function getRateLimitCount(email: string): Promise<number> {
   }
 }
 
-async function forwardRateLimitExceeded(
+function matchesHumanIntervention(subject: string, body: string): boolean {
+  const text = `${subject} ${body}`.toLowerCase();
+  return HUMAN_INTERVENTION_KEYWORDS.some(kw => text.includes(kw.toLowerCase()));
+}
+
+async function forwardToHuman(
   resend: Resend,
   senderField: string,
   senderEmail: string,
   subject: string,
   body: string,
-  count: number
+  reason: string,
 ): Promise<void> {
   await resend.emails.send({
     from: 'Alex (Inbound System) <alex@wenboom.com>',
     to: FORWARD_EMAILS,
-    subject: `[RATE LIMIT EXCEEDED] ${subject}`,
+    subject: `${FORWARD_SUBJECT_PREFIX} [${reason}] ${subject}`,
     replyTo: senderEmail,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-bottom: 20px;">
-          <strong>RATE LIMIT:</strong> This sender has exceeded the 24h AI reply limit (${count}/${RATE_LIMIT_MAX_REPLIES}). Not queued — please review and reply manually.
+          <strong>Forward Reason:</strong> ${reason}<br/>
+          <strong>Original Sender:</strong> ${senderField}
         </div>
-        <p><strong>Original Sender:</strong> ${senderField}</p>
         <p><strong>Subject:</strong> ${subject}</p>
         <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 20px 0;" />
         <p><strong>Email Content:</strong></p>
@@ -92,13 +111,30 @@ async function forwardRateLimitExceeded(
   });
 }
 
+async function sendUnsubscribeConfirmation(resend: Resend, toEmail: string): Promise<void> {
+  try {
+    await resend.emails.send({
+      from: SENDER.from,
+      to: toEmail,
+      subject: 'Unsubscribe confirmed',
+      text: `You have been unsubscribed from automated replies. You will no longer receive automated responses from this address.
+
+If this was a mistake, reply to this email and we'll reconnect you manually.
+
+Best,
+Alex
+Principal AI Infrastructure Architect @ Wenboom`,
+    });
+    console.log(`[inbound-email] Unsubscribe confirmation sent to: ${toEmail}`);
+  } catch (err) {
+    console.warn('[inbound-email] Failed to send unsubscribe confirmation:', err);
+  }
+}
+
 // ------------------------------------------------------------
 // Main Webhook Handler
 // ------------------------------------------------------------
 export const POST: APIRoute = async ({ request }) => {
-  // ------------------------------------------------------------
-  // Step 1: Safe JSON parse (malformed payload -> 400, not 500)
-  // ------------------------------------------------------------
   let body: any;
   try {
     body = await request.json();
@@ -114,10 +150,7 @@ export const POST: APIRoute = async ({ request }) => {
     const eventType = body?.type;
     const emailData = body.data || {};
 
-    // ------------------------------------------------------------
-    // Step 2: Handle bounce / complaint events (write blacklist)
-    //   These events have recipient in data.to, not data.from
-    // ------------------------------------------------------------
+    // Step 2: bounce / complaint
     if (eventType === 'email.bounced' || eventType === 'email.complained') {
       const recipients = extractEmailsFromTo(emailData.to);
       for (const email of recipients) {
@@ -131,9 +164,6 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // ------------------------------------------------------------
-    // Step 3: Only process email.received events from here on
-    // ------------------------------------------------------------
     if (eventType !== 'email.received') {
       return new Response(
         JSON.stringify({ status: 'ignored', type: eventType }),
@@ -147,9 +177,20 @@ export const POST: APIRoute = async ({ request }) => {
     const bodyText = emailData.text ||
       (emailData.html ? emailData.html.replace(/<[^>]*>?/gm, '') : '') || '';
 
-    // ------------------------------------------------------------
-    // Step 4: Ignore self-replies (exact match, not includes)
-    // ------------------------------------------------------------
+    // Step 4b: Extract headers — FIX BUG1: split messageId and inReplyToHeader
+    const headers: Record<string, string> = {};
+    if (emailData.headers && typeof emailData.headers === 'object') {
+      for (const [k, v] of Object.entries(emailData.headers)) {
+        headers[k.toLowerCase()] = String(v);
+      }
+    }
+    const messageId = headers['message-id'] || null;              // current email ID -> for In-Reply-To header when sending reply
+    const inReplyToHeader = headers['in-reply-to'] || null;       // target email ID -> for thread ID generation
+    const references = headers['references'] || null;
+    const autoSubmitted = headers['auto-submitted'] || '';
+    const xAutoreply = headers['x-autoreply'] || '';
+
+    // Step 4: Ignore self-replies
     if (senderEmail === 'alex@wenboom.com') {
       console.log('[inbound-email] Ignored self-reply');
       return new Response(
@@ -158,9 +199,32 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // ------------------------------------------------------------
-    // Step 5: Idempotency check (prevents duplicate queue entries)
-    // ------------------------------------------------------------
+    // Step 5: OOO / auto-reply pre-filter
+    const fastIntent = fastPathClassify(bodyText, {
+      'auto-submitted': autoSubmitted,
+      'x-autoreply': xAutoreply,
+    });
+    if (fastIntent === 'TYPE_D_AUTO_REPLY') {
+      console.log(`[inbound-email] Auto-reply/OOO detected, silent drop: ${senderEmail}`);
+      return new Response(
+        JSON.stringify({ status: 'ignored_auto_reply' }),
+        { status: 200 }
+      );
+    }
+
+    // Step 6: Unsubscribe detection
+    if (fastIntent === 'TYPE_E_UNSUBSCRIBE') {
+      console.log(`[inbound-email] Unsubscribe request from: ${senderEmail}`);
+      await addToBlacklist(senderEmail, 'unsubscribe');
+      const resend = getResend();
+      await sendUnsubscribeConfirmation(resend, senderEmail);
+      return new Response(
+        JSON.stringify({ status: 'unsubscribed', sender: senderEmail }),
+        { status: 200 }
+      );
+    }
+
+    // Step 7: Idempotency check — FIX BUG2: pessimistic lock (mark immediately)
     const emailId = emailData.email_id || emailData.id;
     if (emailId) {
       const idempotencyKey = `processed_email:${emailId}`;
@@ -172,13 +236,11 @@ export const POST: APIRoute = async ({ request }) => {
           { status: 200 }
         );
       }
-      // Mark BEFORE enqueue (crash-safe); if enqueue fails we delete it
+      // Mark immediately (pessimistic lock) to prevent Resend retry during enqueue
       await kvStore.set(idempotencyKey, 'true', { ex: IDEMPOTENCY_TTL_SECONDS });
     }
 
-    // ------------------------------------------------------------
-    // Step 6: Blacklist check (blocked senders don't consume queue)
-    // ------------------------------------------------------------
+    // Step 8: Blacklist check
     try {
       const blacklistKey = `${BLACKLIST_KEY_PREFIX}${senderEmail}`;
       const isBlocked = await kvStore.get(blacklistKey);
@@ -190,32 +252,68 @@ export const POST: APIRoute = async ({ request }) => {
         );
       }
     } catch {
-      // KV failure -> allow through (reply-engine has secondary blacklist check)
+      // allow through
     }
 
-    // ------------------------------------------------------------
-    // Step 7: Rate limit pre-check (over-limit -> forward human immediately, no queue)
-    //   Prevents queue flooding from users who spam replies.
-    // ------------------------------------------------------------
+    // Step 9: Rate limit pre-check
     const replyCount = await getRateLimitCount(senderEmail);
     if (replyCount >= RATE_LIMIT_MAX_REPLIES) {
-      console.log(`[inbound-email] Rate limit pre-check: ${replyCount}/${RATE_LIMIT_MAX_REPLIES}, forwarding immediately: ${senderEmail}`);
+      console.log(`[inbound-email] Rate limit pre-check: ${replyCount}/${RATE_LIMIT_MAX_REPLIES}, forwarding: ${senderEmail}`);
       const resend = getResend();
-      await forwardRateLimitExceeded(resend, rawFrom, senderEmail, subject, bodyText, replyCount);
+      await forwardToHuman(resend, rawFrom, senderEmail, subject, bodyText, 'rate_limited');
       return new Response(
         JSON.stringify({ status: 'forwarded', reason: 'rate-limited', sender: senderEmail }),
         { status: 200 }
       );
     }
 
-    // ------------------------------------------------------------
-    // Step 8: Calculate human-like delay & enqueue to QStash
-    //   Normal path: ~100ms total, returns 200 immediately.
-    //   QStash calls /api/worker/process-reply after delay.
-    // ------------------------------------------------------------
-    const receivedAt = Date.now();
-    const delaySeconds = calculateHumanDelay(receivedAt);
+    // Step 10: Human intervention keyword check
+    if (matchesHumanIntervention(subject, bodyText)) {
+      console.log(`[inbound-email] Human intervention keyword matched, forwarding: ${senderEmail}`);
+      const resend = getResend();
+      await forwardToHuman(resend, rawFrom, senderEmail, subject, bodyText, 'human_keyword');
+      return new Response(
+        JSON.stringify({ status: 'forwarded', reason: 'human_keyword', sender: senderEmail }),
+        { status: 200 }
+      );
+    }
 
+    // Step 11: Generate Thread ID (uses inReplyToHeader, NOT messageId)
+    const threadId = generateThreadId(senderEmail, subject, inReplyToHeader, references);
+
+    // Step 12: KV debounce merge
+    const bufferKey = `buffer:${threadId}`;
+    const latestKey = `latest:${threadId}`;
+    const now = Date.now();
+
+    let existingBuffer: { jobId: string; firstMessageAt: number; messages: string[] } | null = null;
+    try {
+      existingBuffer = await kvStore.get(bufferKey) as any;
+    } catch {
+      existingBuffer = null;
+    }
+
+    const firstMessageAt = existingBuffer?.firstMessageAt || now;
+    const isWithinHardCap = (now - firstMessageAt) < DEBOUNCE.maxBufferWaitMinutes * 60 * 1000;
+    let combinedBody = bodyText;
+
+    if (existingBuffer && isWithinHardCap && existingBuffer.jobId) {
+      await cancelQstashMessage(existingBuffer.jobId);
+      const prevMessages = existingBuffer.messages.join('\n\n--- [Follow-up email] ---\n\n');
+      combinedBody = `${prevMessages}\n\n--- [Follow-up email] ---\n\n${bodyText}`;
+      if (combinedBody.length > DEBOUNCE.maxCombinedBodyLength) {
+        combinedBody = combinedBody.slice(-DEBOUNCE.maxCombinedBodyLength);
+      }
+      console.log(`[inbound-email] Debounce merge: cancelled job ${existingBuffer.jobId}, merged ${existingBuffer.messages.length + 1} emails`);
+    }
+
+    const allMessages = existingBuffer && isWithinHardCap
+      ? [...existingBuffer.messages, bodyText]
+      : [bodyText];
+
+    // Step 13: Calculate delay & enqueue
+    const receivedAt = now;
+    const delaySeconds = calculateHumanDelay(receivedAt);
     const queued: QueuedReply = {
       emailId: emailId || `${senderEmail}-${subject}-${bodyText.substring(0, 100)}`,
       senderEmail,
@@ -223,21 +321,45 @@ export const POST: APIRoute = async ({ request }) => {
       subject,
       body: bodyText,
       receivedAt,
+      threadId,
+      inReplyTo: messageId || undefined,  // FIX BUG1: use messageId (current email ID)
+      combinedBody,
+      firstMessageAt,
     };
 
     try {
-      const messageId = await enqueueReply(queued, delaySeconds);
-      console.log(`[inbound-email] Enqueued to QStash: ${messageId}, delay: ${delaySeconds}s (${Math.round(delaySeconds / 60)}min), from: ${senderEmail}`);
+      const messageIdQstash = await enqueueReply(queued, delaySeconds);
+
+      // Idempotency already marked in Step 7 (pessimistic lock)
+      // No need to set again here.
+
+      await kvStore.set(bufferKey, {
+        jobId: messageIdQstash,
+        firstMessageAt,
+        messages: allMessages,
+      }, { ex: DEBOUNCE.bufferTtlSeconds });
+
+      await kvStore.set(latestKey, messageIdQstash, { ex: DEBOUNCE.bufferTtlSeconds });
+
+      console.log(
+        `[inbound-email] Enqueued: ${messageIdQstash}, delay: ${delaySeconds}s (${Math.round(delaySeconds / 60)}min), ` +
+        `thread: ${threadId}, from: ${senderEmail}, merged: ${allMessages.length}`
+      );
+
       return new Response(
-        JSON.stringify({ status: 'queued', messageId, delaySeconds, sender: senderEmail }),
+        JSON.stringify({
+          status: 'queued',
+          messageId: messageIdQstash,
+          delaySeconds,
+          threadId,
+          mergedCount: allMessages.length,
+          sender: senderEmail,
+        }),
         { status: 200 }
       );
     } catch (qstashErr: any) {
-      // ------------------------------------------------------------
-      // Fallback: QStash unavailable -> delete idempotency mark,
-      // then process synchronously (no delay, but email not lost)
-      // ------------------------------------------------------------
-      console.error('[inbound-email] QStash enqueue failed, falling back to sync processing:', qstashErr?.message || qstashErr);
+      // FIX BUG2: delete pessimistic idempotency mark on enqueue failure
+      console.error('[inbound-email] QStash enqueue failed, falling back to sync:', qstashErr?.message || qstashErr);
       if (emailId) {
         try { await kvStore.del(`processed_email:${emailId}`); } catch { /* ignore */ }
       }
