@@ -1,5 +1,5 @@
 // ============================================================
-// Inbound Email Webhook v4.1.2
+// Inbound Email Webhook v4.1.3
 // Fixes:
 //   BUG1: Split messageId and inReplyToHeader (was merged, caused
 //         threadId to use message-id -> debounce never merged).
@@ -9,6 +9,9 @@
 //   v4.1.2: Extract display name from From header (Resend's data.from
 //           is often bare email; headers.from has "Name <email>").
 //           Sync unsubscribe sign-off to new format.
+//   v4.1.3: DEBUG payload structure (bodyLength=0 + firstName=null
+//           investigation). Enhanced bodyText extraction with multi-field
+//           fallback. Headers extracted before bodyText for debug logging.
 // v4.1 base: KV debounce merge, OOO pre-filter, unsubscribe detect,
 //             human keyword forwarding, thread ID + latest tracking.
 // ============================================================
@@ -54,6 +57,39 @@ function extractEmailsFromTo(toField: any): string[] {
     return toField.map((t: any) => extractEmail(typeof t === 'string' ? t : t?.email || ''));
   }
   return [extractEmail(typeof toField === 'string' ? toField : toField?.email || '')];
+}
+// ------------------------------------------------------------
+// v4.1.3: Robust email body extraction with multi-field fallback
+// Resend inbound webhook may put body in text / html / body / text_body
+// depending on the sending client. Try all known fields.
+// ------------------------------------------------------------
+function extractEmailBody(emailData: any): string {
+  // 1. Try plain text first
+  if (emailData.text && typeof emailData.text === 'string' && emailData.text.trim().length > 0) {
+    return emailData.text;
+  }
+  // 2. Try HTML and strip tags
+  if (emailData.html && typeof emailData.html === 'string' && emailData.html.trim().length > 0) {
+    return emailData.html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+  }
+  // 3. Try alternate field names (some Resend payload versions)
+  const altFields = ['body', 'text_body', 'plain', 'content', 'message'];
+  for (const field of altFields) {
+    if (emailData[field] && typeof emailData[field] === 'string' && emailData[field].trim().length > 0) {
+      return emailData[field];
+    }
+  }
+  // 4. If headers has a body-like field
+  if (emailData.headers && typeof emailData.headers === 'object') {
+    for (const [k, v] of Object.entries(emailData.headers)) {
+      if (k.toLowerCase().includes('body') || k.toLowerCase().includes('content')) {
+        if (v && typeof v === 'string' && v.trim().length > 0 && v.length > 20) {
+          return v;
+        }
+      }
+    }
+  }
+  return '';
 }
 async function addToBlacklist(email: string, reason: string): Promise<void> {
   try {
@@ -157,23 +193,37 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 200 }
       );
     }
-    let rawFrom = String(emailData.from || '');
-    const senderEmail = extractEmail(rawFrom);
-    const subject = emailData.subject || 'No Subject';
-    const bodyText = emailData.text ||
-      (emailData.html ? emailData.html.replace(/<[^>]*>?/gm, '') : '') || '';
-    // Step 4b: Extract headers — FIX BUG1: split messageId and inReplyToHeader
+    // v4.1.3: Extract headers FIRST (before bodyText) so debug logs can access them
     const headers: Record<string, string> = {};
     if (emailData.headers && typeof emailData.headers === 'object') {
       for (const [k, v] of Object.entries(emailData.headers)) {
         headers[k.toLowerCase()] = String(v);
       }
     }
+    let rawFrom = String(emailData.from || '');
+    const senderEmail = extractEmail(rawFrom);
+    const subject = emailData.subject || 'No Subject';
+    // v4.1.3: Use robust multi-field body extraction
+    const bodyText = extractEmailBody(emailData);
+    // v4.1.3: DEBUG payload structure (investigate bodyLength=0 + firstName=null)
+    const allKeys = Object.keys(emailData).join(',');
+    const headerKeys = Object.keys(headers).join(',');
+    console.log(`[inbound-email] DEBUG payload: eventType=${eventType}, dataKeys=[${allKeys}], headerKeys=[${headerKeys}]`);
+    console.log(`[inbound-email] DEBUG fields: textLen=${(emailData.text || '').length}, htmlLen=${(emailData.html || '').length}, bodyLen=${bodyText.length}, dataFrom="${emailData.from || 'N/A'}", headerFrom="${headers['from'] || 'N/A'}"`);
+    console.log(`[inbound-email] DEBUG bodyPreview: "${bodyText.substring(0, 120).replace(/\n/g, ' ')}"`);
     // v4.1.2: Override rawFrom with From header if it contains a display name
     // (Resend's data.from is often just the bare email; headers.from has "Name <email>")
     if (headers['from'] && headers['from'].includes('<') && headers['from'].includes('>')) {
       rawFrom = headers['from'];
       console.log(`[inbound-email] Using From header display name: ${rawFrom}`);
+    } else {
+      // v4.1.3: Also try data.from if it has display name (some Resend versions put it there)
+      if (emailData.from && String(emailData.from).includes('<') && String(emailData.from).includes('>')) {
+        rawFrom = String(emailData.from);
+        console.log(`[inbound-email] Using data.from display name: ${rawFrom}`);
+      } else {
+        console.log(`[inbound-email] No display name found (dataFrom="${emailData.from}", headerFrom="${headers['from']}"), will use "Hey there,"`);
+      }
     }
     const messageId = headers['message-id'] || null;              // current email ID -> for In-Reply-To header when sending reply
     const inReplyToHeader = headers['in-reply-to'] || null;       // target email ID -> for thread ID generation
