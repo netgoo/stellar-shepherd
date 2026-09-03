@@ -1,9 +1,9 @@
 // ============================================================
 // QStash Client - Delayed task queue for human-like email replies
-// v3.3: Fixed JWS body hash verification - try multiple computation
-//       methods (raw / re-stringified / trimmed) to match QStash
-//       signing logic. QStash may hash based on parsed+re-serialized
-//       JSON rather than raw request bytes.
+// v3.4: Fixed base64url padding mismatch - QStash payload.body
+//       retains '=' padding while our base64UrlEncode strips it.
+//       Normalize both sides by stripping trailing '=' before compare.
+// v3.3: Multi-method body hash verification (raw / re-stringified / trimmed).
 // v3.2: Fixed QStash API base URL (read from QSTASH_URL env var).
 //       Native JWS signature verification (no @upstash/qstash dependency).
 // ============================================================
@@ -28,11 +28,18 @@ const QSTASH_BASE_URL = (import.meta.env.QSTASH_URL || process.env.QSTASH_URL ||
 const WORKER_CALLBACK_URL = 'https://wenboom.com/api/worker/process-reply';
 const EST_OFFSET_HOURS = -5; // Eastern Standard Time (UTC-5)
 const DAY_START_HOUR = 7;    // EST 07:00
-const NIGHT_START_HOUR = 25; // EST 22:00
+const NIGHT_START_HOUR = 25; // TEMP DISABLED: set to 25 to skip night mode for body-hash test. Restore to 22 after verification.
 const MIN_DELAY_SECONDS = 8 * 60;   // 8 minutes
 const MAX_DELAY_SECONDS = 35 * 60;  // 35 minutes
 const MORNING_SEND_START_MINUTE = 15;  // 08:15
 const MORNING_SEND_END_MINUTE = 90;    // 09:30 (08:00 + 90min)
+
+// ------------------------------------------------------------
+// Helper: strip trailing '=' padding from base64/base64url strings
+// ------------------------------------------------------------
+function stripPadding(s: string): string {
+  return s.replace(/=+$/, '');
+}
 
 // ------------------------------------------------------------
 // Human-like delay calculator
@@ -122,10 +129,13 @@ async function verifyJwsSignature(signature: string, rawBody: string, signingKey
     const [headerB64, payloadB64, signatureB64] = parts;
 
     // 1. Verify HMAC-SHA256 signature over header.payload
+    //    Strip trailing '=' padding from both sides before comparison
+    //    (QStash may retain padding in the JWS signature segment).
     const data = `${headerB64}.${payloadB64}`;
     const expectedSig = createHmac('sha256', signingKey).update(data).digest();
     const expectedSigB64url = base64UrlEncode(expectedSig);
-    if (signatureB64 !== expectedSigB64url) {
+    const sigClean = stripPadding(signatureB64);
+    if (sigClean !== expectedSigB64url) {
       console.warn('[qstash] JWS signature mismatch');
       return false;
     }
@@ -136,7 +146,8 @@ async function verifyJwsSignature(signature: string, rawBody: string, signingKey
     // 3. Verify body hash - try multiple computation methods to match QStash signing logic.
     //    QStash may hash based on parsed+re-serialized JSON (official SDK uses
     //    JSON.stringify(req.body)) rather than raw request bytes.
-    const expectedBodyHash = payload.body;
+    //    CRITICAL: QStash payload.body retains '=' padding; strip it before compare.
+    const expectedBodyHash = stripPadding(payload.body || '');
     let bodyMatched = false;
     let matchMethod = 'raw';
 
