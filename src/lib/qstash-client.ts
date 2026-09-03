@@ -1,7 +1,9 @@
 // ============================================================
 // QStash Client - Delayed task queue for human-like email replies
+// v3.2: Fixed QStash API base URL (read from QSTASH_URL env var).
+//       Native JWS signature verification (no @upstash/qstash dependency).
 // ============================================================
-import { verifySignature } from '@upstash/qstash';
+import { createHmac, createHash } from 'crypto';
 
 // ------------------------------------------------------------
 // Types
@@ -18,7 +20,7 @@ export interface QueuedReply {
 // ------------------------------------------------------------
 // Constants
 // ------------------------------------------------------------
-const QSTASH_PUBLISH_URL = 'https://qstash.upstash.io/v2/publish';
+const QSTASH_BASE_URL = (import.meta.env.QSTASH_URL || process.env.QSTASH_URL || '').replace(/\/$/, '');
 const WORKER_CALLBACK_URL = 'https://wenboom.com/api/worker/process-reply';
 const EST_OFFSET_HOURS = -5; // Eastern Standard Time (UTC-5)
 const DAY_START_HOUR = 7;    // EST 07:00
@@ -64,8 +66,12 @@ export async function enqueueReply(data: QueuedReply, delaySeconds: number): Pro
   if (!token) {
     throw new Error('[qstash] QSTASH_TOKEN is not configured');
   }
+  if (!QSTASH_BASE_URL) {
+    throw new Error('[qstash] QSTASH_URL is not configured (set to your Upstash QStash REST URL)');
+  }
 
-  const response = await fetch(`${QSTASH_PUBLISH_URL}/${WORKER_CALLBACK_URL}`, {
+  const publishUrl = `${QSTASH_BASE_URL}/v2/publish/${WORKER_CALLBACK_URL}`;
+  const response = await fetch(publishUrl, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -88,9 +94,76 @@ export async function enqueueReply(data: QueuedReply, delaySeconds: number): Pro
 }
 
 // ------------------------------------------------------------
-// Verify QStash webhook signature (called by worker)
-//   Note: If verifySignature import fails, check @upstash/qstash version.
-//   For v2.x: import { verifySignature } from '@upstash/qstash'
+// Native JWS signature verification (replaces @upstash/qstash verifySignature)
+//   QStash signs webhooks with JWS (header.payload.signature) using HMAC-SHA256.
+//   Payload contains: body (sha256 of request body), iss, sub, exp, nbf, iat, jti.
+// ------------------------------------------------------------
+function base64UrlEncode(buf: Buffer): string {
+  return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlDecode(str: string): Buffer {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+  return Buffer.from(padded, 'base64');
+}
+
+async function verifyJwsSignature(signature: string, rawBody: string, signingKey: string): Promise<boolean> {
+  try {
+    const parts = signature.split('.');
+    if (parts.length !== 3) {
+      console.warn('[qstash] JWS does not have 3 parts');
+      return false;
+    }
+
+    const [headerB64, payloadB64, signatureB64] = parts;
+
+    // 1. Verify HMAC-SHA256 signature over header.payload
+    const data = `${headerB64}.${payloadB64}`;
+    const expectedSig = createHmac('sha256', signingKey).update(data).digest();
+    const expectedSigB64url = base64UrlEncode(expectedSig);
+
+    if (signatureB64 !== expectedSigB64url) {
+      console.warn('[qstash] JWS signature mismatch');
+      return false;
+    }
+
+    // 2. Decode and validate payload
+    const payload = JSON.parse(base64UrlDecode(payloadB64).toString('utf-8'));
+
+    // 3. Verify body hash (sha256 of raw request body, base64url)
+    const bodyHash = base64UrlEncode(createHash('sha256').update(rawBody).digest());
+    if (payload.body !== bodyHash) {
+      console.warn('[qstash] JWS body hash mismatch');
+      return false;
+    }
+
+    // 4. Verify time window (nbf <= now <= exp)
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.nbf && now < payload.nbf) {
+      console.warn(`[qstash] JWS not yet valid (nbf=${payload.nbf}, now=${now})`);
+      return false;
+    }
+    if (payload.exp && now > payload.exp) {
+      console.warn(`[qstash] JWS expired (exp=${payload.exp}, now=${now})`);
+      return false;
+    }
+
+    // 5. Verify issuer
+    if (payload.iss && payload.iss !== 'Upstash') {
+      console.warn(`[qstash] JWS unexpected issuer: ${payload.iss}`);
+      return false;
+    }
+
+    return true;
+  } catch (err: any) {
+    console.error('[qstash] JWS verification error:', err?.message || err);
+    return false;
+  }
+}
+
+// ------------------------------------------------------------
+// Verify QStash webhook signature (tries current key, then next key for rotation)
 // ------------------------------------------------------------
 export async function verifyQstashWebhook(signature: string, rawBody: string): Promise<boolean> {
   const currentKey = import.meta.env.QSTASH_CURRENT_SIGNING_KEY || process.env.QSTASH_CURRENT_SIGNING_KEY;
@@ -101,16 +174,19 @@ export async function verifyQstashWebhook(signature: string, rawBody: string): P
     return false;
   }
 
-  try {
-    await verifySignature({
-      signature,
-      body: rawBody,
-      currentSigningKey: currentKey,
-      nextSigningKey: nextKey || currentKey,
-    });
-    return true;
-  } catch (error: any) {
-    console.error('[qstash] Signature verification failed:', error?.message || error);
-    return false;
+  // Try current signing key first
+  const validWithCurrent = await verifyJwsSignature(signature, rawBody, currentKey);
+  if (validWithCurrent) return true;
+
+  // Try next signing key (supports key rotation)
+  if (nextKey && nextKey !== currentKey) {
+    const validWithNext = await verifyJwsSignature(signature, rawBody, nextKey);
+    if (validWithNext) {
+      console.log('[qstash] Signature valid with NEXT signing key (rotation in progress)');
+      return true;
+    }
   }
+
+  console.error('[qstash] Signature verification failed with both keys');
+  return false;
 }
