@@ -1,7 +1,8 @@
 // ============================================================
-// Auto-Reply & Human Intervention System Configuration v2.1
+// Auto-Reply & Human Intervention System Configuration v3.0
 // ============================================================
-
+// v3.0 Changes: Added rate limiting, blacklist, UTM attribution,
+// and natural fallback template for async QStash-based architecture.
 // ------------------------------------------------------------
 // 1. HUMAN INTERVENTION KEYWORDS
 //    Emails matching ANY of these are forwarded (not auto-replied)
@@ -15,7 +16,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'distributor', 'white label', 'white-label', 'whitelabel',
   'wholesale', 'bulk order', 'volume pricing',
   '合作', '商务', '联合', '分销', '代理', '批发', '白标',
-
   // --- Sales, Pricing & Proposals ---
   'pricing', 'price', 'cost', 'fee', 'fees', 'billing', 'invoice',
   'quote', 'quotation', 'proposal', 'demo', 'demostration',
@@ -25,14 +25,12 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'discount', 'coupon', 'promo code', 'negotiate', 'negotiation',
   '报价', '价格', '费用', '合同', '协议', '演示', '试用',
   '企业', '采购', '购买', '折扣', '优惠', '谈判', '收费',
-
   // --- Investment & Finance ---
   'investment', 'investor', 'invest ', 'funding', 'fund ',
   'venture capital', 'vc ', 'angel investor', 'seed round',
   'acquisition', 'acquire', 'buyout', 'merger', 'ipo ',
   'revenue share', 'profit sharing', 'equity', 'stake',
   '投资', '融资', '收购', '并购', '股权', '分成',
-
   // --- Media, PR & Events ---
   'press', 'media', 'journalist', 'reporter', 'editor',
   'publication', 'magazine', 'newspaper', 'blog feature',
@@ -42,7 +40,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'media kit', 'press release', 'testimonial', 'review request',
   '媒体', '采访', '记者', '编辑', '公关', '播客',
   '演讲', '会议', '活动', '研讨会', '测评', '评价',
-
   // --- Legal, Compliance & Security ---
   'legal', 'lawyer', 'attorney', 'law firm', 'court', 'lawsuit',
   'sue', 'subpoena', 'compliance', 'gdpr', 'ccpa',
@@ -54,7 +51,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   '法律', '律师', '诉讼', '合规', '隐私', '版权', '侵权',
   '商标', '专利', '安全', '漏洞', '黑客', '钓鱼', '欺诈',
   '诈骗', '滥用', '举报', '数据泄露',
-
   // --- Hiring & Careers ---
   'job', 'career', 'hiring', 'hire ', 'recruit', 'recruitment',
   'resume', 'cv ', 'application', 'position', 'role', 'opening',
@@ -63,7 +59,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'work with you', 'for hire', 'available for work',
   '工作', '职业', '招聘', '简历', '申请', '职位', '机会',
   '实习', '自由职业', '外包', '团队', '加入',
-
   // --- Affiliate & Marketing ---
   'affiliate', 'referral program', 'commission', 'refer',
   'ambassador', 'influencer', 'creator', 'content creator',
@@ -71,7 +66,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'sponsor', 'sponsorship', 'brand deal', 'endorsement',
   '联盟', '推荐', '佣金', '分成', '大使', '网红',
   '创作者', '推广', '广告', '赞助', '代言',
-
   // --- Custom Development & Consulting ---
   'custom', 'customize', 'customized', 'bespoke', 'tailor-made',
   'build for me', 'develop for me', 'create for me',
@@ -81,7 +75,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'strategy', 'strategic', 'roadmap', 'planning',
   '定制', '开发', '外包', '咨询', '顾问', '指导',
   '审计', '评估', '战略', '规划', '路线图',
-
   // --- Account & Billing Issues ---
   'refund', 'chargeback', 'dispute', 'cancel', 'cancellation',
   'unsubscribe', 'remove me', 'delete my', 'account issue',
@@ -89,14 +82,12 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'billing issue', 'payment failed', 'credit card',
   '退款', '取消', '退订', '删除', '账户', '登录',
   '密码', '账单', '支付',
-
   // --- Urgent / Escalation ---
   'urgent', 'asap', 'immediately', 'critical', 'emergency',
   'ceo ', 'founder', 'owner', 'manager', 'supervisor',
   'escalate', 'escalation', 'complaint', 'dissatisfied',
   '紧急', '尽快', '立即', '严重', '投诉', '不满',
 ];
-
 // ------------------------------------------------------------
 // 2. FORWARDING EMAILS
 // ------------------------------------------------------------
@@ -104,7 +95,6 @@ export const FORWARD_EMAILS: string[] = [
   'hi@aicode8.com',
   'guixinji@outlook.com',
 ];
-
 // ------------------------------------------------------------
 // 3. AFFILIATE LINK MAPPING
 // ------------------------------------------------------------
@@ -113,7 +103,6 @@ export interface AffiliateLink {
   url: string;
   keywords: string[];
 }
-
 export const AFFILIATE_LINKS: AffiliateLink[] = [
   {
     name: 'Make.com',
@@ -235,13 +224,11 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     ],
   },
 ];
-
 // ------------------------------------------------------------
 // 4. AI SYSTEM PROMPT (natural human-like reply style)
 // ------------------------------------------------------------
 export const AI_SYSTEM_PROMPT: string = `You are Alex, Principal AI Infrastructure Architect at Wenboom.com.
 You write natural, conversational email replies to subscribers who email you.
-
 ABOUT YOU:
 - You build production-grade AI infrastructure for lean B2B teams
 - Your site wenboom.com publishes blueprints for 7 core tools across 4 pillars
@@ -250,7 +237,6 @@ ABOUT YOU:
 - Pillar 03: Agentic Voice & Real-Time Flow (Voiceflow + Bland.ai)
 - Pillar 04: Lifecycle Revenue CRM (ActiveCampaign)
 - You test every architecture in live deployment before publishing
-
 RULES:
 - Reply in the SAME language as the user's email (English or Chinese).
 - Write like a real human sending an email - conversational, direct, no corporate fluff.
@@ -262,24 +248,20 @@ RULES:
 - If the user asks about pricing, give general ranges, not exact quotes.
 - If you don't know the answer, say so honestly and suggest where to look.
 - Use specific numbers and benchmarks when relevant (e.g., "83.4% TCO reduction", "sub-800ms latency", "98.4% deliverability").
-
 FORMAT:
 - NO structured headers like "Answer:", "Recommendation:", "Pitfall:".
 - NO markdown bold (**text**), NO bullet points, NO numbered lists.
 - Just natural paragraphs, like a real person wrote it.
 - Start with a natural opener like "Great question," or "Good one," or just dive in.
 - End naturally before the sign-off.
-
 LINK EMBEDDING:
 - If the context provides recommended tools/URLs, naturally mention 1-2 of them in your prose where they fit the answer.
 - Use link format like [Tool Name](URL) when mentioning a tool.
 - Do NOT force links if they don't fit the conversation.
 - Do NOT list links at the end - weave them into your prose naturally.
 - Maximum 2 links per reply.
-
 SIGN-OFF:
 - End with: "To your leverage,\nAlex\nPrincipal AI Infrastructure Architect | Wenboom.com"`;
-
 // ------------------------------------------------------------
 // 5. SYSTEM SETTINGS
 // ------------------------------------------------------------
@@ -288,3 +270,42 @@ export const FORWARD_SUBJECT_PREFIX: string = '[NEEDS MANUAL REPLY]';
 export const MAX_EMAIL_BODY_LENGTH: number = 4000;
 export const DEDUP_TTL_SECONDS: number = 86400; // 24 hours
 export const AI_REPLY_TIMEOUT_MS: number = 30000; // 30 seconds
+// ------------------------------------------------------------
+// 6. RATE LIMIT & ANTI-ABUSE SETTINGS
+//    Prevents a single sender from exhausting AI quota via rapid replies.
+//    After MAX replies within the window, subsequent emails are forwarded to human.
+// ------------------------------------------------------------
+export const RATE_LIMIT_MAX_REPLIES: number = 3; // Max AI replies per sender per window
+export const RATE_LIMIT_WINDOW_SECONDS: number = 86400; // 24 hours
+export const RATE_LIMIT_KEY_PREFIX: string = 'ratelimit:'; // KV key: ratelimit:{email}:{yyyy-mm-dd}
+// ------------------------------------------------------------
+// 7. BLACKLIST SETTINGS (Bounce / Complaint auto-block)
+//    Emails that bounce or are marked as spam are permanently blocked.
+//    Checked before any AI processing to protect domain reputation.
+// ------------------------------------------------------------
+export const BLACKLIST_KEY_PREFIX: string = 'blacklist:'; // KV key: blacklist:{email}
+export const BLACKLIST_FOREVER: boolean = true; // Permanent block (no TTL)
+// ------------------------------------------------------------
+// 8. UTM ATTRIBUTION SETTINGS
+//    Affiliate links are dynamically tagged for conversion tracking.
+//    Format: ?utm_source=auto_reply&utm_medium=email&utm_campaign=reply_{tool}&utm_content={hash}
+// ------------------------------------------------------------
+export const UTM_SOURCE: string = 'auto_reply';
+export const UTM_MEDIUM: string = 'email';
+export const UTM_CAMPAIGN_PREFIX: string = 'reply_'; // e.g., reply_make, reply_n8n, reply_smartlead
+// ------------------------------------------------------------
+// 9. FALLBACK REPLY TEMPLATE (natural, non-robotic)
+//    Used when Groq AI generation fails. Written to sound like a
+//    busy architect promising a proper follow-up, not a generic bot reply.
+// ------------------------------------------------------------
+export const FALLBACK_REPLY_TEMPLATE: string = `Hey,
+
+Good question — let me give you a proper answer rather than something rushed.
+
+A couple of quick details would help me point you in the right direction: are you running this cloud or self-hosted? And roughly what scale — a few workflows a day, or hundreds?
+
+In the meantime, the blueprints at wenboom.com cover most of the common setups, with the exact JSON payloads and workflow exports I use in production.
+
+To your leverage,
+Alex
+Principal AI Infrastructure Architect | Wenboom.com`;
