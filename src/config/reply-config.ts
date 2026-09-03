@@ -1,22 +1,21 @@
 // ============================================================
-// Auto-Reply & Human Intervention System Configuration v3.0
+// Auto-Reply & Human Intervention System Configuration v4.1
+// v4.1: 4-class intent engine + KV debounce + anti-injection
+//       + link whitelist + human takeover lock. Removed
+//       Voiceflow/Bland.ai (no affiliate business).
 // ============================================================
-// v3.0 Changes: Added rate limiting, blacklist, UTM attribution,
-// and natural fallback template for async QStash-based architecture.
+import { createHash } from 'crypto';
+
 // ------------------------------------------------------------
-// 1. HUMAN INTERVENTION KEYWORDS
-//    Emails matching ANY of these are forwarded (not auto-replied)
-//    Case-insensitive, checks subject + body
+// 1. HUMAN INTERVENTION KEYWORDS (preserved from v3.0)
 // ------------------------------------------------------------
 export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
-  // --- Business Development & Partnerships ---
   'partnership', 'partner with', 'collaborate', 'collaboration',
   'joint venture', 'co-marketing', 'strategic alliance',
   'business development', 'reseller', 'resell', 'distribution',
   'distributor', 'white label', 'white-label', 'whitelabel',
   'wholesale', 'bulk order', 'volume pricing',
   '合作', '商务', '联合', '分销', '代理', '批发', '白标',
-  // --- Sales, Pricing & Proposals ---
   'pricing', 'price', 'cost', 'fee', 'fees', 'billing', 'invoice',
   'quote', 'quotation', 'proposal', 'demo', 'demostration',
   'trial', 'free trial', 'contract', 'agreement', 'nda ',
@@ -25,13 +24,11 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'discount', 'coupon', 'promo code', 'negotiate', 'negotiation',
   '报价', '价格', '费用', '合同', '协议', '演示', '试用',
   '企业', '采购', '购买', '折扣', '优惠', '谈判', '收费',
-  // --- Investment & Finance ---
   'investment', 'investor', 'invest ', 'funding', 'fund ',
   'venture capital', 'vc ', 'angel investor', 'seed round',
   'acquisition', 'acquire', 'buyout', 'merger', 'ipo ',
   'revenue share', 'profit sharing', 'equity', 'stake',
   '投资', '融资', '收购', '并购', '股权', '分成',
-  // --- Media, PR & Events ---
   'press', 'media', 'journalist', 'reporter', 'editor',
   'publication', 'magazine', 'newspaper', 'blog feature',
   'interview', 'podcast', 'webinar', 'event', 'conference',
@@ -40,7 +37,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'media kit', 'press release', 'testimonial', 'review request',
   '媒体', '采访', '记者', '编辑', '公关', '播客',
   '演讲', '会议', '活动', '研讨会', '测评', '评价',
-  // --- Legal, Compliance & Security ---
   'legal', 'lawyer', 'attorney', 'law firm', 'court', 'lawsuit',
   'sue', 'subpoena', 'compliance', 'gdpr', 'ccpa',
   'copyright', 'infringement', 'dmca', 'takedown',
@@ -51,7 +47,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   '法律', '律师', '诉讼', '合规', '隐私', '版权', '侵权',
   '商标', '专利', '安全', '漏洞', '黑客', '钓鱼', '欺诈',
   '诈骗', '滥用', '举报', '数据泄露',
-  // --- Hiring & Careers ---
   'job', 'career', 'hiring', 'hire ', 'recruit', 'recruitment',
   'resume', 'cv ', 'application', 'position', 'role', 'opening',
   'opportunity', 'internship', 'intern', 'freelancer', 'freelance',
@@ -59,14 +54,12 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'work with you', 'for hire', 'available for work',
   '工作', '职业', '招聘', '简历', '申请', '职位', '机会',
   '实习', '自由职业', '外包', '团队', '加入',
-  // --- Affiliate & Marketing ---
   'affiliate', 'referral program', 'commission', 'refer',
   'ambassador', 'influencer', 'creator', 'content creator',
   'promote', 'promotion', 'advertise', 'advertising', 'ad campaign',
   'sponsor', 'sponsorship', 'brand deal', 'endorsement',
   '联盟', '推荐', '佣金', '分成', '大使', '网红',
   '创作者', '推广', '广告', '赞助', '代言',
-  // --- Custom Development & Consulting ---
   'custom', 'customize', 'customized', 'bespoke', 'tailor-made',
   'build for me', 'develop for me', 'create for me',
   'outsourcing', 'outsource', 'software development',
@@ -75,28 +68,28 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'strategy', 'strategic', 'roadmap', 'planning',
   '定制', '开发', '外包', '咨询', '顾问', '指导',
   '审计', '评估', '战略', '规划', '路线图',
-  // --- Account & Billing Issues ---
   'refund', 'chargeback', 'dispute', 'cancel', 'cancellation',
   'unsubscribe', 'remove me', 'delete my', 'account issue',
   'login problem', 'password reset', 'access denied', 'locked out',
   'billing issue', 'payment failed', 'credit card',
   '退款', '取消', '退订', '删除', '账户', '登录',
   '密码', '账单', '支付',
-  // --- Urgent / Escalation ---
   'urgent', 'asap', 'immediately', 'critical', 'emergency',
   'ceo ', 'founder', 'owner', 'manager', 'supervisor',
   'escalate', 'escalation', 'complaint', 'dissatisfied',
   '紧急', '尽快', '立即', '严重', '投诉', '不满',
 ];
+
 // ------------------------------------------------------------
-// 2. FORWARDING EMAILS
+// 2. FORWARDING EMAILS (preserved)
 // ------------------------------------------------------------
 export const FORWARD_EMAILS: string[] = [
   'hi@aicode8.com',
   'guixinji@outlook.com',
 ];
+
 // ------------------------------------------------------------
-// 3. AFFILIATE LINK MAPPING
+// 3. AFFILIATE LINK MAPPING (v4.1: removed Voiceflow + Bland.ai)
 // ------------------------------------------------------------
 export interface AffiliateLink {
   name: string;
@@ -108,14 +101,9 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     name: 'Make.com',
     url: 'https://wenboom.com/links/make.html',
     keywords: [
-      'automation', 'workflow', 'workflows', 'integration', 'integrate',
-      'connect', 'connection', 'api', 'webhook', 'trigger', 'action',
-      'scenario', 'template', 'no-code', 'no code', 'low-code', 'low code',
-      'zapier', 'zapier alternative', 'make.com',
-      'airtable', 'notion', 'google sheets', 'slack', 'discord',
-      'crm integration', 'data sync', 'sync data', 'automate',
-      '自动化', '工作流', '集成', '连接', '接口', '触发器',
-      '动作', '场景', '模板', '无代码', '低代码', '数据同步',
+      'make.com', 'make scenario', 'make automation', 'make workflow',
+      'integromat', 'visual automation', 'no-code automation',
+      'zapier alternative', 'automation platform',
     ],
   },
   {
@@ -123,13 +111,9 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     url: 'https://wenboom.com/links/n8n.html',
     keywords: [
       'n8n', 'self-host', 'self hosted', 'self-hosted', 'self hosting',
-      'on-premise', 'on premise', 'on-prem', 'private', 'privacy',
-      'open source', 'open-source', 'source available', 'fair-code',
-      'docker', 'container', 'server', 'vps', 'hetzner', 'digitalocean',
-      'workflow automation', 'data pipeline', 'etl', 'data sync',
-      'automation platform', 'node-based', 'visual workflow',
-      '自建', '自托管', '本地部署', '私有部署', '隐私', '开源',
-      '容器', '服务器', '虚拟主机', '数据管道', '数据同步',
+      'on-premise', 'on premise', 'fair-code', 'docker',
+      'workflow automation', 'data pipeline', 'queue mode',
+      '自建', '自托管', '本地部署', '私有部署',
     ],
   },
   {
@@ -137,68 +121,21 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     url: 'https://wenboom.com/links/clay.html',
     keywords: [
       'clay', 'enrichment', 'data enrichment', 'enrich data',
-      'lead', 'leads', 'prospect', 'prospects', 'b2b', 'b2b data',
-      'data provider', 'apollo', 'zoominfo', 'lusha', 'clearbit',
-      'hunter', 'hunter.io', 'snov', 'dropcontact',
-      'icp', 'ideal customer profile', 'targeting', 'segmentation',
-      'sales intelligence', 'lead scoring', 'data quality',
-      'find emails', 'email finder', 'contact data', 'company data',
-      '数据', '富集', '数据丰富', '线索', '潜在客户',
-      '理想客户画像', '定位', '细分', '销售智能', '线索评分',
-      '数据质量', '找邮箱', '联系人数据', '公司数据',
+      'lead', 'leads', 'prospect', 'prospects', 'b2b data',
+      'apollo', 'zoominfo', 'lusha', 'clearbit', 'hunter.io',
+      'icp', 'ideal customer profile', 'sales intelligence',
+      '数据富集', '线索', '潜在客户', '理想客户画像',
     ],
   },
   {
     name: 'Smartlead',
     url: 'https://wenboom.com/links/smartlead.html',
     keywords: [
-      'smartlead', 'cold email', 'cold outreach', 'cold calling',
-      'email campaign', 'email campaigns', 'sequence', 'sequences',
-      'follow-up', 'follow up', 'drip', 'drip campaign',
-      'outreach', 'outbound', 'sales engagement',
-      'warmup', 'inbox warmup', 'domain warmup', 'inbox rotation',
-      'domain reputation', 'spf', 'dkim', 'dmarc', 'deliverability',
-      'reply detection', 'positive reply', 'meeting booked', 'conversion',
-      'email sending', 'send emails', 'bulk email', 'email marketing',
-      '邮件', '冷邮件', '冷启动', '外展', '外呼',
-      '邮件活动', '序列', '跟进', '培育', '预热',
-      '收件箱轮换', '域名信誉', '送达率', '回复检测', '转化',
-    ],
-  },
-  {
-    name: 'Voiceflow',
-    url: 'https://wenboom.com/links/voiceflow.html',
-    keywords: [
-      'voiceflow', 'chatbot', 'chat bot', 'conversational ai',
-      'conversation', 'conversational', 'dialogue', 'dialog',
-      'nlu', 'nlp', 'natural language', 'intent', 'entity',
-      'agent', 'ai agent', 'virtual assistant', 'assistant',
-      'ivr', 'call center', 'contact center', 'support bot',
-      'helpdesk', 'knowledge base', 'faq bot', 'customer service bot',
-      'prototype', 'design', 'canvas', 'variable', 'api step',
-      '聊天机器人', '对话式ai', '对话', '自然语言',
-      '意图', '实体', '智能体', '虚拟助手', '客服机器人',
-      '帮助台', '知识库', '原型', '设计',
-    ],
-  },
-  {
-    name: 'Bland.ai',
-    url: 'https://wenboom.com/links/bland.html',
-    keywords: [
-      'bland', 'bland.ai', 'voice ai', 'voice agent',
-      'ai call', 'ai calls', 'phone ai', 'phone agent',
-      'outbound call', 'outbound calls', 'inbound call', 'inbound calls',
-      'phone call', 'phone calls', 'telephony', 'pstn', 'sip',
-      'twilio', 'phone number', 'virtual number',
-      'transcription', 'transcribe', 'real-time', 'realtime',
-      'latency', 'response time', 'interrupt', 'interruption',
-      'booking', 'appointment', 'appointment setting', 'scheduling',
-      'reservation', 'calendar', 'schedule call', 'book a call',
-      'auto-booking', 'auto booking', 'lead qualification',
-      '电话', '呼叫', '外呼', '呼入', '语音ai',
-      '语音智能体', '实时', '延迟', '响应时间', '打断',
-      '预订', '预约', '日程安排', '日历', '自动预订',
-      '线索资格审核', '转写',
+      'smartlead', 'cold email', 'cold outreach', 'email campaign',
+      'sequence', 'follow-up', 'outreach', 'outbound',
+      'warmup', 'inbox warmup', 'domain warmup', 'deliverability',
+      'email sending', 'send emails', 'bulk email',
+      '冷邮件', '冷启动', '外展', '邮件活动', '序列', '跟进', '预热', '送达率',
     ],
   },
   {
@@ -207,25 +144,15 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     keywords: [
       'activecampaign', 'crm', 'customer relationship',
       'email marketing', 'marketing automation', 'sales automation',
-      'pipeline', 'sales pipeline', 'deal', 'deals',
-      'lead nurturing', 'nurturing', 'lead scoring', 'scoring',
-      'tagging', 'tags', 'segmentation', 'segments', 'list', 'lists',
-      'landing page', 'landing pages', 'form', 'forms',
-      'site tracking', 'event tracking', 'behavioral',
-      'stage', 'stages', 'forecast', 'forecasting',
-      'win', 'loss', 'win rate', 'conversion rate',
-      'hubspot alternative', 'mailchimp alternative', 'convertkit',
-      'getresponse', 'aweber', 'constant contact',
-      '客户管理', '客户关系', '邮件营销', '营销自动化',
-      '销售自动化', '销售管道', '交易', '线索培育',
-      '线索评分', '标签', '细分', '列表', '落地页',
-      '表单', '站点追踪', '事件追踪', '行为', '阶段',
-      '预测', '赢单', '输单', '转化率',
+      'pipeline', 'sales pipeline', 'lead nurturing', 'lead scoring',
+      'segmentation', 'landing page', 'site tracking', 'behavioral',
+      '客户管理', '邮件营销', '营销自动化', '销售管道', '线索培育', '线索评分',
     ],
   },
 ];
+
 // ------------------------------------------------------------
-// 4. AI SYSTEM PROMPT (natural human-like reply style)
+// 4. AI SYSTEM PROMPT (preserved v3.0, used by generateAIReply fallback)
 // ------------------------------------------------------------
 export const AI_SYSTEM_PROMPT: string = `You are Alex, Principal AI Infrastructure Architect at Wenboom.com.
 You write natural, conversational email replies to subscribers who email you.
@@ -262,50 +189,140 @@ LINK EMBEDDING:
 - Maximum 2 links per reply.
 SIGN-OFF:
 - End with: "To your leverage,\nAlex\nPrincipal AI Infrastructure Architect | Wenboom.com"`;
+
 // ------------------------------------------------------------
-// 5. SYSTEM SETTINGS
+// 5. SYSTEM SETTINGS (preserved v3.0)
 // ------------------------------------------------------------
 export const MAX_AFFILIATE_LINKS: number = 2;
 export const FORWARD_SUBJECT_PREFIX: string = '[NEEDS MANUAL REPLY]';
 export const MAX_EMAIL_BODY_LENGTH: number = 4000;
-export const DEDUP_TTL_SECONDS: number = 86400; // 24 hours
-export const AI_REPLY_TIMEOUT_MS: number = 30000; // 30 seconds
+export const DEDUP_TTL_SECONDS: number = 86400;
+export const AI_REPLY_TIMEOUT_MS: number = 30000;
+
 // ------------------------------------------------------------
-// 6. RATE LIMIT & ANTI-ABUSE SETTINGS
-//    Prevents a single sender from exhausting AI quota via rapid replies.
-//    After MAX replies within the window, subsequent emails are forwarded to human.
+// 6. RATE LIMIT (preserved v3.0 key format)
 // ------------------------------------------------------------
-export const RATE_LIMIT_MAX_REPLIES: number = 3; // Max AI replies per sender per window
-export const RATE_LIMIT_WINDOW_SECONDS: number = 86400; // 24 hours
-export const RATE_LIMIT_KEY_PREFIX: string = 'ratelimit:'; // KV key: ratelimit:{email}:{yyyy-mm-dd}
+export const RATE_LIMIT_MAX_REPLIES: number = 3;
+export const RATE_LIMIT_WINDOW_SECONDS: number = 86400;
+export const RATE_LIMIT_KEY_PREFIX: string = 'ratelimit:';
+
 // ------------------------------------------------------------
-// 7. BLACKLIST SETTINGS (Bounce / Complaint auto-block)
-//    Emails that bounce or are marked as spam are permanently blocked.
-//    Checked before any AI processing to protect domain reputation.
+// 7. BLACKLIST (preserved v3.0)
 // ------------------------------------------------------------
-export const BLACKLIST_KEY_PREFIX: string = 'blacklist:'; // KV key: blacklist:{email}
-export const BLACKLIST_FOREVER: boolean = true; // Permanent block (no TTL)
+export const BLACKLIST_KEY_PREFIX: string = 'blacklist:';
+export const BLACKLIST_FOREVER: boolean = true;
+
 // ------------------------------------------------------------
-// 8. UTM ATTRIBUTION SETTINGS
-//    Affiliate links are dynamically tagged for conversion tracking.
-//    Format: ?utm_source=auto_reply&utm_medium=email&utm_campaign=reply_{tool}&utm_content={hash}
+// 8. UTM ATTRIBUTION (preserved v3.0 + builder function)
 // ------------------------------------------------------------
 export const UTM_SOURCE: string = 'auto_reply';
 export const UTM_MEDIUM: string = 'email';
-export const UTM_CAMPAIGN_PREFIX: string = 'reply_'; // e.g., reply_make, reply_n8n, reply_smartlead
+export const UTM_CAMPAIGN_PREFIX: string = 'reply_';
+
+export function buildUtmParams(campaign: string, email: string): string {
+  const hash = createHash('md5').update(email).digest('hex').slice(0, 8);
+  return `?utm_source=${UTM_SOURCE}&utm_medium=${UTM_MEDIUM}&utm_campaign=${UTM_CAMPAIGN_PREFIX}${campaign}&utm_content=${hash}`;
+}
+
+export function buildAffiliateUrl(tool: AffiliateLink, email: string): string {
+  const campaign = tool.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return `${tool.url}${buildUtmParams(campaign, email)}`;
+}
+
 // ------------------------------------------------------------
-// 9. FALLBACK REPLY TEMPLATE (natural, non-robotic)
-//    Used when Groq AI generation fails. Written to sound like a
-//    busy architect promising a proper follow-up, not a generic bot reply.
+// 9. FALLBACK REPLY TEMPLATE (preserved v3.0)
 // ------------------------------------------------------------
 export const FALLBACK_REPLY_TEMPLATE: string = `Hey,
-
 Good question — let me give you a proper answer rather than something rushed.
-
 A couple of quick details would help me point you in the right direction: are you running this cloud or self-hosted? And roughly what scale — a few workflows a day, or hundreds?
-
 In the meantime, the blueprints at wenboom.com cover most of the common setups, with the exact JSON payloads and workflow exports I use in production.
-
 To your leverage,
 Alex
 Principal AI Infrastructure Architect | Wenboom.com`;
+
+// ============================================================
+// v4.1 NEW CONFIGURATION BELOW
+// ============================================================
+
+// ------------------------------------------------------------
+// 10. INTENT CLASSIFICATION CONFIG
+// ------------------------------------------------------------
+export const CLASSIFICATION = {
+  fastPathMaxLength: 50,
+  maxConsecutiveAcks: 1,
+  ackStateTtlSeconds: 259200, // 3 days
+  llmModel: 'openai/gpt-oss-120b',
+  llmMaxTokens: 200,
+  llmTemperature: 0.1,
+};
+
+// ------------------------------------------------------------
+// 11. FAST-PATH REGEX PATTERNS
+// ------------------------------------------------------------
+export const FAST_PATH_REGEX = {
+  quickAck: /^(thanks|thank you|thx|got it|noted|ok|okay|cool|awesome|great|perfect|收到|谢谢|好的|没问题|收到，谢谢|thanks!|thank you!|will do|sounds good|sounds great)[\s!.]*$/i,
+  quickResolved: /^(never mind|nevermind|fixed it|i fixed|ignore this|ignore my|solved it|all set|不用了|我自己解决了|已解决|解决了|搞定了)[\s!.]*$/i,
+  autoReplyHeader: /auto-replied|auto-generated|automatic reply/i,
+  outOfOffice: /out of office|ooo|on vacation|on holiday|休假自动回复|离线自动回复|automatic reply/i,
+  unsubscribe: /unsubscribe|stop sending|remove me|opt out|不要再发|退订|取消订阅/i,
+};
+
+// ------------------------------------------------------------
+// 12. KV DEBOUNCE CONFIG
+// ------------------------------------------------------------
+export const DEBOUNCE = {
+  maxBufferWaitMinutes: 30,
+  bufferTtlSeconds: 3600,
+  historyTtlSeconds: 604800, // 7 days
+  maxCombinedBodyLength: 8000,
+  minDelaySeconds: 480,   // 8 minutes
+  maxDelaySeconds: 2100,  // 35 minutes
+};
+
+// ------------------------------------------------------------
+// 13. HUMAN TAKEOVER LOCK CONFIG
+// ------------------------------------------------------------
+export const HUMAN_LOCK = {
+  ttlSeconds: 604800, // 7 days
+  keyPrefix: 'humanlock:',
+};
+
+// ------------------------------------------------------------
+// 14. LINK WHITELIST (prevent hallucinated 404 links)
+// ------------------------------------------------------------
+export const LINK_WHITELIST = {
+  domains: [
+    'wenboom.com', 'www.wenboom.com',
+    'clay.com', 'smartlead.ai', 'make.com', 'n8n.io',
+    'hetzner.com', 'digitalocean.com', 'aws.amazon.com', 'github.com',
+  ] as string[],
+  fallbackUrl: 'https://wenboom.com',
+  // Only validate /links/ pages (fixed). Other internal pages pass through.
+  validateLinksPrefix: '/links/',
+};
+
+// ------------------------------------------------------------
+// 15. SHORT TEMPLATES (TYPE_A / TYPE_C)
+// ------------------------------------------------------------
+export const TYPE_A_ACK_TEMPLATES = [
+  "Glad it helped! Feel free to ping me if anything else comes up.",
+  "You're welcome! Hit me up if you run into any snags along the way.",
+  "Awesome, glad that was useful. Don't hesitate to reach out if you need more.",
+  "No problem at all. Let me know how it goes!",
+];
+
+export const TYPE_C_RESOLVED_TEMPLATES = [
+  "Awesome, glad you got it sorted out! Enjoy building.",
+  "Great to hear! Feel free to reach out if anything else comes up.",
+  "Perfect, glad it's working. Have a great one!",
+];
+
+// ------------------------------------------------------------
+// 16. SENDER INFO
+// ------------------------------------------------------------
+export const SENDER = {
+  from: 'Alex <alex@wenboom.com>',
+  fromName: 'Alex',
+  role: 'Principal AI Infrastructure Architect @ Wenboom',
+  humanForwardEmail: 'hi@aicode8.com',
+};
