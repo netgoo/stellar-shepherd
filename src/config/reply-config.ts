@@ -3,9 +3,9 @@
 // v4.1: 4-class intent engine + KV debounce + anti-injection
 //       + link whitelist + human takeover lock. Removed
 //       Voiceflow/Bland.ai (no affiliate business).
+// v4.1.1: SIGN-OFF simplified across all templates + SENDER.role.
 // ============================================================
 import { createHash } from 'crypto';
-
 // ------------------------------------------------------------
 // 1. HUMAN INTERVENTION KEYWORDS (preserved from v3.0)
 // ------------------------------------------------------------
@@ -79,7 +79,6 @@ export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
   'escalate', 'escalation', 'complaint', 'dissatisfied',
   '紧急', '尽快', '立即', '严重', '投诉', '不满',
 ];
-
 // ------------------------------------------------------------
 // 2. FORWARDING EMAILS (preserved)
 // ------------------------------------------------------------
@@ -87,7 +86,6 @@ export const FORWARD_EMAILS: string[] = [
   'hi@aicode8.com',
   'guixinji@outlook.com',
 ];
-
 // ------------------------------------------------------------
 // 3. AFFILIATE LINK MAPPING (v4.1: removed Voiceflow + Bland.ai)
 // ------------------------------------------------------------
@@ -150,7 +148,6 @@ export const AFFILIATE_LINKS: AffiliateLink[] = [
     ],
   },
 ];
-
 // ------------------------------------------------------------
 // 4. AI SYSTEM PROMPT (preserved v3.0, used by generateAIReply fallback)
 // ------------------------------------------------------------
@@ -188,8 +185,7 @@ LINK EMBEDDING:
 - Do NOT list links at the end - weave them into your prose naturally.
 - Maximum 2 links per reply.
 SIGN-OFF:
-- End with: "To your leverage,\nAlex\nPrincipal AI Infrastructure Architect | Wenboom.com"`;
-
+- End with: "Alex\nPrincipal AI Infrastructure Architect @ Wenboom.com"`;
 // ------------------------------------------------------------
 // 5. SYSTEM SETTINGS (preserved v3.0)
 // ------------------------------------------------------------
@@ -198,37 +194,31 @@ export const FORWARD_SUBJECT_PREFIX: string = '[NEEDS MANUAL REPLY]';
 export const MAX_EMAIL_BODY_LENGTH: number = 4000;
 export const DEDUP_TTL_SECONDS: number = 86400;
 export const AI_REPLY_TIMEOUT_MS: number = 30000;
-
 // ------------------------------------------------------------
 // 6. RATE LIMIT (preserved v3.0 key format)
 // ------------------------------------------------------------
 export const RATE_LIMIT_MAX_REPLIES: number = 3;
 export const RATE_LIMIT_WINDOW_SECONDS: number = 86400;
 export const RATE_LIMIT_KEY_PREFIX: string = 'ratelimit:';
-
 // ------------------------------------------------------------
 // 7. BLACKLIST (preserved v3.0)
 // ------------------------------------------------------------
 export const BLACKLIST_KEY_PREFIX: string = 'blacklist:';
 export const BLACKLIST_FOREVER: boolean = true;
-
 // ------------------------------------------------------------
 // 8. UTM ATTRIBUTION (preserved v3.0 + builder function)
 // ------------------------------------------------------------
 export const UTM_SOURCE: string = 'auto_reply';
 export const UTM_MEDIUM: string = 'email';
 export const UTM_CAMPAIGN_PREFIX: string = 'reply_';
-
 export function buildUtmParams(campaign: string, email: string): string {
   const hash = createHash('md5').update(email).digest('hex').slice(0, 8);
   return `?utm_source=${UTM_SOURCE}&utm_medium=${UTM_MEDIUM}&utm_campaign=${UTM_CAMPAIGN_PREFIX}${campaign}&utm_content=${hash}`;
 }
-
 export function buildAffiliateUrl(tool: AffiliateLink, email: string): string {
   const campaign = tool.name.toLowerCase().replace(/[^a-z0-9]/g, '');
   return `${tool.url}${buildUtmParams(campaign, email)}`;
 }
-
 // ------------------------------------------------------------
 // 9. FALLBACK REPLY TEMPLATE (preserved v3.0)
 // ------------------------------------------------------------
@@ -236,14 +226,11 @@ export const FALLBACK_REPLY_TEMPLATE: string = `Hey,
 Good question — let me give you a proper answer rather than something rushed.
 A couple of quick details would help me point you in the right direction: are you running this cloud or self-hosted? And roughly what scale — a few workflows a day, or hundreds?
 In the meantime, the blueprints at wenboom.com cover most of the common setups, with the exact JSON payloads and workflow exports I use in production.
-To your leverage,
 Alex
-Principal AI Infrastructure Architect | Wenboom.com`;
-
+Principal AI Infrastructure Architect @ Wenboom.com`;
 // ============================================================
 // v4.1 NEW CONFIGURATION BELOW
 // ============================================================
-
 // ------------------------------------------------------------
 // 10. INTENT CLASSIFICATION CONFIG
 // ------------------------------------------------------------
@@ -255,7 +242,6 @@ export const CLASSIFICATION = {
   llmMaxTokens: 200,
   llmTemperature: 0.1,
 };
-
 // ------------------------------------------------------------
 // 11. FAST-PATH REGEX PATTERNS
 // ------------------------------------------------------------
@@ -266,7 +252,6 @@ export const FAST_PATH_REGEX = {
   outOfOffice: /out of office|ooo|on vacation|on holiday|休假自动回复|离线自动回复|automatic reply/i,
   unsubscribe: /unsubscribe|stop sending|remove me|opt out|不要再发|退订|取消订阅/i,
 };
-
 // ------------------------------------------------------------
 // 12. KV DEBOUNCE CONFIG
 // ------------------------------------------------------------
@@ -278,7 +263,6 @@ export const DEBOUNCE = {
   minDelaySeconds: 480,   // 8 minutes
   maxDelaySeconds: 2100,  // 35 minutes
 };
-
 // ------------------------------------------------------------
 // 13. HUMAN TAKEOVER LOCK CONFIG
 // ------------------------------------------------------------
@@ -286,7 +270,6 @@ export const HUMAN_LOCK = {
   ttlSeconds: 604800, // 7 days
   keyPrefix: 'humanlock:',
 };
-
 // ------------------------------------------------------------
 // 14. LINK WHITELIST (prevent hallucinated 404 links)
 // ------------------------------------------------------------
@@ -300,7 +283,6 @@ export const LINK_WHITELIST = {
   // Only validate /links/ pages (fixed). Other internal pages pass through.
   validateLinksPrefix: '/links/',
 };
-
 // ------------------------------------------------------------
 // 15. SHORT TEMPLATES (TYPE_A / TYPE_C)
 // ------------------------------------------------------------
@@ -310,20 +292,17 @@ export const TYPE_A_ACK_TEMPLATES = [
   "Awesome, glad that was useful. Don't hesitate to reach out if you need more.",
   "No problem at all. Let me know how it goes!",
 ];
-
 export const TYPE_C_RESOLVED_TEMPLATES = [
   "Awesome, glad you got it sorted out! Enjoy building.",
   "Great to hear! Feel free to reach out if anything else comes up.",
   "Perfect, glad it's working. Have a great one!",
 ];
-
 // ------------------------------------------------------------
 // 16. SENDER INFO
 // ------------------------------------------------------------
 export const SENDER = {
   from: 'Alex <alex@wenboom.com>',
   fromName: 'Alex',
-  role: 'Principal AI Infrastructure Architect @ Wenboom',
+  role: 'Principal AI Infrastructure Architect @ Wenboom.com',
   humanForwardEmail: 'hi@aicode8.com',
 };
-
