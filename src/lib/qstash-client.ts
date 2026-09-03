@@ -36,7 +36,7 @@ export interface QueuedReply {
 const QSTASH_BASE_URL = (import.meta.env.QSTASH_URL || process.env.QSTASH_URL || '').replace(/\/$/, '');
 const WORKER_CALLBACK_URL = 'https://wenboom.com/api/worker/process-reply';
 const EST_OFFSET_HOURS = -5; // Eastern Standard Time (UTC-5)
-const DAY_START_HOUR = 7;    // EST 07:00
+const DAY_START_HOUR = 0;    // EST 07:00
 const NIGHT_START_HOUR = 25; // v4.1: Restored night mode (was 25 for body-hash testing)
 const MIN_DELAY_SECONDS = 8 * 60;   // 8 minutes
 const MAX_DELAY_SECONDS = 35 * 60;  // 35 minutes
