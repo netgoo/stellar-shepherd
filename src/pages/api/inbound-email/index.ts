@@ -1,6 +1,14 @@
 // ============================================================
-// Inbound Email Webhook v4.1.4
+// Inbound Email Webhook v4.1.5
 // Fixes:
+//   v4.1.5: Debounce merge buffer key changed from threadId to
+//           senderEmail. Resend free tier doesn't pass In-Reply-To
+//           headers, so generateThreadId falls back to sender+subject
+//           hash — different subjects = different threadIds = merge
+//           never triggered. Using senderEmail ensures all emails from
+//           the same person within the delay window merge into one
+//           reply, saving Resend quota. threadId still used for
+//           conversation history tracking.
 //   BUG1: Split messageId and inReplyToHeader (was merged, caused
 //         threadId to use message-id -> debounce never merged).
 //   BUG2: Restore pessimistic idempotency lock (mark immediately
@@ -350,8 +358,13 @@ export const POST: APIRoute = async ({ request }) => {
     // Step 11: Generate Thread ID (uses inReplyToHeader, NOT messageId)
     const threadId = generateThreadId(senderEmail, subject, inReplyToHeader, references);
     // Step 12: KV debounce merge
-    const bufferKey = `buffer:${threadId}`;
-    const latestKey = `latest:${threadId}`;
+    // v4.1.5: Buffer keyed by senderEmail (not threadId).
+    // Resend free tier omits In-Reply-To headers, so threadId degrades
+    // to sender+subject hash — different subjects never merge. Keying by
+    // senderEmail ensures all emails from one person within the delay
+    // window collapse into a single reply (saves Resend quota).
+    const bufferKey = `buffer:${senderEmail}`;
+    const latestKey = `latest:${senderEmail}`;
     const now = Date.now();
     let existingBuffer: { jobId: string; firstMessageAt: number; messages: string[] } | null = null;
     try {
