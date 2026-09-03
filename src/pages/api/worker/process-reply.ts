@@ -1,7 +1,19 @@
 // ============================================================
-// QStash Worker - Process delayed email reply (v4.1.3)
+// QStash Worker - Process delayed email reply (v4.1.5)
 // v4.1.3: Added markdownToHtml + HTML email rendering (clickable links).
 //         Fixed CLASSIFICATION import missing in v4.1.2.
+// v4.1.4: FIX debounce merge bug — Worker now prefers combinedBody
+//         (merged multi-email content) over single-email body.
+// v4.1.5: Production hardening — 3 bug fixes:
+//   BUG1 (HIGH): Strip <> from inReplyTo before re-wrapping to avoid
+//         double angle brackets (<<id>>) violating RFC 2822, which
+//         causes Gmail/Outlook to mark as spam or 550 reject.
+//   BUG2 (MED): Defer buffer/latestKey deletion until after Resend
+//         send success. Early deletion caused stale-state on QStash
+//         retry and duplicate replies on concurrent inbound emails.
+//   BUG3 (MED): Rewrite markdownToHtml with extract-then-escape
+//         pattern so URL query params (&utm_*) are NOT corrupted
+//         by HTML entity escaping. Added target=_blank + rel safety.
 // ============================================================
 export const prerender = false;
 import type { APIRoute } from 'astro';
@@ -28,39 +40,58 @@ import {
   validateAndFixLinks,
 } from '../../../lib/reply-engine';
 import type { QueuedReply } from '../../../lib/qstash-client';
-
 const IDEMPOTENCY_TTL_SECONDS = 86400;
-
 // ------------------------------------------------------------
-// Markdown to HTML converter (clickable links + formatting)
+// Markdown to HTML converter (v4.1.5: extract-then-escape pattern)
+//   1. Extract Markdown links to placeholders (preserve raw URL &)
+//   2. Escape HTML entities on remaining text
+//   3. Restore links with safe attributes
+//   4. Bold / italic / paragraphs
+// This prevents URL query params like &utm_medium= from being
+// corrupted into &amp;utm_medium= by premature entity escaping.
 // ------------------------------------------------------------
 function markdownToHtml(text: string): string {
-  let html = text
+  // Step 1: Extract all Markdown links, replace with placeholders
+  const links: Array<{ text: string; url: string }> = [];
+  let protectedText = text.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    (match, linkText: string, url: string) => {
+      links.push({ text: linkText, url });
+      return `__LINK_PLACEHOLDER_${links.length - 1}__`;
+    }
+  );
+  // Step 2: Escape HTML entities (safe — no URLs remain in text)
+  protectedText = protectedText
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
-  // Links [text](url)
-  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2" style="color:#2563eb;text-decoration:underline;">$1</a>');
-  // Bold **text**
-  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Italic *text*
-  html = html.replace(/(^|\s)\*([^*\n]+)\*/g, '$1<em>$2</em>');
-  // Paragraphs
-  const paragraphs = html.split(/\n\n+/);
-  html = paragraphs.map(p => {
+  // Step 3: Restore placeholders as anchor tags (raw URL, safe attrs)
+  protectedText = protectedText.replace(
+    /__LINK_PLACEHOLDER_(\d+)__/g,
+    (match, indexStr: string) => {
+      const idx = parseInt(indexStr, 10);
+      const link = links[idx];
+      if (!link) return match;
+      return `<a href="${link.url}" style="color:#2563eb;text-decoration:underline;" target="_blank" rel="noopener noreferrer">${link.text}</a>`;
+    }
+  );
+  // Step 4: Bold **text**
+  protectedText = protectedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Step 5: Italic *text*
+  protectedText = protectedText.replace(/(^|\s)\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  // Step 6: Paragraphs
+  const paragraphs = protectedText.split(/\n\n+/);
+  protectedText = paragraphs.map(p => {
     p = p.replace(/\n/g, '<br>');
     return `<p style="margin:0 0 14px 0;line-height:1.65;">${p}</p>`;
   }).join('');
-  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;color:#222;line-height:1.65;">${html}</div>`;
+  return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;color:#222;line-height:1.65;">${protectedText}</div>`;
 }
-
 function getResend(): Resend {
   const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
   if (!apiKey) throw new Error('[worker] RESEND_API_KEY is not configured');
   return new Resend(apiKey.trim());
 }
-
 async function getRateLimitCount(email: string): Promise<number> {
   try {
     const today = new Date().toISOString().split('T')[0];
@@ -71,7 +102,6 @@ async function getRateLimitCount(email: string): Promise<number> {
     return 0;
   }
 }
-
 async function incrementRateLimit(email: string): Promise<number> {
   try {
     const today = new Date().toISOString().split('T')[0];
@@ -84,7 +114,6 @@ async function incrementRateLimit(email: string): Promise<number> {
     return 0;
   }
 }
-
 async function getAckCount(threadId: string): Promise<number> {
   try {
     const key = `ack_count:${threadId}`;
@@ -94,7 +123,6 @@ async function getAckCount(threadId: string): Promise<number> {
     return 0;
   }
 }
-
 async function incrementAckCount(threadId: string): Promise<number> {
   try {
     const key = `ack_count:${threadId}`;
@@ -106,19 +134,16 @@ async function incrementAckCount(threadId: string): Promise<number> {
     return 0;
   }
 }
-
 export const POST: APIRoute = async ({ request }) => {
   // Step 1: Read raw body for JWS verification
   const rawBody = await request.text();
   const signature = request.headers.get('upstash-signature') || '';
-
   // Step 2: Verify JWS signature
   const isValid = await verifyQstashWebhook(signature, rawBody);
   if (!isValid) {
     console.warn('[worker] Invalid QStash signature, rejecting');
     return new Response(JSON.stringify({ status: 'error', message: 'Invalid signature' }), { status: 403 });
   }
-
   // Step 3: Parse JSON
   let data: QueuedReply;
   try {
@@ -127,24 +152,26 @@ export const POST: APIRoute = async ({ request }) => {
     console.warn('[worker] Invalid JSON body');
     return new Response(JSON.stringify({ status: 'error', message: 'Invalid JSON' }), { status: 400 });
   }
-
+  // Destructure (v4.1.4: combinedBody for debounce merge)
   const {
     emailId, senderEmail, senderField, subject, body,
-    threadId, inReplyTo, firstMessageAt,
+    threadId, inReplyTo, firstMessageAt, combinedBody,
   } = data;
-
-  // === DEBUG: Log body content ===
-  console.log(`[worker] DEBUG: from=${senderEmail}, subject="${subject}", bodyLength=${body?.length || 0}, bodyPreview="${(body || '').substring(0, 150).replace(/\n/g, ' ')}"`);
-
-  // === FIX: If body is empty, use subject as fallback ===
-  let effectiveBody = body || '';
+  // === DEBUG: Log body + combinedBody content ===
+  console.log(`[worker] DEBUG: from=${senderEmail}, subject="${subject}", bodyLength=${body?.length || 0}, combinedBodyLength=${combinedBody?.length || 0}, bodyPreview="${(body || '').substring(0, 100).replace(/\n/g, ' ')}", combinedPreview="${(combinedBody || '').substring(0, 100).replace(/\n/g, ' ')}"`);
+  // === v4.1.4: Prefer combinedBody (debounce merged) over single-email body ===
+  let effectiveBody = '';
+  if (combinedBody && combinedBody.trim().length > 0) {
+    effectiveBody = combinedBody;
+    console.log(`[worker] Using combinedBody (debounce merged, ${combinedBody.length} chars)`);
+  } else if (body && body.trim().length > 0) {
+    effectiveBody = body;
+  }
   if (effectiveBody.trim().length < 5) {
     console.warn(`[worker] Body too short (${effectiveBody.length} chars), using subject as fallback`);
     effectiveBody = `Subject: ${subject}\n\n(Email body was empty or too short — user may have sent an image-only or empty email.)`;
   }
-
   console.log(`[worker] Processing: ${emailId}, from: ${senderEmail}, thread: ${threadId}`);
-
   // Step 4: Idempotency
   const qstashMessageId = request.headers.get('upstash-message-id') || data.qstashMessageId || emailId;
   if (qstashMessageId) {
@@ -155,8 +182,9 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ status: 'already_processed' }), { status: 200 });
     }
   }
-
-  // Step 5: Latest check
+  // Step 5: Latest check (v4.1.5: READ-ONLY — do NOT delete buffer here)
+  // Defer buffer cleanup until after Resend send success (Step 21) to
+  // preserve state for QStash retries and concurrent inbound emails.
   if (threadId) {
     try {
       const latestKey = `latest:${threadId}`;
@@ -168,11 +196,9 @@ export const POST: APIRoute = async ({ request }) => {
         }
         return new Response(JSON.stringify({ status: 'stale_skipped' }), { status: 200 });
       }
-      await kvStore.del(`buffer:${threadId}`);
-      await kvStore.del(latestKey);
+      // v4.1.5: buffer/latestKey NOT deleted here — deferred to Step 21
     } catch { /* ignore */ }
   }
-
   // Step 6: Human takeover lock
   try {
     const lockByEmail = await kvStore.get(`${HUMAN_LOCK.keyPrefix}${senderEmail}`);
@@ -185,7 +211,6 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ status: 'human_locked' }), { status: 200 });
     }
   } catch { /* ignore */ }
-
   // Step 7: Blacklist re-check
   try {
     const blacklistKey = `${BLACKLIST_KEY_PREFIX}${senderEmail}`;
@@ -198,7 +223,6 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ status: 'blacklisted' }), { status: 200 });
     }
   } catch { /* ignore */ }
-
   // Step 8: Intent classification
   let intent;
   const fastIntent = fastPathClassify(effectiveBody, {});
@@ -210,7 +234,6 @@ export const POST: APIRoute = async ({ request }) => {
     intent = result.intent;
     console.log(`[worker] LLM classified: ${intent} (${result.reason})`);
   }
-
   // Step 9: TYPE_D - auto reply, silent
   if (intent === 'TYPE_D_AUTO_REPLY') {
     console.log('[worker] TYPE_D auto-reply, silent skip');
@@ -219,7 +242,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
     return new Response(JSON.stringify({ status: 'silent', type: 'TYPE_D' }), { status: 200 });
   }
-
   // Step 10: TYPE_E - unsubscribe
   if (intent === 'TYPE_E_UNSUBSCRIBE') {
     console.log('[worker] TYPE_E unsubscribe, blacklisting');
@@ -240,7 +262,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
     return new Response(JSON.stringify({ status: 'unsubscribed' }), { status: 200 });
   }
-
   // Step 11: TYPE_A - ACK limit
   if (intent === 'TYPE_A_ACK' && threadId) {
     const ackCount = await getAckCount(threadId);
@@ -252,7 +273,6 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ status: 'ack_silenced' }), { status: 200 });
     }
   }
-
   // Step 12: TYPE_B - rate limit
   if (intent === 'TYPE_B_QUESTION') {
     const count = await getRateLimitCount(senderEmail);
@@ -274,11 +294,9 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ status: 'rate_limited_forwarded' }), { status: 200 });
     }
   }
-
   // Step 13: Match affiliate links
   const matchedTools = matchAffiliateLinks(effectiveBody).slice(0, 2);
   console.log(`[worker] Matched tools: ${matchedTools.map(t => t.name).join(', ') || 'none'}`);
-
   // Step 14: Load thread history
   let history = '';
   if (threadId) {
@@ -286,11 +304,9 @@ export const POST: APIRoute = async ({ request }) => {
       history = (await kvStore.get(`history:${threadId}`)) || '';
     } catch { /* ignore */ }
   }
-
   // Step 15: Extract first name
   const firstName = extractFirstName(senderField);
   console.log(`[worker] firstName extracted: "${firstName}" (senderField="${senderField}")`);
-
   // Step 16: Generate reply
   let replyText: string;
   try {
@@ -301,35 +317,34 @@ export const POST: APIRoute = async ({ request }) => {
     console.error('[worker] Generation failed, using fallback:', err);
     replyText = FALLBACK_REPLY_TEMPLATE;
   }
-
   // Step 17: Send via Resend (HTML + text multipart)
+  // v4.1.5 BUG1 FIX: Strip existing <> from inReplyTo before re-wrapping
+  // to prevent double angle brackets (<<id>>) violating RFC 2822.
   const resend = getResend();
   const htmlContent = markdownToHtml(replyText);
+  const cleanInReplyTo = inReplyTo ? inReplyTo.replace(/[<>]/g, '').trim() : null;
   const sendResult = await resend.emails.send({
     from: SENDER.from,
     to: senderEmail,
     subject: subject.startsWith('Re:') ? subject : `Re: ${subject}`,
     text: replyText,
     html: htmlContent,
-    headers: inReplyTo ? {
-      'In-Reply-To': `<${inReplyTo}>`,
-      'References': `<${inReplyTo}>`,
+    headers: cleanInReplyTo ? {
+      'In-Reply-To': `<${cleanInReplyTo}>`,
+      'References': `<${cleanInReplyTo}>`,
     } : undefined,
   });
   console.log(`[worker] Reply sent: ${sendResult?.id || 'unknown'}, intent: ${intent}, length: ${replyText.length}`);
-
   // Step 18: ACK count increment
   if (intent === 'TYPE_A_ACK' && threadId) {
     const newAck = await incrementAckCount(threadId);
     console.log(`[worker] ACK count incremented: ${newAck}`);
   }
-
   // Step 19: Rate limit increment
   if (intent === 'TYPE_B_QUESTION') {
     const newCount = await incrementRateLimit(senderEmail);
     console.log(`[worker] Rate limit incremented: ${newCount}/${RATE_LIMIT_MAX_REPLIES}`);
   }
-
   // Step 20: Update history
   if (threadId) {
     try {
@@ -338,11 +353,18 @@ export const POST: APIRoute = async ({ request }) => {
       await kvStore.set(`history:${threadId}`, trimmed, { ex: DEBOUNCE.historyTtlSeconds });
     } catch { /* ignore */ }
   }
-
-  // Step 21: Mark idempotency
+  // Step 21: Mark idempotency + clean up buffer (v4.1.5: AFTER successful send)
   if (qstashMessageId) {
     await kvStore.set(`processed_qstash:${qstashMessageId}`, 'true', { ex: IDEMPOTENCY_TTL_SECONDS });
   }
-
+  // v4.1.5 BUG2 FIX: Delete buffer/latestKey ONLY after Resend send success.
+  // This preserves state for QStash retries (on 500) and prevents
+  // concurrent inbound emails from creating duplicate pending tasks.
+  if (threadId) {
+    try {
+      await kvStore.del(`buffer:${threadId}`);
+      await kvStore.del(`latest:${threadId}`);
+    } catch { /* ignore */ }
+  }
   return new Response(JSON.stringify({ status: 'replied', intent, messageId: sendResult?.id }), { status: 200 });
 };
