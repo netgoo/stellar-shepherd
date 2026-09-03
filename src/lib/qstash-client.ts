@@ -1,7 +1,10 @@
 // ============================================================
 // QStash Client - Delayed task queue for human-like email replies
-// v4.1: Restored night mode (NIGHT_START_HOUR=22, was 25 for testing).
-//       Extended QueuedReply with thread/debounce fields (all optional).
+// v4.1.1: Restored production delay parameters after testing.
+//         DAY_START_HOUR=7, NIGHT_START_HOUR=22,
+//         MIN_DELAY_SECONDS=480 (8min), MAX_DELAY_SECONDS=2100 (35min).
+//         (Testing used 0/25/60/60 for fast verification.)
+// v4.1: Extended QueuedReply with thread/debounce fields (all optional).
 //       Added cancelQstashMessage() for KV debounce merge cancellation.
 // v3.4: Fixed base64url padding mismatch - QStash payload.body
 //       retains '=' padding while our base64UrlEncode strips it.
@@ -11,7 +14,6 @@
 //       Native JWS signature verification (no @upstash/qstash dependency).
 // ============================================================
 import { createHmac, createHash } from 'crypto';
-
 // ------------------------------------------------------------
 // Types
 // ------------------------------------------------------------
@@ -29,27 +31,24 @@ export interface QueuedReply {
   firstMessageAt?: number;    // Timestamp of first email in thread (for hard-cap timeout)
   qstashMessageId?: string;   // Set by worker after receiving QStash callback (idempotency)
 }
-
 // ------------------------------------------------------------
 // Constants
 // ------------------------------------------------------------
 const QSTASH_BASE_URL = (import.meta.env.QSTASH_URL || process.env.QSTASH_URL || '').replace(/\/$/, '');
 const WORKER_CALLBACK_URL = 'https://wenboom.com/api/worker/process-reply';
 const EST_OFFSET_HOURS = -5; // Eastern Standard Time (UTC-5)
-const DAY_START_HOUR = 0;    // EST 07:00
-const NIGHT_START_HOUR = 25; // v4.1: Restored night mode (was 25 for body-hash testing)
-const MIN_DELAY_SECONDS = 60;   // 8 minutes
-const MAX_DELAY_SECONDS = 60;  // 35 minutes
+const DAY_START_HOUR = 7;    // EST 07:00 daytime begins
+const NIGHT_START_HOUR = 22; // EST 22:00 nighttime begins
+const MIN_DELAY_SECONDS = 480;   // 8 minutes
+const MAX_DELAY_SECONDS = 2100;  // 35 minutes
 const MORNING_SEND_START_MINUTE = 15;  // 08:15
 const MORNING_SEND_END_MINUTE = 90;    // 09:30 (08:00 + 90min)
-
 // ------------------------------------------------------------
 // Helper: strip trailing '=' padding from base64/base64url strings
 // ------------------------------------------------------------
 function stripPadding(s: string): string {
   return s.replace(/=+$/, '');
 }
-
 // ------------------------------------------------------------
 // Human-like delay calculator
 //   Daytime (EST 07:00-22:00): 8-35 min random delay
@@ -75,7 +74,6 @@ export function calculateHumanDelay(receivedAt: number): number {
   return MIN_DELAY_SECONDS +
     Math.floor(Math.random() * (MAX_DELAY_SECONDS - MIN_DELAY_SECONDS + 1));
 }
-
 // ------------------------------------------------------------
 // Enqueue reply to QStash with delay (pure HTTP fetch)
 // ------------------------------------------------------------
@@ -107,7 +105,6 @@ export async function enqueueReply(data: QueuedReply, delaySeconds: number): Pro
   console.log(`[qstash] Enqueued reply: ${messageId}, delay: ${delaySeconds}s (${Math.round(delaySeconds / 60)}min)`);
   return messageId;
 }
-
 // ------------------------------------------------------------
 // v4.1 NEW: Cancel a queued QStash message (for KV debounce merge)
 //   Returns true if cancelled successfully, false if already
@@ -140,7 +137,6 @@ export async function cancelQstashMessage(messageId: string): Promise<boolean> {
     return false;
   }
 }
-
 // ------------------------------------------------------------
 // Native JWS signature verification (replaces @upstash/qstash verifySignature)
 //   QStash signs webhooks with JWS (header.payload.signature) using HMAC-SHA256.
@@ -149,13 +145,11 @@ export async function cancelQstashMessage(messageId: string): Promise<boolean> {
 function base64UrlEncode(buf: Buffer): string {
   return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-
 function base64UrlDecode(str: string): Buffer {
   const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
   const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
   return Buffer.from(padded, 'base64');
 }
-
 async function verifyJwsSignature(signature: string, rawBody: string, signingKey: string): Promise<boolean> {
   try {
     const parts = signature.split('.');
@@ -246,7 +240,6 @@ async function verifyJwsSignature(signature: string, rawBody: string, signingKey
     return false;
   }
 }
-
 // ------------------------------------------------------------
 // Verify QStash webhook signature (tries current key, then next key for rotation)
 // ------------------------------------------------------------
