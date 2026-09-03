@@ -1,83 +1,55 @@
 // ============================================================
-// Auto-Reply & Human Intervention System Configuration v4.1
+// Auto-Reply & Human Intervention System Configuration v4.1.3
 // v4.1: 4-class intent engine + KV debounce + anti-injection
-//       + link whitelist + human takeover lock. Removed
-//       Voiceflow/Bland.ai (no affiliate business).
+//       + link whitelist + human takeover lock.
 // v4.1.1: SIGN-OFF simplified across all templates + SENDER.role.
+// v4.1.2: HUMAN_INTERVENTION_KEYWORDS cleanup — removed overly
+//         broad terms (咨询, price, job, team, custom, etc.).
+// v4.1.3: Radical精简 — goal is "minimum human replies possible".
+//         Only 4 high-risk categories remain:
+//           1. Legal threats (lawsuit, copyright, compliance)
+//           2. Security incidents (vulnerability, hack, breach, fraud)
+//           3. Investment / acquisition (founder-level decisions)
+//           4. Media / press (brand risk, unified messaging)
+//         Removed ALL of: business development, pricing/sales,
+//         hiring, custom dev, refunds/account, urgent/complaints,
+//         affiliate/marketing, events. AI handles these first;
+//         escalate to human only if AI cannot resolve.
 // ============================================================
 import { createHash } from 'crypto';
 // ------------------------------------------------------------
-// 1. HUMAN INTERVENTION KEYWORDS (preserved from v3.0)
+// 1. HUMAN INTERVENTION KEYWORDS (v4.1.3: minimal — 4 risk categories only)
 // ------------------------------------------------------------
 export const HUMAN_INTERVENTION_KEYWORDS: string[] = [
-  'partnership', 'partner with', 'collaborate', 'collaboration',
-  'joint venture', 'co-marketing', 'strategic alliance',
-  'business development', 'reseller', 'resell', 'distribution',
-  'distributor', 'white label', 'white-label', 'whitelabel',
-  'wholesale', 'bulk order', 'volume pricing',
-  '合作', '商务', '联合', '分销', '代理', '批发', '白标',
-  'pricing', 'price', 'cost', 'fee', 'fees', 'billing', 'invoice',
-  'quote', 'quotation', 'proposal', 'demo', 'demostration',
-  'trial', 'free trial', 'contract', 'agreement', 'nda ',
-  'sla ', 'service level', 'enterprise plan', 'enterprise license',
-  'purchase', 'buy ', 'order now', 'booking', 'reservation',
-  'discount', 'coupon', 'promo code', 'negotiate', 'negotiation',
-  '报价', '价格', '费用', '合同', '协议', '演示', '试用',
-  '企业', '采购', '购买', '折扣', '优惠', '谈判', '收费',
-  'investment', 'investor', 'invest ', 'funding', 'fund ',
-  'venture capital', 'vc ', 'angel investor', 'seed round',
-  'acquisition', 'acquire', 'buyout', 'merger', 'ipo ',
-  'revenue share', 'profit sharing', 'equity', 'stake',
-  '投资', '融资', '收购', '并购', '股权', '分成',
-  'press', 'media', 'journalist', 'reporter', 'editor',
-  'publication', 'magazine', 'newspaper', 'blog feature',
-  'interview', 'podcast', 'webinar', 'event', 'conference',
-  'summit', 'expo', 'speaker', 'speaking engagement',
-  'keynote', 'panel', 'workshop', 'public relations',
-  'media kit', 'press release', 'testimonial', 'review request',
-  '媒体', '采访', '记者', '编辑', '公关', '播客',
-  '演讲', '会议', '活动', '研讨会', '测评', '评价',
-  'legal', 'lawyer', 'attorney', 'law firm', 'court', 'lawsuit',
-  'sue', 'subpoena', 'compliance', 'gdpr', 'ccpa',
+  // === Category 1: Legal Threats / Compliance (AI must NOT handle) ===
+  'legal', 'lawyer', 'lawsuit', 'sue',
   'copyright', 'infringement', 'dmca', 'takedown',
-  'trademark', 'patent', 'data protection',
-  'security', 'vulnerability', 'exploit', 'hack', 'hacked',
-  'breach', 'data leak', 'phishing', 'fraud', 'scam',
+  'trademark', 'patent',
+  'gdpr', 'ccpa', 'data protection',
+  '法律', '律师', '诉讼', '起诉',
+  '版权', '侵权', '商标', '专利',
+  '隐私', '合规', '数据保护',
+
+  // === Category 2: Security Incidents / Fraud (needs human emergency response) ===
+  'vulnerability', 'exploit', 'hack', 'hacked',
+  'breach', 'data leak', 'phishing',
+  'fraud', 'scam',
   'abuse', 'spam complaint', 'report abuse', 'malicious',
-  '法律', '律师', '诉讼', '合规', '隐私', '版权', '侵权',
-  '商标', '专利', '安全', '漏洞', '黑客', '钓鱼', '欺诈',
-  '诈骗', '滥用', '举报', '数据泄露',
-  'job', 'career', 'hiring', 'hire ', 'recruit', 'recruitment',
-  'resume', 'cv ', 'application', 'position', 'role', 'opening',
-  'opportunity', 'internship', 'intern', 'freelancer', 'freelance',
-  'contractor', 'consultant', 'agency', 'team', 'join us',
-  'work with you', 'for hire', 'available for work',
-  '工作', '职业', '招聘', '简历', '申请', '职位', '机会',
-  '实习', '自由职业', '外包', '团队', '加入',
-  'affiliate', 'referral program', 'commission', 'refer',
-  'ambassador', 'influencer', 'creator', 'content creator',
-  'promote', 'promotion', 'advertise', 'advertising', 'ad campaign',
-  'sponsor', 'sponsorship', 'brand deal', 'endorsement',
-  '联盟', '推荐', '佣金', '分成', '大使', '网红',
-  '创作者', '推广', '广告', '赞助', '代言',
-  'custom', 'customize', 'customized', 'bespoke', 'tailor-made',
-  'build for me', 'develop for me', 'create for me',
-  'outsourcing', 'outsource', 'software development',
-  'consulting', 'consult ', 'consultation', 'advisor',
-  'coaching', 'mentor', 'mentorship', 'audit', 'assessment',
-  'strategy', 'strategic', 'roadmap', 'planning',
-  '定制', '开发', '外包', '咨询', '顾问', '指导',
-  '审计', '评估', '战略', '规划', '路线图',
-  'refund', 'chargeback', 'dispute', 'cancel', 'cancellation',
-  'unsubscribe', 'remove me', 'delete my', 'account issue',
-  'login problem', 'password reset', 'access denied', 'locked out',
-  'billing issue', 'payment failed', 'credit card',
-  '退款', '取消', '退订', '删除', '账户', '登录',
-  '密码', '账单', '支付',
-  'urgent', 'asap', 'immediately', 'critical', 'emergency',
-  'ceo ', 'founder', 'owner', 'manager', 'supervisor',
-  'escalate', 'escalation', 'complaint', 'dissatisfied',
-  '紧急', '尽快', '立即', '严重', '投诉', '不满',
+  '漏洞', '黑客', '被黑',
+  '数据泄露', '钓鱼',
+  '欺诈', '诈骗',
+  '滥用', '举报', '恶意',
+
+  // === Category 3: Investment / Acquisition (founder-level decisions) ===
+  'investment', 'investor', 'funding', 'venture capital',
+  'acquisition', 'acquire', 'buyout', 'merger', 'ipo',
+  'equity', 'stake',
+  '投资', '融资', '收购', '并购', '股权',
+
+  // === Category 4: Media / Press (brand risk, unified messaging) ===
+  'press', 'journalist', 'reporter', 'interview',
+  'media kit', 'press release',
+  '媒体', '采访', '记者', '公关',
 ];
 // ------------------------------------------------------------
 // 2. FORWARDING EMAILS (preserved)
