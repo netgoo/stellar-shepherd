@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The 7-Core Production Stack | Wenboom</title>
     <meta name="description" content="The strict 7-core production AI infrastructure stack: Make, n8n, Clay, Smartlead, Voiceflow, Bland.ai, and ActiveCampaign. Each tool stress-tested in live deployment with hard data, use cases, and documented limitations." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The 7-Core Production Stack | Wenboom" />
+    <meta property="og:description" content="The strict 7-core production AI infrastructure stack: Make, n8n, Clay, Smartlead, Voiceflow, Bland.ai, and ActiveCampaign. Each tool stress-tested in live deployment with hard data, use cases, and documented limitations." />
+    <meta property="og:url" content="https://wenboom.com/tools" />
+    <meta property="og:image" content="https://wenboom.com/favicon.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The 7-Core Production Stack | Wenboom" />
+    <meta name="twitter:description" content="The strict 7-core production AI infrastructure stack: Make, n8n, Clay, Smartlead, Voiceflow, Bland.ai, and ActiveCampaign. Each tool stress-tested in live deployment with hard data, use cases, and documented limitations." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
         .tools-hero {
@@ -167,10 +175,27 @@
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "Person",
+          "@id": "https://wenboom.com/#alex",
+          "name": "Alex",
+          "jobTitle": "Principal AI Infrastructure Architect",
+          "worksFor": { "@id": "https://wenboom.com/#organization" },
+          "sameAs": ["https://wenboom.com/about"]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://wenboom.com/#organization",
+          "name": "Wenboom",
+          "url": "https://wenboom.com",
+          "logo": "https://wenboom.com/favicon.svg",
+          "founder": { "@id": "https://wenboom.com/#alex" }
+        },
+        {
           "@type": "CollectionPage",
           "@id": "https://wenboom.com/tools#collection",
           "url": "https://wenboom.com/tools",
           "name": "Wenboom 7-Core Production Stack",
+          "inLanguage": "en-US",
           "description": "The strict 7-core production AI infrastructure stack, each tool stress-tested in live deployment with hard data, use cases, and documented limitations.",
           "publisher": { "@id": "https://wenboom.com/#organization" },
           "mainEntity": {
