@@ -1,4 +1,4 @@
-/* site-common.css — ALEX AUTOMATION Global Shared Styles — V4.1 Article Components + CTA Button Fix */
+/* site-common.css — ALEX AUTOMATION Global Shared Styles — V4.1 Article Components + CTA Button Fix v3 */
 /*
 ==== FONT NOTICE ====
 Place these 4 font woff2 files inside /fonts/ folder:
@@ -275,24 +275,24 @@ nav a:hover { color: var(--accent-gold); }
 }
 .lead-magnet-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; font-weight: 800; }
 .lead-magnet-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
-/* V4.1 CTA FIX: Inside lead-magnet-box, magnet-cta-link becomes a solid gold button (black text). Dual-class selector overrides global .magnet-cta-link. */
+/* V4.1 CTA FIX v3: !important beats .article-container .content a (0,2,1). Gold button, black text, guaranteed. */
 .lead-magnet-box .magnet-cta-link {
     all: unset;
-    display: inline-block;
-    background-color: var(--accent-gold);
-    color: #000;
-    padding: 0.7rem 1.8rem;
-    border-radius: 6px;
-    font-size: 0.92rem;
-    font-weight: 800;
-    text-decoration: none;
+    display: inline-block !important;
+    background-color: var(--accent-gold) !important;
+    color: #000 !important;
+    padding: 0.7rem 1.8rem !important;
+    border-radius: 6px !important;
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
     cursor: pointer;
     transition: 0.3s;
     white-space: normal;
 }
 .lead-magnet-box .magnet-cta-link:hover {
-    background-color: var(--accent-gold-light);
-    color: #000;
+    background-color: var(--accent-gold-light) !important;
+    color: #000 !important;
     transform: translateY(-1px);
 }
 /* Shared breathing float keyframe */
