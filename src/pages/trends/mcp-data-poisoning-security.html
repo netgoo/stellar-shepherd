@@ -9,7 +9,6 @@
     <meta name="description" content="Why automated LLM pipelines fail from dirty data payloads, and how a WCEI-optimized multi-vendor enrichment mesh (Clay + Smartlead) eliminates 429 rate limits, duplicate records, and field loss with deterministic JSON validation." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
-        /* Article-specific overrides only. All shared V4.1 components (tldr-box, verdict, failure-card, code-block, data-hook-link, benchmark-table, cost-table, cluster-list, engineering-transparency, subscribe-cta-inline) inherit from site-common.css */
         .lead-magnet-box {
             background: linear-gradient(135deg, rgba(243,198,83,0.08) 0%, rgba(243,198,83,0.02) 100%);
             border: 1px solid rgba(243, 198, 83, 0.2);
@@ -30,23 +29,24 @@
             line-height: 1.5;
             max-width: none;
         }
-        .magnet-cta-link {
-            display: inline-block;
-            background-color: var(--accent-gold);
-            color: #000;
-            padding: 0.7rem 1.8rem;
-            border-radius: 6px;
-            font-size: 0.92rem;
-            font-weight: 800;
-            text-decoration: none;
-            transition: 0.3s;
-            animation: none;
-            white-space: normal;
+        .lead-magnet-box .magnet-cta-link {
+            display: inline-block !important;
+            background-color: var(--accent-gold) !important;
+            color: #000 !important;
+            padding: 0.7rem 1.8rem !important;
+            border-radius: 6px !important;
+            font-size: 0.92rem !important;
+            font-weight: 800 !important;
+            text-decoration: none !important;
+            animation: none !important;
+            white-space: normal !important;
+            transition: 0.3s !important;
         }
-        .magnet-cta-link:hover {
-            background-color: #ffe082;
-            transform: translateY(-1px);
-            filter: none;
+        .lead-magnet-box .magnet-cta-link:hover {
+            background-color: #ffe082 !important;
+            color: #000 !important;
+            transform: translateY(-1px) !important;
+            filter: none !important;
         }
     </style>
     <meta property="og:type" content="article" />
