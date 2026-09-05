@@ -9,114 +9,14 @@
     <meta name="description" content="Why automated LLM pipelines fail from dirty data payloads, and how a WCEI-optimized multi-vendor enrichment mesh (Clay + Smartlead) eliminates 429 rate limits, duplicate records, and field loss with deterministic JSON validation." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
-        /* ===== Article-level link color override: all text links gold ===== */
-        .article-container .content a {
-            color: var(--accent-gold);
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .article-container .content a:hover {
-            color: #ffe082;
-        }
-        .tldr-box {
-            background: rgba(243, 198, 83, 0.06);
-            border: 1px solid rgba(243, 198, 83, 0.25);
-            border-radius: 8px;
-            padding: 1rem 1.25rem;
-            margin: 1rem 0 1.5rem;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            line-height: 1.65;
-        }
-        .tldr-box strong {
-            color: var(--accent-gold);
-        }
-        .verdict-section {
-            background: linear-gradient(135deg, rgba(243,198,83,0.06) 0%, rgba(243,198,83,0.02) 100%);
-            border: 1px solid rgba(243, 198, 83, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem 1.75rem;
-            margin: 1.5rem 0 2rem;
-        }
-        .verdict-label {
-            font-size: 0.7rem;
-            color: var(--accent-gold);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.75rem;
-        }
-        .verdict-text {
-            font-size: 1rem;
-            color: var(--text-primary);
-            line-height: 1.7;
-            margin: 0;
-            font-weight: 500;
-        }
-        .code-block {
-            background-color: #0d1117;
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: monospace;
-            font-size: 0.88rem;
-            color: #e6edf3;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            line-height: 1.45;
-        }
-        .code-block .keyword { color: #ff7b72; }
-        .code-block .string { color: #a5d6ff; }
-        .code-block .comment { color: #8b949e; }
-        .highlight-quote {
-            background: linear-gradient(135deg, rgba(243,198,83,0.06) 0%, rgba(243,198,83,0.02) 100%);
-            border-left: 3px solid var(--accent-gold);
-            padding: 1.25rem 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 0 6px 6px 0;
-        }
-        .highlight-quote p {
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-style: italic;
-            margin: 0;
-            line-height: 1.6;
-        }
-        .failure-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        .failure-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            border-left: 3px solid #EF4444;
-        }
-        .failure-card h4 {
-            color: #fff;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-        .failure-card p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-        .failure-card .fix {
-            color: #10B981;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+        /* Article-specific overrides only. All shared V4.1 components (tldr-box, verdict, failure-card, code-block, data-hook-link, benchmark-table, cost-table, cluster-list, engineering-transparency, subscribe-cta-inline) inherit from site-common.css */
         .lead-magnet-box {
             background: linear-gradient(135deg, rgba(243,198,83,0.08) 0%, rgba(243,198,83,0.02) 100%);
             border: 1px solid rgba(243, 198, 83, 0.2);
             border-radius: 12px;
             padding: 1.75rem 2rem;
             margin: 2rem 0;
+            text-align: left;
         }
         .lead-magnet-box h3 {
             color: #fff;
@@ -128,6 +28,7 @@
             font-size: 0.92rem;
             margin: 0 0 1rem;
             line-height: 1.5;
+            max-width: none;
         }
         .magnet-cta-link {
             display: inline-block;
@@ -139,116 +40,13 @@
             font-weight: 800;
             text-decoration: none;
             transition: 0.3s;
+            animation: none;
+            white-space: normal;
         }
         .magnet-cta-link:hover {
             background-color: #ffe082;
             transform: translateY(-1px);
-        }
-        .cluster-list {
-            list-style: none;
-            padding: 0;
-            margin: 1rem 0;
-        }
-        .cluster-list li {
-            padding: 0.6rem 0;
-            border-bottom: 1px solid var(--card-border);
-        }
-        .cluster-list li:last-child {
-            border-bottom: none;
-        }
-        .cluster-list a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.95rem;
-        }
-        .cluster-list a:hover {
-            color: var(--accent-gold);
-        }
-        .benchmark-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-        .benchmark-table th {
-            background-color: rgba(243, 198, 83, 0.1);
-            color: var(--accent-gold);
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 700;
-            border-bottom: 2px solid var(--accent-gold);
-        }
-        .benchmark-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text-main);
-        }
-        .benchmark-table .highlight {
-            color: var(--accent-gold);
-            font-weight: 700;
-        }
-        .cost-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-        .cost-table th {
-            background-color: rgba(243, 198, 83, 0.1);
-            color: var(--accent-gold);
-            padding: 0.75rem 1rem;
-            text-align: left;
-            font-weight: 700;
-            border-bottom: 2px solid var(--accent-gold);
-        }
-        .cost-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text-main);
-        }
-        .cost-table .savings {
-            color: #10B981;
-            font-weight: 700;
-        }
-        /* ===== Data hook link: small gold, no wrap break ===== */
-        .data-hook-link {
-            color: var(--accent-gold);
-            font-size: 0.82rem;
-            font-weight: 600;
-            text-decoration: underline;
-            text-underline-offset: 2px;
-        }
-        .data-hook-link:hover {
-            color: #ffe082;
-        }
-        /* ===== Engineering Transparency: links gold ===== */
-        .engineering-transparency {
-            margin: 3rem 0 1rem;
-            padding: 1.25rem 1.5rem;
-            background-color: rgba(17, 24, 39, 0.03);
-            border-left: 4px solid var(--accent-gold);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #6B7280;
-            line-height: 1.6;
-        }
-        .engineering-transparency strong {
-            color: #374151;
-        }
-        .engineering-transparency a {
-            color: var(--accent-gold);
-            text-decoration: underline;
-        }
-        .engineering-transparency a:hover {
-            color: #ffe082;
-        }
-        /* ===== Subscribe CTA inline ===== */
-        .subscribe-cta-inline {
-            margin: 1.5rem 0;
-            padding: 1rem 1.25rem;
-            background: rgba(243, 198, 83, 0.04);
-            border-radius: 8px;
-            font-size: 0.92rem;
-            color: var(--text-muted);
-            line-height: 1.6;
+            filter: none;
         }
     </style>
     <meta property="og:type" content="article" />
