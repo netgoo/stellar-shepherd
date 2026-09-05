@@ -1,6 +1,5 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-
 // Structured benchmark dataset for AI agents and RAG pipelines
 // All metrics derived from internal production testing, updated monthly
 const benchmarkData = {
@@ -32,6 +31,69 @@ const benchmarkData = {
     { id: "cost-per-lead", name: "Cost Per 10k Enriched Leads", value: "$320", comparison: "vs $800 single-provider", category: "cost" },
     { id: "agent-failure", name: "Chained Agent Failure Rate", value: "14-22%", comparison: "REST webhook orchestration", category: "reliability" },
     { id: "cold-start", name: "Cold Start Latency P99", value: "<50ms", comparison: "after RLRP warmup", category: "performance" }
+  ],
+  pillarBlueprints: [
+    {
+      id: "pillar-01-data-waterfall",
+      name: "Pillar 01: Data Waterfall & Cold Enrichment Architecture",
+      pillar: "01",
+      tools: ["Clay", "Smartlead"],
+      category: "data-waterfall",
+      metrics: {
+        deliverability: "98.4%",
+        wcei: "0.94+",
+        costPer10kLeads: "$320",
+        enrichmentProviders: "50+",
+        testVolume: "50k monthly leads"
+      },
+      articleUrl: "https://wenboom.com/blueprints/data-waterfall-infrastructure",
+      status: "published"
+    },
+    {
+      id: "pillar-02-orchestration",
+      name: "Pillar 02: Visual vs Self-Hosted Orchestration",
+      pillar: "02",
+      tools: ["Make.com", "n8n", "PgBouncer"],
+      category: "orchestration",
+      metrics: {
+        tcoReduction: "83.4%",
+        p99Latency: "<50ms",
+        connectionPooling: "PgBouncer",
+        benchmarkExecutions: "500k/month"
+      },
+      articleUrl: "https://wenboom.com/blueprints/visual-vs-self-hosted-orchestration",
+      status: "published"
+    },
+    {
+      id: "pillar-03-voice-ai",
+      name: "Pillar 03: AI Voice Agent Infrastructure",
+      pillar: "03",
+      tools: ["Voiceflow", "Bland AI"],
+      category: "voice",
+      metrics: {
+        endToEndLatency: "640ms",
+        callCompletionRate: "89.2%",
+        costPerMinute: "$0.09",
+        latencySla: "sub-800ms"
+      },
+      articleUrl: "https://wenboom.com/blueprints/production-ai-agentic-architecture",
+      status: "published"
+    },
+    {
+      id: "pillar-04-lifecycle-crm",
+      name: "Pillar 04: Enterprise Lead Lifecycle & CRM Sync",
+      pillar: "04",
+      tools: ["ActiveCampaign", "n8n", "Redis"],
+      category: "crm",
+      metrics: {
+        duplicateContactRate: "0.01%",
+        stateCorruption: "0/month",
+        apiFailureRate: "0.02%",
+        idempotency: "SHA-256 tokens"
+      },
+      articleUrl: "https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm",
+      status: "published"
+    }
   ],
   architectureBenchmarks: [
     {
@@ -71,32 +133,31 @@ const benchmarkData = {
       status: "published"
     },
     {
-      id: "make-vs-zapier-roi",
-      name: "Make.com vs Zapier 2026 TCO Comparison",
-      tools: ["Make.com", "Zapier", "n8n"],
-      category: "cost",
+      id: "mcp-data-poisoning-security",
+      name: "Eradicating Data Poisoning in Multi-Agent Outbound Systems",
+      tools: ["Clay", "Smartlead"],
+      category: "data-security",
       metrics: {
-        makeProMonthly: "$9",
-        zapierProfessionalMonthly: "$29.99",
-        n8nSelfHostedMonthly: "$20",
-        breakEvenOps: "150,000 invocations/month"
+        wcei: "0.94+",
+        duplicateRate: "0.01%",
+        productionFailureModes: 4,
+        dedupMethod: "SHA-256 deterministic keys"
       },
-      articleUrl: "https://wenboom.com/trends/make-vs-zapier-2026-roi",
+      articleUrl: "https://wenboom.com/trends/mcp-data-poisoning-security",
       status: "published"
     },
     {
-      id: "serverless-vs-vps",
-      name: "Serverless vs VPS Cloud Cost Break-Even 2026",
-      tools: ["AWS Lambda", "Hetzner", "DigitalOcean"],
-      category: "cost",
+      id: "mcp-protocol-enterprise-impact",
+      name: "The 10-Year Paradigm Shift: Embracing Model Context Protocol (MCP)",
+      tool: "Model Context Protocol",
+      category: "mcp",
       metrics: {
-        breakEvenInvocations: "150,000/month",
-        workloadMemory: "512MB",
-        lambdaCostPerMillion: "$0.20 compute + $0.20 requests",
-        hetznerVpsMonthly: "$20"
+        restAgentFailureRate: "14-22%",
+        zeroGlueFailureRate: "<2%",
+        protocolLayer: "localized LLM communication"
       },
-      articleUrl: "https://wenboom.com/trends/serverless-vs-vps-2026-cloud-cost-roi",
-      status: "published_soon"
+      articleUrl: "https://wenboom.com/trends/mcp-protocol-enterprise-impact",
+      status: "published"
     },
     {
       id: "mcp-transport",
@@ -112,17 +173,45 @@ const benchmarkData = {
       status: "published_soon"
     },
     {
-      id: "visual-vs-code-orchestration",
-      name: "Visual vs Code-First Orchestration TCO",
-      tools: ["Make.com", "n8n", "Temporal"],
-      category: "orchestration",
+      id: "make-vs-zapier-roi",
+      name: "Make.com vs Zapier 2026 TCO Comparison",
+      tools: ["Make.com", "Zapier", "n8n"],
+      category: "cost",
       metrics: {
-        visualBreakEven: "10,000 operations/month",
-        codeFirstBreakEven: "100,000 operations/month",
-        selfHostedMonthly: "$20"
+        makeProMonthly: "$9",
+        zapierProfessionalMonthly: "$29.99",
+        n8nSelfHostedMonthly: "$20",
+        overheadReduction: "83.4% at 500k executions"
       },
-      articleUrl: "https://wenboom.com/trends/visual-vs-self-hosted-orchestration",
-      status: "published_soon"
+      articleUrl: "https://wenboom.com/trends/make-vs-zapier-2026-roi",
+      status: "published"
+    },
+    {
+      id: "make-vs-zapier-roi-v2",
+      name: "Make vs Zapier: Zero-Code MCP Bridge & Semantic Gateway",
+      tools: ["Make.com", "n8n", "Clay", "Smartlead"],
+      category: "cost",
+      metrics: {
+        bridgePattern: "MCP JSON schema",
+        compensation: "Saga transactions",
+        gateway: "SMB semantic gateway"
+      },
+      articleUrl: "https://wenboom.com/trends/make-vs-zapier-2026-roi-v2",
+      status: "published"
+    },
+    {
+      id: "serverless-vs-vps",
+      name: "Serverless vs VPS Cloud Cost Break-Even 2026",
+      tools: ["AWS Lambda", "Hetzner", "DigitalOcean"],
+      category: "cost",
+      metrics: {
+        breakEvenInvocations: "150,000/month",
+        workloadMemory: "512MB",
+        lambdaCostPerMillion: "$0.20 compute + $0.20 requests",
+        hetznerVpsMonthly: "$20"
+      },
+      articleUrl: "https://wenboom.com/trends/serverless-vs-vps-2026-cloud-cost-roi",
+      status: "published"
     }
   ],
   toolStack: [
@@ -130,6 +219,8 @@ const benchmarkData = {
     { name: "n8n", category: "Self-Hosted Orchestration", affiliateUrl: "https://wenboom.com/links/n8n.html", freeTier: "Unlimited self-hosted" },
     { name: "Clay", category: "Data Enrichment", affiliateUrl: "https://wenboom.com/links/clay.html", freeTier: "Limited credits" },
     { name: "Smartlead", category: "Cold Outreach", affiliateUrl: "https://wenboom.com/links/smartlead.html", freeTier: "Trial" },
+    { name: "Voiceflow", category: "Agentic Voice Logic", affiliateUrl: "https://wenboom.com/links/voiceflow.html", freeTier: "Trial" },
+    { name: "Bland.ai", category: "Voice Telephony API", affiliateUrl: "https://wenboom.com/links/bland.html", freeTier: "Pay-per-minute" },
     { name: "ActiveCampaign", category: "Lifecycle CRM", affiliateUrl: "https://wenboom.com/links/activecampaign.html", freeTier: "Trial" }
   ],
   endpoints: {
@@ -140,7 +231,6 @@ const benchmarkData = {
     emailAutoReply: "mailto:alex@wenboom.com"
   }
 };
-
 export const GET: APIRoute = async () => {
   return new Response(JSON.stringify(benchmarkData, null, 2), {
     status: 200,
