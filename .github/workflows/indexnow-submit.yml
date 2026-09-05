@@ -5,8 +5,9 @@ on:
     branches: [ main ]
     paths:
       - 'public/**/*.html'
-      - 'public/sitemap.xml'
       - 'src/pages/**/*.html'
+      - 'src/pages/**/*.ts'
+      - 'src/data/**/*.ts'
   workflow_dispatch:
 
 jobs:
@@ -16,17 +17,30 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Extract URLs from Sitemap and Submit to IndexNow
+      - name: Wait for Vercel Deployment
+        run: sleep 60
+
+      - name: Fetch Sitemap and Submit to IndexNow
         run: |
           python3 -c "
           import xml.etree.ElementTree as ET
           import json
           import urllib.request
 
-          tree = ET.parse('public/sitemap.xml')
-          root = tree.getroot()
+          sitemap_url = 'https://wenboom.com/sitemap.xml'
+          print(f'Fetching sitemap from {sitemap_url}...')
+          try:
+              with urllib.request.urlopen(sitemap_url, timeout=30) as resp:
+                  sitemap_content = resp.read()
+                  print(f'Sitemap fetched: {len(sitemap_content)} bytes')
+          except Exception as e:
+              print(f'Failed to fetch sitemap: {e}')
+              raise
+
+          root = ET.fromstring(sitemap_content)
           ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
           urls = [loc.text for loc in root.findall('.//sm:loc', ns)]
+          print(f'Extracted {len(urls)} URLs from sitemap')
 
           payload = json.dumps({
               'host': 'wenboom.com',
