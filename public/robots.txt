@@ -1,16 +1,15 @@
 # ============================================================
 # wenboom.com robots.txt
 # SEO + GEO + A2A crawler allowlist
-# v2.0: Added OAI-SearchBot / anthropic-ai / CCBot / Bytespider / Applebot
+# v2.1: Added /admin/ to Disallow (V4.0 21.1 compliance)
 # ============================================================
-
 User-agent: *
 Allow: /
 Disallow: /links/
 Disallow: /api/
+Disallow: /admin/
 Disallow: /unsubscribe-success
 Crawl-delay: 1
-
 # --- AI Search / LLM Crawlers (GEO full access, sensitive paths only) ---
 User-agent: GPTBot
 User-agent: PerplexityBot
@@ -25,6 +24,6 @@ User-agent: Applebot
 Allow: /
 Disallow: /api/
 Disallow: /links/
+Disallow: /admin/
 Disallow: /unsubscribe-success
-
 Sitemap: https://wenboom.com/sitemap.xml
