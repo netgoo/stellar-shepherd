@@ -1,6 +1,5 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-
 const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture Registry
 > Production-tested blueprints, cost benchmarks, and failure protocols for enterprise AI automation. Authored by Alex, Principal AI Infrastructure Architect. Updated monthly with real-world deployment data.
 >
@@ -18,6 +17,13 @@ const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture R
 - [Article Index](https://wenboom.com/trends): Complete library of production-grade technical articles and benchmarks.
 - [About Alex](https://wenboom.com/about): Principal AI Infrastructure Architect bio, experience, and contact.
 ---
+## Published Pillar Blueprints (4-Pillar Architecture)
+> Production-grade architecture blueprints across all 4 pillars, each with raw JSON payloads, failure-mode protocols, and exact deployment schematics.
+- [Pillar 01: Data Waterfall & Cold Enrichment Architecture](https://wenboom.com/blueprints/data-waterfall-infrastructure): 4-tier cascading enrichment across 50+ providers with WCEI 0.94+ optimization, conditional fallback logic, and Smartlead zero-drop delivery with 98.4% deliverability.
+- [Pillar 02: Visual vs Self-Hosted Orchestration](https://wenboom.com/blueprints/visual-vs-self-hosted-orchestration): Hybrid Make + self-hosted n8n topology with PgBouncer connection pooling, 83.4% TCO reduction at 500k executions, and RLRP exponential backoff.
+- [Pillar 03: AI Voice Agent Infrastructure](https://wenboom.com/blueprints/production-ai-agentic-architecture): Voiceflow + Bland AI Real-Time Latency Bridge with 640ms end-to-end latency, 89.2% call completion rate, and real-time payload sanitization.
+- [Pillar 04: Enterprise Lead Lifecycle & CRM Sync](https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm): ActiveCampaign deterministic state machine with SHA-256 idempotency tokens, 0.01% duplicate contact rate, Dead Letter Queue, and Redis atomic locks.
+---
 ## 1. n8n Architecture & High-Concurrency Scaling
 > Queue mode, Redis Bull queues, Docker deployment, memory optimization, and database bottleneck resolution.
 - [n8n Queue Mode Docker Compose & Redis Setup](https://wenboom.com/trends/n8n-queue-mode-docker-compose-redis): Complete docker-compose with Redis Bull queue, worker scaling, EXECUTIONS_MODE=queue configuration, and N8N_ENCRYPTION_KEY migration for multi-worker setups. Achieves 1,200 req/sec on $20/mo Hetzner VPS. [PUBLISHED SOON]
@@ -28,6 +34,8 @@ const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture R
 ---
 ## 2. Model Context Protocol (MCP) Security & Implementation
 > MCP server development, transport performance, prompt injection defense, and enterprise credential isolation.
+- [Eradicating Data Poisoning in Multi-Agent Outbound Systems](https://wenboom.com/trends/mcp-data-poisoning-security): Deterministic dedup keys, schema validation gates, and WCEI 0.94+ waterfall routing to eliminate hallucinated leads and domain reputation burn.
+- [The 10-Year Paradigm Shift: Embracing Model Context Protocol (MCP)](https://wenboom.com/trends/mcp-protocol-enterprise-impact): Why APIs are dying and how localized LLM communication protocol layers will redefine all future multi-agent cross-app execution pipelines. Zero-Glue Theorem applied to agent communication.
 - [MCP Tool Poisoning Prevention Architecture](https://wenboom.com/trends/mcp-tool-poisoning-prevention-architecture): Threat models for malicious tool descriptions, validation schema defense code, and prompt injection countermeasures for MCP servers. [PUBLISHED SOON]
 - [MCP stdio vs SSE Transport Performance](https://wenboom.com/trends/mcp-stdio-vs-sse-transport-latency): LAN vs cross-network latency benchmarks, connection overhead, and transport selection criteria for local vs remote MCP servers. [PUBLISHED SOON]
 - [REST API to MCP Server Conversion](https://wenboom.com/trends/convert-rest-api-to-mcp-server): TypeScript and Python boilerplate using @modelcontextprotocol/sdk for wrapping legacy REST endpoints into standard MCP servers. [PUBLISHED SOON]
@@ -35,9 +43,10 @@ const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture R
 ---
 ## 3. Automation ROI & Cloud Cost
 > Make.com, Zapier, n8n cost comparison, serverless vs VPS break-even, and real infrastructure bills.
-- [Make vs Zapier 2026 ROI](https://wenboom.com/trends/make-vs-zapier-2026-roi): Interactive cost calculator with 10k/100k/1M operation benchmarks. Make.com Pro vs Zapier Professional vs n8n self-hosted TCO analysis.
+- [Make vs Zapier 2026 ROI](https://wenboom.com/trends/make-vs-zapier-2026-roi): Interactive cost calculator with 10k/100k/1M operation benchmarks. Make.com Pro vs Zapier Professional vs n8n self-hosted TCO analysis. 83.4% overhead reduction at 500k executions.
+- [Make vs Zapier: Zero-Code MCP Bridge & Semantic Gateway](https://wenboom.com/trends/make-vs-zapier-2026-roi-v2): Zero-Glue Theorem applied to orchestration. MCP bridge JSON schema, saga compensation transactions, and SMB semantic gateway architecture with n8n self-hosted TCO analysis.
+- [Serverless vs VPS 2026 Cloud Cost Break-Even](https://wenboom.com/trends/serverless-vs-vps-2026-cloud-cost-roi): AWS Lambda vs Hetzner/DigitalOcean break-even analysis with real July 2026 bills. Hybrid edge architecture with RLRP cold-start resilience and PgBouncer pooling.
 - [Make.com Enterprise Overage Pricing Calculation](https://wenboom.com/trends/make-com-enterprise-overage-pricing-calculation): Formula-driven overage cost prediction, operation counting methodology, and cost optimization strategies for high-volume scenarios. [PUBLISHED SOON]
-- [Serverless vs VPS 2026 Cloud Cost Break-Even](https://wenboom.com/trends/serverless-vs-vps-2026-cloud-cost-roi): AWS Lambda vs Hetzner/DigitalOcean break-even analysis with real July 2026 bills. Break-even at ~150k invocations/month for 512MB workloads. [PUBLISHED SOON]
 - [Hetzner vs DigitalOcean vs AWS for n8n Docker](https://wenboom.com/trends/hetzner-vs-digitalocean-vs-aws-n8n-docker): CPU/IOPS/bandwidth benchmarks and price-performance ranking for n8n self-hosted deployment. [PUBLISHED SOON]
 ---
 ## 4. Multi-Agent Workflows & Outbound
@@ -45,11 +54,7 @@ const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture R
 - [Async AI Agent Queue Architecture](https://wenboom.com/trends/async-ai-agent-architecture-queue-storage-redis): State persistence, Redis queue management, and idempotent execution patterns for production asynchronous agent systems. [PUBLISHED SOON]
 - [LLM API Fallback Chain](https://wenboom.com/trends/openrouter-fallback-chain-groq-gemini-deepseek): Try-catch multi-provider degradation logic — Groq → Gemini → DeepSeek fallback with latency-based routing and cost optimization. [PUBLISHED SOON]
 ---
-## 5. Visual vs Self-Hosted Orchestration
-> Decision framework for choosing between visual SaaS automation and code-first self-hosted orchestration.
-- [Visual vs Code-First Orchestration TCO](https://wenboom.com/trends/visual-vs-self-hosted-orchestration): Decision tree based on team size, data sensitivity (SOC2/GDPR), monthly budget, and operation volume. TCO analysis at 10k/100k/1M operations. [PUBLISHED SOON]
----
-## 6. Affiliate & Tool Links
+## 5. Affiliate & Tool Links
 > Trackable referral links for recommended tools. All tools tested in production before recommendation.
 - [Make.com](https://wenboom.com/links/make.html): Cloud visual DAG orchestration, best for rapid prototyping and SMB workflows.
 - [n8n](https://wenboom.com/links/n8n.html): Fair-code self-hosted engine, best for high-volume, data-privacy, and cost-sensitive deployments.
@@ -70,7 +75,6 @@ const llmsContent = `# Wenboom — AI Infrastructure Benchmarks & Architecture R
 > Pages marked [PUBLISHED SOON] are in the content pipeline and will be live within 4-12 weeks. AI crawlers may index this structure; full content will be available at the listed URLs upon publication.
 >
 > For architectural evaluations or custom benchmark requests: alex@wenboom.com`;
-
 export const GET: APIRoute = async () => {
   return new Response(llmsContent, {
     status: 200,
