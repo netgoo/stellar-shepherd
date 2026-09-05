@@ -1,4 +1,4 @@
-/* site-common.css — ALEX AUTOMATION Global Shared Styles — FINAL GOLD VERSION (V4.1 Article Components) */
+/* site-common.css — ALEX AUTOMATION Global Shared Styles — V4.1 Article Components + CTA Button Fix */
 /*
 ==== FONT NOTICE ====
 Place these 4 font woff2 files inside /fonts/ folder:
@@ -6,35 +6,6 @@ PlusJakartaSans-Regular.woff2
 PlusJakartaSans-Medium.woff2
 PlusJakartaSans-SemiBold.woff2
 PlusJakartaSans-ExtraBold.woff2
-@font-face blocks should be placed here at the very top of file:
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('./fonts/PlusJakartaSans-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('./fonts/PlusJakartaSans-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('./fonts/PlusJakartaSans-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('./fonts/PlusJakartaSans-ExtraBold.woff2') format('woff2');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
 */
 :root {
     --bg-color: #0B0F19;
@@ -72,7 +43,6 @@ header {
 }
 .logo span { color: var(--accent-gold); display:block; }
 .logo a { color:#fff; text-decoration:none; }
-/* PC-desktop: nav horizontal, right-aligned */
 nav {
     display: flex;
     flex-direction: row;
@@ -99,7 +69,7 @@ nav a:hover { color: var(--accent-gold); }
 .content ul, .content ol { margin-bottom: 1.8rem; padding-left: 1.5rem; color: var(--text-main); }
 .content li { margin-bottom: 0.6rem; font-size: 1.05rem; }
 .content strong { color: var(--accent-gold); font-weight: 600; }
-/* ===== V4.1: All article body text links are gold (not blue) ===== */
+/* V4.1: All article body text links are gold */
 .article-container .content a {
     color: var(--accent-gold);
     text-decoration: underline;
@@ -109,7 +79,7 @@ nav a:hover { color: var(--accent-gold); }
 .article-container .content a:hover {
     color: var(--accent-gold-light);
 }
-/* ===== V4.1: TL;DR Box ===== */
+/* V4.1: TL;DR Box */
 .tldr-box {
     background: rgba(243, 198, 83, 0.06);
     border: 1px solid rgba(243, 198, 83, 0.25);
@@ -121,7 +91,7 @@ nav a:hover { color: var(--accent-gold); }
     line-height: 1.65;
 }
 .tldr-box strong { color: var(--accent-gold); }
-/* ===== V4.1: Verdict Section ===== */
+/* V4.1: Verdict Section */
 .verdict-section {
     background: linear-gradient(135deg, rgba(243,198,83,0.06) 0%, rgba(243,198,83,0.02) 100%);
     border: 1px solid rgba(243, 198, 83, 0.2);
@@ -156,7 +126,7 @@ nav a:hover { color: var(--accent-gold); }
     background: rgba(59, 130, 246, 0.05);
     border-left-color: var(--accent-blue);
 }
-/* ===== V4.1: Failure Mode Cards ===== */
+/* V4.1: Failure Mode Cards */
 .failure-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -186,7 +156,7 @@ nav a:hover { color: var(--accent-gold); }
     font-size: 0.85rem;
     font-weight: 600;
 }
-/* ===== V4.1: Code Block ===== */
+/* V4.1: Code Block */
 .code-block {
     background-color: #0d1117;
     border: 1px solid var(--card-border);
@@ -202,7 +172,7 @@ nav a:hover { color: var(--accent-gold); }
 .code-block .keyword { color: #ff7b72; }
 .code-block .string { color: #a5d6ff; }
 .code-block .comment { color: #8b949e; }
-/* ===== V4.1: Data Hook Link (small gold, single line) ===== */
+/* V4.1: Data Hook Link (small gold, single line) */
 .data-hook-link {
     color: var(--accent-gold);
     font-size: 0.82rem;
@@ -214,7 +184,7 @@ nav a:hover { color: var(--accent-gold); }
 .data-hook-link:hover {
     color: var(--accent-gold-light);
 }
-/* ===== V4.1: Benchmark & Cost Tables (gold header) ===== */
+/* V4.1: Benchmark & Cost Tables (gold header) */
 .benchmark-table, .cost-table {
     width: 100%;
     border-collapse: collapse;
@@ -241,7 +211,7 @@ nav a:hover { color: var(--accent-gold); }
     color: #10B981;
     font-weight: 700;
 }
-/* ===== V4.1: Cluster / Related Articles List ===== */
+/* V4.1: Cluster / Related Articles List */
 .cluster-list {
     list-style: none;
     padding: 0;
@@ -263,7 +233,7 @@ nav a:hover { color: var(--accent-gold); }
 .cluster-list a:hover {
     color: var(--accent-gold);
 }
-/* ===== V4.1: Engineering Transparency (links gold, not gray) ===== */
+/* V4.1: Engineering Transparency (links gold) */
 .engineering-transparency {
     margin: 3rem 0 1rem;
     padding: 1.25rem 1.5rem;
@@ -285,7 +255,7 @@ nav a:hover { color: var(--accent-gold); }
 .engineering-transparency a:hover {
     color: var(--accent-gold-light);
 }
-/* ===== V4.1: Inline Subscribe CTA ===== */
+/* V4.1: Inline Subscribe CTA */
 .subscribe-cta-inline {
     margin: 1.5rem 0;
     padding: 1rem 1.25rem;
@@ -305,13 +275,33 @@ nav a:hover { color: var(--accent-gold); }
 }
 .lead-magnet-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 1rem; font-weight: 800; }
 .lead-magnet-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+/* V4.1 CTA FIX: Inside lead-magnet-box, magnet-cta-link becomes a solid gold button (black text). Dual-class selector overrides global .magnet-cta-link. */
+.lead-magnet-box .magnet-cta-link {
+    all: unset;
+    display: inline-block;
+    background-color: var(--accent-gold);
+    color: #000;
+    padding: 0.7rem 1.8rem;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: normal;
+}
+.lead-magnet-box .magnet-cta-link:hover {
+    background-color: var(--accent-gold-light);
+    color: #000;
+    transform: translateY(-1px);
+}
 /* Shared breathing float keyframe */
 @keyframes breatheFloat {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-6px); }
     100% { transform: translateY(0px); }
 }
-/* Legacy class for backward-compatibility with old pages — DESKTOP nowrap */
+/* Legacy class for backward-compatibility with old pages */
 a.cta-float-btn {
     all: unset;
     display: inline-block;
@@ -331,7 +321,7 @@ a.cta-float-btn:hover {
     text-decoration-color: var(--accent-gold);
     filter: brightness(1.25);
 }
-/* New preferred global magnet-cta-link — DESKTOP nowrap */
+/* Global magnet-cta-link: large underline link style (for standalone use outside lead-magnet-box) */
 .magnet-cta-link {
     all: unset;
     display: inline-block;
@@ -351,7 +341,7 @@ a.cta-float-btn:hover {
     text-decoration-color: var(--accent-gold);
     filter: brightness(1.25);
 }
-/* Table scroll wrapper: FIXED for mobile horizontal scroll; roi-table-container kept for old pages compatibility */
+/* Table scroll wrapper */
 .table-scroll-wrap {
     width: 100%;
     margin: 2.5rem 0;
@@ -375,7 +365,6 @@ a.cta-float-btn:hover {
     min-width: 640px;
     width: auto !important;
 }
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -592,7 +581,7 @@ td strong { color: #fff; }
 .trend-feed-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
 .trend-meta { font-size: 0.8rem; color: var(--accent-blue); font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.5px; }
 .trend-footer { font-size: 0.95rem; color: var(--accent-blue); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
-/* ========== Unified Footer (All pages use this markup) ========== */
+/* ========== Unified Footer ========== */
 footer {
     background-color: #080B13;
     text-align: center;
@@ -639,31 +628,25 @@ footer {
 }
 /* ========== Mobile Breakpoint 768px ========== */
 @media (max-width: 768px) {
-    /* Home page */
     .hero h1, .hero-section h1, .tools-hero h1, .archive-hero h1 {
         font-size: 2.2rem;
     }
-    /* Article page */
     .article-container h1 { font-size: 2.2rem; }
     .content p { text-align: left; }
-
     header {
         justify-content: space-between;
     }
-    /* Mobile-only: nav  */
     nav {
         width: auto;
         flex-direction: column;
         align-items: flex-start;
         gap: 0.9rem;
     }
-    /* Mobile CTA link: allow text wrap */
     a.cta-float-btn,
     .magnet-cta-link {
         font-size: 1.3rem;
         white-space: normal;
         text-align: center;
     }
-    /* Footer responsive gap */
     .footer-links-wrap { gap:1.2rem 1.8rem; }
 }
