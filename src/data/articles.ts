@@ -1,7 +1,7 @@
 // src/data/articles.ts
 // Single Source of Truth for all article and pillar blueprint metadata.
 // All machine-readable endpoints (llms.txt, llms-full.json, sitemap.xml)
-// and static HTML list pages (trends, index, blueprints) import from here.
+// and static HTML list pages (trends, index, blueprints, tools) import from here.
 // TypeScript interface enforces required fields at build time.
 
 export interface Article {
@@ -37,6 +37,19 @@ export interface Pillar {
   metrics: Record<string, string>;
   description: string;
   benchmarkDetail: BenchmarkDetail;
+}
+
+export interface Tool {
+  name: string;
+  slug: string;
+  pillar: '01' | '02' | '03' | '04';
+  role: string;
+  description: string;
+  metrics: string[];
+  bestFor: string;
+  notFor: string;
+  affiliateLink: string | null;
+  ctaText: string;
 }
 
 export const articles: Article[] = [
@@ -433,6 +446,93 @@ export const pillars: Pillar[] = [
         { mode: 'API failure during sync', fix: 'RLRP circuit breaker + retry with exponential backoff' }
       ]
     }
+  }
+];
+
+export const tools: Tool[] = [
+  {
+    name: 'Clay',
+    slug: 'clay',
+    pillar: '01',
+    role: 'Data Intelligence',
+    description: 'Programmatic multi-provider lead enrichment engine. Combines 50+ data providers into a unified waterfall schema, automatically qualifies leads, and scores prospects via semantic modeling. The core data layer for any high-volume outbound pipeline.',
+    metrics: ['WCEI 0.94+ across 50+ providers', '$320 cost per 10k leads'],
+    bestFor: 'Agencies and outbound teams needing multi-provider enrichment at scale, ICP qualification automation, and dedup pipelines.',
+    notFor: 'Teams with under 5k records/month where single-vendor enrichment suffices, or teams needing on-premise data residency.',
+    affiliateLink: '/links/clay.html',
+    ctaText: 'Deploy Clay Enrichment Stack &rarr;'
+  },
+  {
+    name: 'Smartlead',
+    slug: 'smartlead',
+    pillar: '01',
+    role: 'Outbound Engine',
+    description: 'Dedicated IP warmup protocols, multi-account rotation, and zero-drop webhook outreach infrastructure. The delivery layer that ensures enriched leads actually reach the inbox without burning domain reputation.',
+    metrics: ['98.4% deliverability rate', 'Zero-drop webhook triggers'],
+    bestFor: 'High-volume outbound teams needing multi-account rotation, dedicated IP warmup, and API-driven campaign management.',
+    notFor: 'Teams sending under 1k emails/month, or teams requiring built-in CRM with full lifecycle automation (use ActiveCampaign instead).',
+    affiliateLink: '/links/smartlead.html',
+    ctaText: 'Deploy Smartlead Outbound Engine &rarr;'
+  },
+  {
+    name: 'Make.com',
+    slug: 'make',
+    pillar: '02',
+    role: 'Visual Middleware',
+    description: 'Deterministic visual middleware builder for array aggregation, complex conditional branching, and custom API nesting. The visual DAG orchestrator that processes multi-destination routing as single operations, eliminating the per-task tax of linear chains.',
+    metrics: ['83.4% cost reduction vs Zapier at 500k executions', 'Visual DAG with native array handling'],
+    bestFor: 'Lean teams needing complex multi-app logic, array aggregation, and visual scenario building without engineering overhead.',
+    notFor: 'Teams running 100k+ daily executions needing full data residency control, or teams requiring unlimited concurrency at static cost (use n8n self-hosted).',
+    affiliateLink: '/links/make.html',
+    ctaText: 'Deploy Make.com Visual Orchestration &rarr;'
+  },
+  {
+    name: 'n8n (Self-Hosted)',
+    slug: 'n8n',
+    pillar: '02',
+    role: 'High Concurrency',
+    description: 'Dedicated worker-node orchestration engineered for unlimited concurrent workflows at static server cost. Self-hosted determinism with full data retention control, PgBouncer connection pooling, and zero vendor lock-in. The heavy-compute layer for production-grade pipelines.',
+    metrics: ['Near-zero marginal cost at 100k+ daily executions', 'PgBouncer connection pooling'],
+    bestFor: 'Engineering-led teams needing self-hosted determinism, high concurrency, full auditability, and static cost predictability.',
+    notFor: 'Non-technical teams without server management capability, or teams needing fully managed hosting with SLA guarantees (use Make.com).',
+    affiliateLink: null,
+    ctaText: 'Explore Pillar 02 Orchestration Blueprint &rarr;'
+  },
+  {
+    name: 'Voiceflow',
+    slug: 'voiceflow',
+    pillar: '03',
+    role: 'Agentic Logic',
+    description: 'Visual conversation flow orchestrator for complex conversational state machines and multi-turn context retention. The dialogue logic layer that powers AI voice agents with structured branching, variable management, and integration hooks.',
+    metrics: ['Multi-turn conversational state management', '640ms latency with Bland.ai bridge'],
+    bestFor: 'Teams building AI voice agents, conversational IVRs, or multi-turn qualification flows needing visual dialogue design and context retention.',
+    notFor: 'Teams needing a full telephony carrier with SIP trunking (use Bland.ai), or teams needing simple one-way voice broadcasts without dialogue logic.',
+    affiliateLink: null,
+    ctaText: 'Explore Pillar 03 Voice Blueprint &rarr;'
+  },
+  {
+    name: 'Bland.ai',
+    slug: 'bland',
+    pillar: '03',
+    role: 'Voice Automation',
+    description: 'Ultra-low-latency real-time phone dispatch API with dynamic custom webhook responses and live transfers. The telephony execution layer that turns Voiceflow dialogue logic into actual phone calls with sub-800ms response latency.',
+    metrics: ['640ms end-to-end voice latency', '89.2% call completion rate'],
+    bestFor: 'Teams needing automated inbound/outbound voice agents, real-time call routing, and API-driven telephony at scale.',
+    notFor: 'Teams needing visual dialogue design without coding (use Voiceflow), or teams needing traditional call center software with agent desktops.',
+    affiliateLink: null,
+    ctaText: 'Explore Pillar 03 Voice Blueprint &rarr;'
+  },
+  {
+    name: 'ActiveCampaign',
+    slug: 'activecampaign',
+    pillar: '04',
+    role: 'Lifecycle CRM',
+    description: 'High-deliverability lifecycle CRM for automated behavioral retention, lead scoring, and revenue attribution. The closed-loop layer that syncs enriched outbound leads into nurture pools without state loss, converting cold outreach into recurring revenue.',
+    metrics: ['0.01% duplicate contact rate', 'Closed-loop lead attribution &amp; scoring'],
+    bestFor: 'B2B teams needing lifecycle automation, behavioral lead scoring, and closed-loop attribution from cold outreach to customer retention.',
+    notFor: 'Teams needing a pure outbound sending engine (use Smartlead), or teams needing enterprise-grade sales CRM with full pipeline management (use a dedicated CRM).',
+    affiliateLink: null,
+    ctaText: 'Explore Pillar 04 CRM Blueprint &rarr;'
   }
 ];
 
