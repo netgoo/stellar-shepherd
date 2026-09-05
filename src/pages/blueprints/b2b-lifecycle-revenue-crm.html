@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enterprise Lead Lifecycle &amp; CRM Sync Architecture | Wenboom</title>
     <meta name="description" content="Maintain CRM pipeline state integrity across distributed AI channels using ActiveCampaign deterministic idempotency token routing and n8n webhook middleware." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Enterprise Lead Lifecycle &amp; CRM Sync Architecture | Wenboom" />
+    <meta property="og:description" content="Maintain CRM pipeline state integrity across distributed AI channels using ActiveCampaign deterministic idempotency token routing and n8n webhook middleware." />
+    <meta property="og:url" content="https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm" />
+    <meta property="og:image" content="https://wenboom.com/favicon.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Enterprise Lead Lifecycle &amp; CRM Sync Architecture | Wenboom" />
+    <meta name="twitter:description" content="Maintain CRM pipeline state integrity across distributed AI channels using ActiveCampaign deterministic idempotency token routing and n8n webhook middleware." />
     <link rel="stylesheet" href="/site-common.css">
     <style>
         .pillar-hero { background: linear-gradient(135deg, rgba(243,198,83,0.08) 0%, rgba(243,198,83,0.02) 100%); border: 1px solid var(--card-border); border-radius: 12px; padding: 2rem; margin: 1.5rem 0 2rem; }
@@ -27,12 +35,37 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "TechArticle",
-      "headline": "Enterprise Lead Lifecycle & CRM Sync Architecture Blueprint",
-      "author": { "@type": "Person", "name": "Alex", "jobTitle": "Principal AI Infrastructure Architect" },
-      "publisher": { "@type": "Organization", "name": "Wenboom", "url": "https://wenboom.com" },
-      "datePublished": "2026-09-01",
-      "mainEntityOfPage": "https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm"
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://wenboom.com/#alex",
+          "name": "Alex",
+          "jobTitle": "Principal AI Infrastructure Architect",
+          "worksFor": { "@id": "https://wenboom.com/#organization" },
+          "sameAs": ["https://wenboom.com/about"]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://wenboom.com/#organization",
+          "name": "Wenboom",
+          "url": "https://wenboom.com",
+          "logo": "https://wenboom.com/favicon.svg",
+          "founder": { "@id": "https://wenboom.com/#alex" }
+        },
+        {
+          "@type": "TechArticle",
+          "@id": "https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm#article",
+          "headline": "Enterprise Lead Lifecycle & CRM Sync Architecture Blueprint",
+          "description": "Maintain CRM pipeline state integrity across distributed AI channels using ActiveCampaign deterministic idempotency token routing and n8n webhook middleware.",
+          "inLanguage": "en-US",
+          "datePublished": "2026-09-01",
+          "dateModified": "2026-09-04",
+          "author": { "@id": "https://wenboom.com/#alex" },
+          "publisher": { "@id": "https://wenboom.com/#organization" },
+          "mainEntityOfPage": "https://wenboom.com/blueprints/b2b-lifecycle-revenue-crm",
+          "articleSection": "Lifecycle Revenue CRM"
+        }
+      ]
     }
     </script>
 </head>
