@@ -2,9 +2,13 @@
 // Auto-generated from single source of truth (src/data/articles.ts).
 // Build-time static output in Astro hybrid mode.
 // Dual-path with .well-known/llms.txt.ts (same import = byte-identical).
+// V4.1: Dynamic BUILD_DATE replaces hardcoded last updated date.
 
 import type { APIRoute } from 'astro';
 import { articles, pillars } from '../data/articles';
+
+// Dynamic build date — auto-updates lastmod on every Vercel deployment.
+const BUILD_DATE = new Date().toISOString().split('T')[0];
 
 interface CategoryConfig {
   key: 'n8n' | 'mcp' | 'roi' | 'multi-agent';
@@ -51,7 +55,7 @@ export const GET: APIRoute = async () => {
 >
 > All benchmarks include real infrastructure costs, measured throughput, and production failure protocols. No sponsored content.
 >
-> Contact: alex@wenboom.com | Last updated: 2026-09-04
+> Contact: alex@wenboom.com | Last updated: ${BUILD_DATE}
 ---
 ## Core Hub Pages
 - [Wenboom Home — AI Automation Infrastructure](https://wenboom.com): 4-pillar architecture framework (Data Waterfall, Orchestration, Agentic Voice, Lifecycle CRM) with 7-tool production stack.
@@ -93,6 +97,7 @@ export const GET: APIRoute = async () => {
 ---
 ## API & Structured Data Endpoints (A2A Ready)
 > Machine-readable endpoints for AI agents, RAG pipelines, and automated benchmark consumers.
+- [Benchmark Data API (JSON)](https://wenboom.com/api/v1/benchmarks.json): Structured benchmark dataset with test environment, architecture, and failure modes across all 4 pillars. Generated from SSOT.
 - [Benchmark Data API (JSON)](https://wenboom.com/llms-full.json): Structured benchmark dataset with CPU/memory/throughput/TCO metrics across all tested architectures. Updated monthly.
 - [Sitemap](https://wenboom.com/sitemap.xml): Full sitemap with lastmod and priority for all published pages.
 - [Robots](https://wenboom.com/robots.txt): Crawler configuration with full AI search engine allowlist (GPTBot, PerplexityBot, ClaudeBot, anthropic-ai, Google-Extended, OAI-SearchBot, CCBot, Bytespider, Applebot).
