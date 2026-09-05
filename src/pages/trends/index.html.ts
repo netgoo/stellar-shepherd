@@ -1,10 +1,10 @@
-// src/pages/trends.html.ts
+// src/pages/trends/index.html.ts
 // Build-time static HTML list page generated from single source of truth.
 // Replaces src/pages/trends.html (delete after deploy).
 // 4-channel article cards auto-generated from articles.ts.
 
 import type { APIRoute } from 'astro';
-import { articles, type Article } from '../data/articles';
+import { articles, type Article } from '../../data/articles';
 
 interface ChannelConfig {
   heading: string;
