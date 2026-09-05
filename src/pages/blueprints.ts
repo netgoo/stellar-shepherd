@@ -140,9 +140,9 @@ export const GET: APIRoute = () => {
         .arch-arrow { color: var(--accent-gold); font-size: 1.5rem; font-weight: 700; }
         .dashboard-section { max-width: 1100px; margin: 0 auto 3rem; padding: 0 5%; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-        .dashboard-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 1.25rem; text-align: center; }
-        .dashboard-value { font-size: 1.75rem; font-weight: 800; color: var(--accent-gold); line-height: 1.1; }
-        .dashboard-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dashboard-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-align: left; }
+        .dashboard-value { font-size: 1.4rem; font-weight: 800; color: var(--accent-gold); line-height: 1.1; white-space: nowrap; }
+        .dashboard-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0; }
         .matrix-section { max-width: 1100px; margin: 0 auto 3rem; padding: 0 5%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.75rem; margin-top: 1.5rem; }
         .blueprint-card { background-color: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border); padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s; }
