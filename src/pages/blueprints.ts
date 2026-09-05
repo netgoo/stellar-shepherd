@@ -83,15 +83,26 @@ export const GET: APIRoute = () => {
   const clusterA = getByCluster('A').slice(0, 3);
   const clusterB = getByCluster('B').slice(0, 3);
   const clusterC = getByCluster('C').slice(0, 3);
+  const clusterCPillars = pillars.filter((p) => p.pillar === '03' || p.pillar === '04');
 
-  function renderClusterList(items: typeof publishedArticles, label: string) {
+  function renderClusterList(items: typeof publishedArticles, label: string, fallbackPillars?: typeof pillars) {
+    if (items.length > 0) {
+      return `
+        <div class="deep-dive-card">
+          <h3>${label}</h3>
+          <ul>${items.map((a) => `<li><a href="/trends/${a.slug}"><strong>${a.title}</strong><br/><span class="dd-desc">${a.description.substring(0, 100)}...</span></a></li>`).join('')}</ul>
+        </div>
+      `;
+    }
+    const pillarLinks = fallbackPillars?.map((p) => {
+      const firstMetric = Object.entries(p.metrics)[0];
+      return `<li><a href="/blueprints/${p.slug}"><strong>${p.name}</strong><br/><span class="dd-desc">${firstMetric[1]} — ${p.shortTitle}</span></a></li>`;
+    }).join('') || '';
     return `
       <div class="deep-dive-card">
         <h3>${label}</h3>
-        ${items.length > 0
-          ? `<ul>${items.map((a) => `<li><a href="/trends/${a.slug}"><strong>${a.title}</strong><br/><span class="dd-desc">${a.description.substring(0, 100)}...</span></a></li>`).join('')}</ul>`
-          : `<p class="coming-soon-note">Deep dive articles coming Q4 2026</p>`
-        }
+        <ul>${pillarLinks}</ul>
+        <p class="coming-soon-note">Deep dive articles coming Q4 2026</p>
       </div>
     `;
   }
@@ -326,7 +337,7 @@ export const GET: APIRoute = () => {
             <div class="deep-dive-grid">
                 ${renderClusterList(clusterA, 'Cluster A — Data Waterfall & Outbound')}
                 ${renderClusterList(clusterB, 'Cluster B — Orchestration & Cost Control')}
-                ${renderClusterList(clusterC, 'Cluster C — Agentic Voice & Lifecycle CRM')}
+                ${renderClusterList(clusterC, 'Cluster C — Agentic Voice & Lifecycle CRM', clusterCPillars)}
             </div>
         </section>
 
