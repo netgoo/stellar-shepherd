@@ -65,7 +65,7 @@ export const articles: Article[] = [
     metaTag: 'FAILURE PROTOCOL • DATA INTEGRITY',
     status: 'published',
     publishedDate: '2026-08-15',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { wcei: '0.94+', duplicateRate: '0.01%', failureModes: '4' },
     tools: ['Clay', 'Smartlead']
   },
@@ -80,7 +80,7 @@ export const articles: Article[] = [
     metaTag: 'FAILURE PROTOCOL • CLOUD INFRASTRUCTURE',
     status: 'published',
     publishedDate: '2026-08-20',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { p99Latency: '<50ms', breakEven: '150k invocations/month', workloadMemory: '512MB' },
     tools: ['AWS Lambda', 'Hetzner', 'DigitalOcean', 'n8n']
   },
@@ -95,7 +95,7 @@ export const articles: Article[] = [
     metaTag: 'AGENTIC WORKFLOW • CLUSTER A',
     status: 'published',
     publishedDate: '2026-08-10',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { deliverability: '98.4%', wcei: '0.94+', costPer10kLeads: '$320' },
     tools: ['Clay', 'Smartlead']
   },
@@ -110,7 +110,7 @@ export const articles: Article[] = [
     metaTag: 'AGENT PROTOCOL • CLUSTER A',
     status: 'published',
     publishedDate: '2026-08-25',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { restAgentFailureRate: '14-22%', zeroGlueFailureRate: '<2%' },
     tools: ['Model Context Protocol']
   },
@@ -125,7 +125,7 @@ export const articles: Article[] = [
     metaTag: 'COST BENCHMARK • CLUSTER B',
     status: 'published',
     publishedDate: '2026-08-05',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { overheadReduction: '83.4%', makeProMonthly: '$9', zapierProMonthly: '$29.99', n8nMonthly: '$20' },
     tools: ['Make.com', 'Zapier', 'n8n']
   },
@@ -140,7 +140,7 @@ export const articles: Article[] = [
     metaTag: 'MCP BRIDGE • CLUSTER B',
     status: 'published',
     publishedDate: '2026-08-28',
-    updatedDate: '2026-09-01',
+    updatedDate: '2026-09-05',
     metrics: { bridgePattern: 'MCP JSON schema', compensation: 'Saga transactions', gateway: 'SMB semantic gateway' },
     tools: ['Make.com', 'n8n', 'Clay', 'Smartlead']
   },
