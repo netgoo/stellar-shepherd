@@ -20,6 +20,12 @@ export interface Article {
   tools?: string[];
 }
 
+export interface BenchmarkDetail {
+  testEnvironment: Record<string, string>;
+  architecture: Record<string, string>;
+  failureModes: { mode: string; fix: string }[];
+}
+
 export interface Pillar {
   slug: string;
   url: string;
@@ -30,6 +36,7 @@ export interface Pillar {
   status: 'published' | 'published_soon';
   metrics: Record<string, string>;
   description: string;
+  benchmarkDetail: BenchmarkDetail;
 }
 
 export const articles: Article[] = [
@@ -313,7 +320,27 @@ export const pillars: Pillar[] = [
     tools: ['Clay', 'Smartlead'],
     status: 'published',
     metrics: { deliverability: '98.4%', wcei: '0.94+', costPer10kLeads: '$320', enrichmentProviders: '50+' },
-    description: '4-tier cascading enrichment across 50+ providers with conditional fallback logic. WCEI optimization from 0.62 to 0.94+, strict SMTP handshake verification, and Smartlead zero-drop delivery with dedicated IP warmup.'
+    description: '4-tier cascading enrichment across 50+ providers with conditional fallback logic. WCEI optimization from 0.62 to 0.94+, strict SMTP handshake verification, and Smartlead zero-drop delivery with dedicated IP warmup.',
+    benchmarkDetail: {
+      testEnvironment: {
+        leadVolume: '50,000 monthly leads',
+        enrichmentProviders: '50+',
+        testedAt: '2026-08'
+      },
+      architecture: {
+        tiers: '4',
+        fallbackLogic: 'conditional cascading',
+        dedupMethod: 'SHA-256 deterministic keys',
+        ipWarmup: 'dedicated IP rotation',
+        smtpVerification: 'strict handshake validation'
+      },
+      failureModes: [
+        { mode: 'Enrichment timeout (504)', fix: 'RLRP exponential backoff, 500ms initial, max 32s, 5 retries' },
+        { mode: 'Duplicate cross-contamination', fix: 'Deterministic dedup keys before Smartlead injection' },
+        { mode: 'Domain reputation burn', fix: 'SMTP handshake verification + dedicated IP warmup schedule' },
+        { mode: 'Credit waste on low-quality leads', fix: 'WCEI-optimized provider routing, threshold 0.94, quarantine queue' }
+      ]
+    }
   },
   {
     slug: 'visual-vs-self-hosted-orchestration',
@@ -324,7 +351,28 @@ export const pillars: Pillar[] = [
     tools: ['Make.com', 'n8n', 'PgBouncer'],
     status: 'published',
     metrics: { tcoReduction: '83.4%', p99Latency: '<50ms', connectionPooling: 'PgBouncer', benchmarkExecutions: '500k/month' },
-    description: 'Hybrid Make + self-hosted n8n topology enforcing the Zero-Glue Theorem. Make handles visual webhooks and SaaS triggers; n8n worker cluster behind PgBouncer handles bulk enrichment.'
+    description: 'Hybrid Make + self-hosted n8n topology enforcing the Zero-Glue Theorem. Make handles visual webhooks and SaaS triggers; n8n worker cluster behind PgBouncer handles bulk enrichment.',
+    benchmarkDetail: {
+      testEnvironment: {
+        executionVolume: '500,000 monthly executions',
+        vps: 'Hetzner CX22',
+        vpsSpecs: '4 vCPU / 8GB RAM',
+        vpsMonthlyCost: '$20',
+        testedAt: '2026-08'
+      },
+      architecture: {
+        pattern: 'hybrid Make + self-hosted n8n',
+        makeRole: 'visual webhooks and SaaS triggers',
+        n8nRole: 'worker cluster behind PgBouncer for bulk enrichment',
+        theorem: 'Zero-Glue Theorem, native protocol boundaries'
+      },
+      failureModes: [
+        { mode: 'Connection pool exhaustion', fix: 'PgBouncer transaction pooling, max 20 client connections' },
+        { mode: 'Rate-limit cascade (429)', fix: 'RLRP warmup + circuit breaker + quarantine queue' },
+        { mode: 'Cold start timeout', fix: 'RLRP warmup pool, keep-alive connections, <50ms P99' },
+        { mode: 'Execution limit kill', fix: 'Worker queue mode, Redis Bull, horizontal scaling to 4 workers' }
+      ]
+    }
   },
   {
     slug: 'production-ai-agentic-architecture',
@@ -335,7 +383,26 @@ export const pillars: Pillar[] = [
     tools: ['Voiceflow', 'Bland AI'],
     status: 'published',
     metrics: { endToEndLatency: '640ms', callCompletionRate: '89.2%', costPerMinute: '$0.09', latencySla: 'sub-800ms' },
-    description: 'Real-Time Latency Bridge pairing Voiceflow visual dialogue state machines with Bland AI PSTN telephony execution. Sub-800ms latency SLA enforcement, real-time payload sanitization, and async CRM telemetry sync.'
+    description: 'Real-Time Latency Bridge pairing Voiceflow visual dialogue state machines with Bland AI PSTN telephony execution. Sub-800ms latency SLA enforcement, real-time payload sanitization, and async CRM telemetry sync.',
+    benchmarkDetail: {
+      testEnvironment: {
+        latencySla: 'sub-800ms',
+        testedAt: '2026-08'
+      },
+      architecture: {
+        pattern: 'Real-Time Latency Bridge',
+        voiceflowRole: 'visual dialogue state machine orchestration',
+        blandRole: 'PSTN telephony execution via dynamic custom webhooks',
+        payloadSanitization: 'real-time input validation and sanitization',
+        fillerStrategy: 'pre-buffered filler phrases for latency spike resilience'
+      },
+      failureModes: [
+        { mode: 'Latency spike above SLA', fix: 'Pre-buffered filler phrases + async CRM telemetry sync' },
+        { mode: 'Payload injection via webhook', fix: 'Real-time payload sanitization and schema validation gates' },
+        { mode: 'Call drop mid-conversation', fix: 'max_duration hard caps + live transfer protocol fallback' },
+        { mode: 'Context loss between turns', fix: 'Voiceflow conversation state machine persistence' }
+      ]
+    }
   },
   {
     slug: 'b2b-lifecycle-revenue-crm',
@@ -346,7 +413,26 @@ export const pillars: Pillar[] = [
     tools: ['ActiveCampaign', 'n8n', 'Redis'],
     status: 'published',
     metrics: { duplicateContactRate: '0.01%', stateCorruption: '0/month', apiFailureRate: '0.02%', idempotency: 'SHA-256 tokens' },
-    description: 'Deterministic State Machine Engine enforcing single-source-of-truth updates in ActiveCampaign via SHA-256 idempotency tokens. Monotonic lifecycle state transition validation, Dead Letter Queue for out-of-order events.'
+    description: 'Deterministic State Machine Engine enforcing single-source-of-truth updates in ActiveCampaign via SHA-256 idempotency tokens. Monotonic lifecycle state transition validation, Dead Letter Queue for out-of-order events.',
+    benchmarkDetail: {
+      testEnvironment: {
+        testedAt: '2026-08'
+      },
+      architecture: {
+        pattern: 'Deterministic State Machine Engine',
+        crmRole: 'ActiveCampaign single-source-of-truth updates',
+        idempotency: 'SHA-256 idempotency tokens on all write operations',
+        stateValidation: 'monotonic lifecycle state transition validation',
+        deadLetterQueue: 'out-of-order event quarantine and replay',
+        raceConditionPrevention: 'Redis atomic locks'
+      },
+      failureModes: [
+        { mode: 'Duplicate contact creation', fix: 'SHA-256 idempotency tokens + deterministic dedup keys' },
+        { mode: 'Out-of-order lifecycle events', fix: 'Dead Letter Queue + monotonic state transition validation' },
+        { mode: 'Race condition on concurrent updates', fix: 'Redis atomic locks before ActiveCampaign write' },
+        { mode: 'API failure during sync', fix: 'RLRP circuit breaker + retry with exponential backoff' }
+      ]
+    }
   }
 ];
 
