@@ -126,7 +126,7 @@ class SubscribeBox extends HTMLElement {
         }
         .subscribe-fineprint {
           color: #6B7280;
-          font-size: 0.8rem;
+          font-size: 0.72rem;
           margin-top: 0.75rem;
           margin-bottom: 0;
         }
